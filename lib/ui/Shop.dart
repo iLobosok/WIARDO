@@ -135,31 +135,10 @@ class Shopping extends State<Shop> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    SizedBox(width: 100,),
-                    Positioned(
-                      left:110,
-                    top:10,
-                    child:InkWell(
-                      onTap: ()
-                      {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => HomeScreen(user: user)));
-                      },
-                    child:CachedNetworkImage(
-                      imageUrl: "${user.profilePictureURL}",
-                      alignment: Alignment.center,
-                      placeholder: (context, url) => CircularProgressIndicator(),
-                      errorWidget: (context, url, error) => Icon(Icons.account_circle),
-                    ),
-                    ),
-                    ),
+
                     Text(
                       'Find Your',
                       style: TextStyle(color: Colors.black87, fontSize: 25),
-                    ),
-                    SizedBox(
-                      height: 5,
                     ),
                     Text(
                       'Swag',
@@ -168,6 +147,24 @@ class Shopping extends State<Shop> {
                           fontSize: 35,
                           fontWeight: FontWeight.bold),
                     ),
+                    Align(
+                      alignment:
+                      FractionalOffset(1, 3),
+                      child:InkWell(
+                          onTap: ()
+                          {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => HomeScreen(user: user)));
+                          },
+                          child:CircleAvatar(
+                            radius: 30.0,
+                            backgroundImage: NetworkImage("${user.profilePictureURL}"),
+                            //backgroundColor: Colors.transparent,
+                          )
+                      ),
+                    ),
+
                     SizedBox(
                       height: 20,
                     ),
