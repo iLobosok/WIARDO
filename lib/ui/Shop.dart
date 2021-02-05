@@ -138,11 +138,20 @@ class Shopping extends State<Shop> {
                     SizedBox(width: 100,),
                     Positioned(
                       left:110,
+                    top:10,
+                    child:InkWell(
+                      onTap: ()
+                      {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => HomeScreen(user: user)));
+                      },
                     child:CachedNetworkImage(
                       imageUrl: "${user.profilePictureURL}",
                       alignment: Alignment.center,
                       placeholder: (context, url) => CircularProgressIndicator(),
                       errorWidget: (context, url, error) => Icon(Icons.account_circle),
+                    ),
                     ),
                     ),
                     Text(
