@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "911536410946",
+    "firebase_url": "https://chat-b43aa.firebaseio.com",
+    "project_id": "chat-b43aa",
+    "storage_bucket": "chat-b43aa.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:911536410946:android:41519cf7a1eb524c1278db",
+        "android_client_info": {
+          "package_name": "com.niowo.shopper"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "911536410946-tvruqcoij1pgabeqcrv4pthmda3aptnb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBxov19E4KR4PvLo6jOK4Q67AmzFMQBhs4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "911536410946-tvruqcoij1pgabeqcrv4pthmda3aptnb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
