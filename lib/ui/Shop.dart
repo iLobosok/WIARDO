@@ -158,6 +158,7 @@ class Shopping extends State<Shop> {
                                 MaterialPageRoute(builder: (context) => HomeScreen(user: user)));
                           },
                           child:CircleAvatar(
+                            //circle avatar
                             radius: 30.0,
                             backgroundImage: NetworkImage("${user.profilePictureURL}"),
                             //backgroundColor: Colors.transparent,
