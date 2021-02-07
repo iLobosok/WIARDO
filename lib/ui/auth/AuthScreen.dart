@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 
 
 
@@ -15,15 +16,15 @@ class AuthScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
+            SizedBox(height: 80,),
             Center(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 200.0, bottom: 20.0),
-                child: Icon(
-                  Icons.phone_iphone,
-                  size: 150,
-                  color: Color(Constants.COLOR_PRIMARY),
-                ),
-              ),
+              child: Lottie.network(
+                //Lottie
+                'https://assets8.lottiefiles.com/packages/lf20_jcikwtux.json',
+                width: 250,
+                height: 300,
+                fit: BoxFit.fill,
+              )
             ),
             Text(
               'Register your account',

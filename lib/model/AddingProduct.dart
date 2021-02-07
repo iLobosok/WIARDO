@@ -5,12 +5,15 @@ import 'package:flutter/services.dart';
 import 'package:flutter_login_screen/model/Product.dart';
 import 'package:flutter_login_screen/services/Authenticate.dart';
 import 'package:flutter_login_screen/services/helper.dart';
+import 'package:flutter_login_screen/constants.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_login_screen/ui/Shop.dart';
 import 'dart:io';
+
+import '../main.dart';
 
 File _image;
 
@@ -46,6 +49,7 @@ class _AdgProductState extends State<AddProduct> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       body: Center(
           child: SingleChildScrollView(
@@ -75,7 +79,7 @@ class RegisterPet extends StatefulWidget {
 
 class _RegisterPetState extends State<RegisterPet> {
   final _formKey = GlobalKey<FormState>();
-  final listOfPets = ["Shoppers", "Shirts", "T-Shirts", "Shoes", "Pants", "Masks", "Glasses"];
+  final listOfPets = ["Shoppers", "Shirts", "T-Shirts", "Shoes", "Shorts", "Pants", "Masks", "Glasses"];
   String dropdownValue = 'Shoppers';
   final titleController = TextEditingController();
   final ImagePicker _imagePicker = ImagePicker();
@@ -85,6 +89,8 @@ class _RegisterPetState extends State<RegisterPet> {
   AutovalidateMode _validate = AutovalidateMode.disabled;
   final costController = TextEditingController();
   final dbRef = FirebaseDatabase.instance.reference().child("Products");
+  String title, description, productID, product, password, confirmPassword,bio;
+
   Future<void> retrieveLostData() async {
     final LostData response = await _imagePicker.getLostData();
     if (response == null) {
@@ -99,7 +105,7 @@ class _RegisterPetState extends State<RegisterPet> {
   _onCameraClick() {
     final action = CupertinoActionSheet(
       message: Text(
-        "Add picture",
+        "Add profile picture",
         style: TextStyle(fontSize: 15.0),
       ),
       actions: <Widget>[
@@ -109,7 +115,7 @@ class _RegisterPetState extends State<RegisterPet> {
           onPressed: () async {
             Navigator.pop(context);
             PickedFile image =
-            await _imagePicker.getImage(source: ImageSource.gallery);
+            await _imagePicker.getImage(source: ImageSource.gallery,imageQuality: 50);
             if (image != null)
               setState(() {
                 _image = File(image.path);
@@ -306,6 +312,7 @@ class _RegisterPetState extends State<RegisterPet> {
                           descriptionController.clear();
                           costController.clear();
                           titleController.clear();
+
                         },
                         child: Text('Done', style: TextStyle(color: Colors.white),),
                       ),
@@ -314,11 +321,11 @@ class _RegisterPetState extends State<RegisterPet> {
                   )),
             ])));
   }
- @override
+
+  @override
   void dispose() {
+    _passwordController.dispose();
+    _image = null;
     super.dispose();
-    descriptionController.dispose();
-    costController.dispose();
-    titleController.dispose();
   }
 }

@@ -13,6 +13,11 @@ bool _isFavorite = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        elevation: 0.0,
+        backgroundColor: Colors.transparent,
+        iconTheme: IconThemeData(color: Colors.black),
+      ),
       body: SingleChildScrollView(
           child: Hero(
             tag: 'red',

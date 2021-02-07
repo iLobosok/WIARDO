@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -8,9 +7,7 @@ import 'package:flutter_login_screen/model/User.dart';
 import 'package:flutter_login_screen/services/Authenticate.dart';
 import 'package:flutter_login_screen/ui/home/HomeScreen.dart';
 import 'package:image_picker/image_picker.dart';
-
-
-
+import 'package:lottie/lottie.dart';
 import '../../constants.dart' as Constants;
 import '../../constants.dart';
 import '../../main.dart';
@@ -29,7 +26,7 @@ class _SignUpState extends State<SignUpScreen> {
   TextEditingController _passwordController = new TextEditingController();
   GlobalKey<FormState> _key = new GlobalKey();
   AutovalidateMode _validate = AutovalidateMode.disabled;
-  String firstName, lastName, email, mobile, password, confirmPassword;
+  String firstName, lastName, email, mobile, password, confirmPassword,bio;
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +78,7 @@ class _SignUpState extends State<SignUpScreen> {
           onPressed: () async {
             Navigator.pop(context);
             PickedFile image =
-                await _imagePicker.getImage(source: ImageSource.gallery);
+                await _imagePicker.getImage(source: ImageSource.gallery,imageQuality: 50);
             if (image != null)
               setState(() {
                 _image = File(image.path);
@@ -323,6 +320,31 @@ class _SignUpState extends State<SignUpScreen> {
                     ))),
           ),
         ),
+        ConstrainedBox(
+            constraints: BoxConstraints(minWidth: double.infinity),
+            child: Padding(
+                padding:
+                const EdgeInsets.only(top: 16.0, right: 8.0, left: 8.0),
+                child: TextFormField(
+                  onSaved: (String val) {
+                      bio = val;
+                    },
+                   autovalidateMode: _validate,
+                    textInputAction: TextInputAction.next,
+                    onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
+                    decoration: InputDecoration(
+                        contentPadding: new EdgeInsets.symmetric(
+                            vertical: 8, horizontal: 16),
+                        fillColor: Colors.white,
+                        hintText: 'bio: Designer, 23 y.o.',
+                        focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(25.0),
+                            borderSide: BorderSide(
+                                color: Color(Constants.COLOR_PRIMARY),
+                                width: 2.0)),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                        ))))),
         Padding(
           padding: const EdgeInsets.only(right: 40.0, left: 40.0, top: 40.0),
           child: ConstrainedBox(
@@ -365,6 +387,8 @@ class _SignUpState extends State<SignUpScreen> {
             email: email,
             firstName: firstName,
             phoneNumber: mobile,
+            ban: false,
+            bio: bio,
             userID: result.user.uid,
             active: true,
             lastName: lastName,

@@ -7,6 +7,7 @@ import 'package:flutter_swiper/flutter_swiper.dart';
 import 'dart:io';
 import 'package:flutter_login_screen/animation/FadeAnimation.dart';
 import 'dart:math';
+import 'package:lottie/lottie.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -28,7 +29,6 @@ class Shop extends StatefulWidget {
     return Shopping(user);
   }
 }
-
 
 class Shopping extends State<Shop> {
   final User user;
@@ -108,7 +108,7 @@ class Shopping extends State<Shop> {
               padding: EdgeInsets.only(right: 20.0),
               child: GestureDetector(
                 onTap: () {
-                  HomeScreen();
+                  //Test();
                 },
                 child: Icon(
                   Icons.shopping_cart,
@@ -148,8 +148,7 @@ class Shopping extends State<Shop> {
                           fontWeight: FontWeight.bold),
                     ),
                     Align(
-                      alignment:
-                      FractionalOffset(1, 3),
+                      alignment: FractionalOffset(1, 3),
                       child:InkWell(
                           onTap: ()
                           {

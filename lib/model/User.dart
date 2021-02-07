@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class User {
   String email = '';
   String firstName = '';
+  String bio = '';
   String lastName = '';
   String phoneNumber = '';
   bool active = false;
@@ -19,9 +20,10 @@ class User {
   User(
       {this.email,
       this.firstName,
+      this.bio,
       this.phoneNumber,
       this.lastName,
-        this.ban,
+      this.ban,
       this.active,
       this.lastOnlineTimestamp,
       this.userID,
@@ -37,6 +39,7 @@ class User {
         email: parsedJson['email'] ?? '',
         firstName: parsedJson['firstName'] ?? '',
         lastName: parsedJson['lastName'] ?? '',
+        bio: parsedJson['bio'] ?? '',
         active: parsedJson['active'] ?? false,
         ban: parsedJson['banned'] ?? false,
         lastOnlineTimestamp: parsedJson['lastOnlineTimestamp'],
@@ -47,6 +50,7 @@ class User {
 
   Map<String, dynamic> toJson() {
     return {
+      'bio' : this.bio,
       'email': this.email,
       'firstName': this.firstName,
       'lastName': this.lastName,
