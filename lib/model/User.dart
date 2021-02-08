@@ -15,11 +15,13 @@ class User {
   String userID;
   String profilePictureURL = '';
   bool selected = false;
+  bool seller = false;
   String appIdentifier = '${Platform.operatingSystem}';
 
   User(
       {this.email,
       this.firstName,
+        this.seller,
       this.bio,
       this.phoneNumber,
       this.lastName,
@@ -37,6 +39,7 @@ class User {
   factory User.fromJson(Map<String, dynamic> parsedJson) {
     return new User(
         email: parsedJson['email'] ?? '',
+        seller: parsedJson['seller'] ?? false,
         firstName: parsedJson['firstName'] ?? '',
         lastName: parsedJson['lastName'] ?? '',
         bio: parsedJson['bio'] ?? '',
@@ -52,6 +55,7 @@ class User {
     return {
       'bio' : this.bio,
       'email': this.email,
+      'seller': this.seller,
       'firstName': this.firstName,
       'lastName': this.lastName,
       'phoneNumber': this.phoneNumber,

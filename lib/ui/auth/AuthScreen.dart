@@ -24,7 +24,7 @@ class AuthScreen extends StatelessWidget {
                 width: 250,
                 height: 300,
                 fit: BoxFit.fill,
-              )
+              ),
             ),
             Text(
               'Register your account',

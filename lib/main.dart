@@ -6,6 +6,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_login_screen/ui/Shop.dart';
+import 'package:flutter_login_screen/ui/onBoarding/OnBoarding.dart';
 import 'model/Product.dart';
 import 'model/User.dart';
 import 'services/Authenticate.dart';
@@ -15,7 +16,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'constants.dart' as Constants;
 import 'ui/auth/AuthScreen.dart';
-import 'ui/onBoarding/OnBoardingScreen.dart';
+
 
 void main() => runApp(new MyApp());
 
@@ -148,11 +149,9 @@ class OnBoardingState extends State<OnBoarding> {
         } else {
           pushReplacement(context, new AuthScreen());
         }
-      } else {
-        pushReplacement(context, new AuthScreen());
       }
     } else {
-      pushReplacement(context, new OnBoardingScreen());
+      pushReplacement(context, new OnboardingScreen());
     }
   }
 

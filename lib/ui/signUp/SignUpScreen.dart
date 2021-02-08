@@ -28,6 +28,8 @@ class _SignUpState extends State<SignUpScreen> {
   AutovalidateMode _validate = AutovalidateMode.disabled;
   String firstName, lastName, email, mobile, password, confirmPassword,bio;
 
+  bool sellerx = false;
+
   @override
   Widget build(BuildContext context) {
     if (Platform.isAndroid) {
@@ -336,7 +338,7 @@ class _SignUpState extends State<SignUpScreen> {
                         contentPadding: new EdgeInsets.symmetric(
                             vertical: 8, horizontal: 16),
                         fillColor: Colors.white,
-                        hintText: 'bio: Designer, 23 y.o.',
+                        hintText: 'Bio: Designer, 23 y.o.',
                         focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(25.0),
                             borderSide: BorderSide(
@@ -345,6 +347,22 @@ class _SignUpState extends State<SignUpScreen> {
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(25.0),
                         ))))),
+    Theme(
+    data: Theme.of(context).copyWith(
+    unselectedWidgetColor: Colors.white,
+    ),
+        child:CheckboxListTile(
+          title: Text("I'm seller?", style: TextStyle(color: Colors.blueAccent),),
+          value: sellerx,
+          checkColor: Colors.green,
+          activeColor: Colors.white,
+          onChanged: (bool value) {
+            setState(() {
+              sellerx = value;
+            });
+          },
+          ),
+    ),
         Padding(
           padding: const EdgeInsets.only(right: 40.0, left: 40.0, top: 40.0),
           child: ConstrainedBox(
@@ -388,6 +406,7 @@ class _SignUpState extends State<SignUpScreen> {
             firstName: firstName,
             phoneNumber: mobile,
             ban: false,
+            seller: sellerx,
             bio: bio,
             userID: result.user.uid,
             active: true,
