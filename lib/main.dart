@@ -150,7 +150,8 @@ class OnBoardingState extends State<OnBoarding> {
           pushReplacement(context, new AuthScreen());
         }
       }
-    } else {
+    }
+    else {
       pushReplacement(context, new OnboardingScreen());
     }
   }
@@ -164,7 +165,7 @@ class OnBoardingState extends State<OnBoarding> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.lightBlueAccent,
+      backgroundColor: Colors.grey[800],
       body: Center(
         child: CircularProgressIndicator(
           backgroundColor: Colors.white,

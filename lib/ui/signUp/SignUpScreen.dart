@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_login_screen/model/User.dart';
 import 'package:flutter_login_screen/services/Authenticate.dart';
 import 'package:flutter_login_screen/ui/home/HomeScreen.dart';
+import 'package:flutter_login_screen/ui/onBoarding/OnBoarding.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lottie/lottie.dart';
 import '../../constants.dart' as Constants;
@@ -418,7 +419,7 @@ class _SignUpState extends State<SignUpScreen> {
             .set(user.toJson());
         hideProgress();
         MyAppState.currentUser = user;
-        pushAndRemoveUntil(context, Shop(user: user),false);
+        pushReplacement(context, new Shop(user: user));
             //HomeScreen(user: user), false);
       } on auth.FirebaseAuthException catch (error) {
         hideProgress();

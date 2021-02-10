@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 
 class User {
   String email = '';
@@ -10,6 +11,7 @@ class User {
   String lastName = '';
   String phoneNumber = '';
   bool active = false;
+  int subs = 1;
   bool ban = false;
   Timestamp lastOnlineTimestamp = Timestamp.now();
   String userID;
@@ -22,6 +24,7 @@ class User {
       {this.email,
       this.firstName,
         this.seller,
+        this.subs,
       this.bio,
       this.phoneNumber,
       this.lastName,
@@ -39,6 +42,7 @@ class User {
   factory User.fromJson(Map<String, dynamic> parsedJson) {
     return new User(
         email: parsedJson['email'] ?? '',
+        subs: parsedJson['subscribers'] ?? 0,
         seller: parsedJson['seller'] ?? false,
         firstName: parsedJson['firstName'] ?? '',
         lastName: parsedJson['lastName'] ?? '',
@@ -55,6 +59,7 @@ class User {
     return {
       'bio' : this.bio,
       'email': this.email,
+      'subcribers' : this.subs,
       'seller': this.seller,
       'firstName': this.firstName,
       'lastName': this.lastName,

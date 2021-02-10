@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_login_screen/constants.dart';
+import 'package:flutter_login_screen/constants.dart' as Constants;
 import 'package:flutter_login_screen/services/helper.dart';
 import 'package:flutter_login_screen/ui/auth/AuthScreen.dart';
 import 'package:lottie/lottie.dart';
@@ -15,7 +15,7 @@ class OnboardingScreen extends StatefulWidget {
 
 Future<bool> setFinishedOnBoarding() async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
-  return prefs.setBool('finishedOnBoarding', true);
+  return prefs.setBool(Constants.FINISHED_ON_BOARDING, true);
 }
 
 class _OnboardingScreenState extends State<OnboardingScreen> {

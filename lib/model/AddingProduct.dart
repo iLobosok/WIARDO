@@ -7,6 +7,7 @@ import 'package:flutter_login_screen/services/Authenticate.dart';
 import 'package:flutter_login_screen/services/helper.dart';
 import 'package:flutter_login_screen/constants.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter_login_screen/constants.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:firebase_database/firebase_database.dart';
@@ -88,7 +89,7 @@ class _RegisterPetState extends State<RegisterPet> {
   GlobalKey<FormState> _key = new GlobalKey();
   AutovalidateMode _validate = AutovalidateMode.disabled;
   final costController = TextEditingController();
-  final dbRef = FirebaseDatabase.instance.reference().child("Products");
+  final dbRef = FirebaseDatabase.instance.reference().child("Data");
   String title, description, productID, product, password, confirmPassword,bio;
 
   Future<void> retrieveLostData() async {
@@ -295,7 +296,7 @@ class _RegisterPetState extends State<RegisterPet> {
                         onPressed: () {
                           if (_formKey.currentState.validate()) {
                             dbRef.push().set({
-                              "Title": titleController.text,
+                              "name": titleController.text,
                               "Description": descriptionController.text,
                               "Cost": costController.text,
                               "type": dropdownValue

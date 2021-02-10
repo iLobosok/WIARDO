@@ -68,12 +68,12 @@ class _HomeState extends State<HomeScreen> {
                         image: DecorationImage(
                             fit: BoxFit.cover,
                             image: NetworkImage('$image_to_print')),
-                        borderRadius: BorderRadius.circular(10),
                       ),
                       child: ClipRRect( // make sure we apply clip it properly
                         child: BackdropFilter(
                           filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
                           child: Container(
+
                             child:Container(
                                 width: 150.0,
                                 height: 150.0,

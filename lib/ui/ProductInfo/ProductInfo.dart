@@ -13,11 +13,6 @@ bool _isFavorite = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0.0,
-        backgroundColor: Colors.transparent,
-        iconTheme: IconThemeData(color: Colors.black),
-      ),
       body: SingleChildScrollView(
           child: Hero(
             tag: 'red',
@@ -90,6 +85,8 @@ bool _isFavorite = false;
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
                           FadeAnimation(1.3, Text("Night cow", style: TextStyle(color: Colors.white, fontSize: 50, fontWeight: FontWeight.bold),)),
+                          SizedBox(height: 5,),
+                          FadeAnimation(1.3, InkWell(child:Text("Details", style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),)),),
                           SizedBox(height: 20,),
                           FadeAnimation(1.5, Container(
                             height: 50,
