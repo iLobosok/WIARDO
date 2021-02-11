@@ -90,7 +90,7 @@ class _AddProductsState extends State<AddProducts> {
   AutovalidateMode _validate = AutovalidateMode.disabled;
   final costController = TextEditingController();
   final dbRef = FirebaseDatabase.instance.reference().child("Data");
-  String title, description, productID, product, password, confirmPassword,bio;
+  String title, description, productID, product, password, confirmPassword,bio, image;
 
   Future<void> retrieveLostData() async {
     final LostData response = await _imagePicker.getLostData();
@@ -146,7 +146,7 @@ class _AddProductsState extends State<AddProducts> {
     );
     showCupertinoModalPopup(context: context, builder: (context) => action);
   }
-  @override
+
   Widget build(BuildContext context) {
     return Form(
         key: _formKey,
@@ -309,6 +309,7 @@ class _AddProductsState extends State<AddProducts> {
                                   .showSnackBar(SnackBar(content: Text(onError)));
                             });
                           }
+
                           MaterialPageRoute(builder: (context) => Shop(/**/));
                           descriptionController.clear();
                           costController.clear();

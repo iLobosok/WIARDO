@@ -1,20 +1,29 @@
 import 'dart:math';
 import 'dart:ui';
 import 'package:flutter_login_screen/animation/AnimationProfile.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_login_screen/constants.dart';
+import 'package:flutter_login_screen/database/Data.dart';
 import 'package:flutter_login_screen/model/User.dart';
-import 'package:flutter_login_screen/services/Authenticate.dart';
-import 'package:flutter_login_screen/ui/auth/AuthScreen.dart';
 
-
-
-import '../../main.dart';
-import '../../services/helper.dart';
+List randomImages =
+[
+  'https://cdn.pixabay.com/photo/2014/09/30/22/50/sandstone-467714_960_720.jpg',
+  'https://cdn.pixabay.com/photo/2020/06/15/15/34/fog-5302291_960_720.jpg',
+  'https://cdn.pixabay.com/photo/2020/12/23/14/41/forest-5855196_960_720.jpg',
+  'https://cdn.pixabay.com/photo/2020/10/21/09/49/beach-5672641_960_720.jpg',
+  'https://cdn.pixabay.com/photo/2020/12/18/15/29/mountains-5842346_960_720.jpg',
+  'https://cdn.pixabay.com/photo/2021/01/28/03/13/person-5956897_960_720.jpg',
+  'https://cdn.pixabay.com/photo/2020/12/10/08/44/mountains-5819651_960_720.jpg',
+  'https://cdn.pixabay.com/photo/2021/01/29/09/33/beach-5960371_960_720.jpg',
+  'https://cdn.pixabay.com/photo/2021/01/21/09/58/swan-5936863_960_720.jpg',
+];
+int min = 0;
+int max = randomImages.length-1;
+Random rnd = new Random();
+int r = min + rnd.nextInt(max - min);
+String image_to_print  = randomImages[r].toString();
 
 class HomeScreenx extends StatefulWidget {
   final User user;
@@ -37,6 +46,9 @@ class _HomeState extends State<HomeScreenx> {
     {
       imseller = 'Buyer';
     }
+    if (user.profilePictureURL == null) {
+      user.profilePictureURL = image_to_print;
+    }
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(
@@ -51,7 +63,7 @@ class _HomeState extends State<HomeScreenx> {
                   background: Container(
                     decoration: BoxDecoration(
                         image: DecorationImage(
-                            image: NetworkImage('${user.profilePictureURL}'),
+                            image: NetworkImage('$image_to_print'),
                             fit: BoxFit.cover
                         )
                     ),

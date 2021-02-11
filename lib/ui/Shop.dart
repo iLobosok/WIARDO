@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_login_screen/model/AddingProduct.dart';
+import 'package:flutter_login_screen/model/config.dart';
 import 'package:flutter_login_screen/services/helper.dart';
 import 'package:flutter_login_screen/ui/ProductInfo/ProductInfo.dart';
 import 'package:flutter_login_screen/ui/home/HomeScreen.dart';
@@ -35,6 +36,7 @@ class Shop extends StatefulWidget {
 
 class Shopping extends State<Shop> {
   final User user;
+
   List<Data> dataList = [
   ]; //тут будет список виджетов данных для виджетов, котрый создастся при чтении данных с бд
   DatabaseReference databaseReference = FirebaseDatabase.instance
@@ -44,6 +46,7 @@ class Shopping extends State<Shop> {
 
   @override
   Widget build(BuildContext context) {
+
     getDataFromFirebaseAndBuildList(); //вызываем функцию, которая создаст список виджетов и отрисует их
     String imageUrl;
     int min = 1,
@@ -96,7 +99,7 @@ class Shopping extends State<Shop> {
     }
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.black,
       appBar: AppBar(
         title: Text(''),
         backgroundColor: Colors.black,
@@ -130,12 +133,12 @@ class Shopping extends State<Shop> {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
+          physics: BouncingScrollPhysics(),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Container(
                 width: double.infinity,
-
                 decoration: BoxDecoration(
                     color: Colors.black12,
                     borderRadius:
@@ -151,7 +154,7 @@ class Shopping extends State<Shop> {
                           fontSize: 25,
                           fontWeight: FontWeight.bold),
                     ),
-                    SizedBox(width: 200,),
+                    SizedBox(width: MediaQuery.of(context).size.width * 0.39,),
                     Align(
                       alignment: FractionalOffset(3, 3),
                       child: InkWell(
@@ -164,9 +167,8 @@ class Shopping extends State<Shop> {
                           child: CircleAvatar(
                             //circle avatar
                             radius: 30.0,
-                            backgroundImage: NetworkImage("${user
-                                .profilePictureURL}"),
-                            //backgroundColor: Colors.transparent,
+                              backgroundImage: NetworkImage('https://cs13.pikabu.ru/video/2021/02/02/5/og_og_1612250143310255815.jpg'),
+                            backgroundColor: Colors.transparent,
                           )
                       ),
                     ),
@@ -178,20 +180,23 @@ class Shopping extends State<Shop> {
                 height: 20,
               ),
               Container(
-                padding: EdgeInsets.all(5),
-                decoration: BoxDecoration(
-                    color: Colors.grey[900],
-                    borderRadius: BorderRadius.circular(15)),
-                child: TextField(
-                  decoration: InputDecoration(
-                      border: InputBorder.none,
-                      prefixIcon: Icon(
-                        Icons.search,
-                        color: Colors.white,
-                      ),
-                      hintText: "Search something",
-                      hintStyle:
-                      TextStyle(color: Colors.grey, fontSize: 15)),
+                padding:  EdgeInsets.symmetric(horizontal: Paddings.getPadding(context, 0.02)),
+                child: Container(
+                  padding: EdgeInsets.all(5),
+                  decoration: BoxDecoration(
+                      color: Colors.grey[900],
+                      borderRadius: BorderRadius.circular(15)),
+                  child: TextField(
+                    decoration: InputDecoration(
+                        border: InputBorder.none,
+                        prefixIcon: Icon(
+                          Icons.search,
+                          color: Colors.white,
+                        ),
+                        hintText: "Search something",
+                        hintStyle:
+                        TextStyle(color: Colors.grey, fontSize: 15)),
+                  ),
                 ),
               ),
               SizedBox(
@@ -210,21 +215,19 @@ class Shopping extends State<Shop> {
                       style:
                       TextStyle(fontSize: 15,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white),
+                          color: Colors.black),
                     ),
                     SizedBox(
                       height: 15,
                     ),
                     Container(
                       height: 200,
-                      width: MediaQuery
-                          .of(context)
-                          .size
-                          .width,
+                      width: MediaQuery.of(context).size.width,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(5),
                         child: CarouselSlider(
                           options: CarouselOptions(
+                            enlargeCenterPage: true,
                             height: 240.0,
                             initialPage: 0,
                             autoPlay: true,
@@ -245,7 +248,7 @@ class Shopping extends State<Shop> {
                                       .width,
                                   margin: EdgeInsets.symmetric(horizontal: 5.0),
                                   child: ClipRRect(
-                                    //borderRadius: BorderRadius.circular(20),
+                                    borderRadius: BorderRadius.circular(20),
                                     child: Image.network(
                                       imgUrl,
                                       fit: BoxFit.cover,
@@ -261,150 +264,87 @@ class Shopping extends State<Shop> {
                     SizedBox(
                       height: 60,
                     ),
-                    // ClipRRect(
-                    //   borderRadius: BorderRadius.circular(25.0),
-                    // child:Container(
-                    //   height: 150,
-                    //   width: MediaQuery.of(context).size.width,
-                    //   child: ListView(
-                    //     scrollDirection: Axis.horizontal,
-                    //     children: <Widget>[
-                    //       Image.network('https://firebasestorage.googleapis.com/v0/b/chat-b43aa.appspot.com/o/images%2Fid-0xiGjOHeZwfHJNxCHJJMtryEZjp2%2Fhash-74849519?alt=media&token=466d8ff0-c712-46e4-a5d4-1762a30f2a0b'),
-                    //       Image.network('https://firebasestorage.googleapis.com/v0/b/chat-b43aa.appspot.com/o/images%2Fid-0xiGjOHeZwfHJNxCHJJMtryEZjp2%2Fhash-45474279?alt=media&token=c8400e7a-33c4-4ccf-8184-3759feb8c936'),
-                    //       Image.network('https://firebasestorage.googleapis.com/v0/b/chat-b43aa.appspot.com/o/images%2Fid-0xiGjOHeZwfHJNxCHJJMtryEZjp2%2Fhash-29503656?alt=media&token=a030a049-f6b3-4b87-ae6d-449bd917fd11'),
-                    //       Image.network('https://firebasestorage.googleapis.com/v0/b/chat-b43aa.appspot.com/o/images%2Fid-0xiGjOHeZwfHJNxCHJJMtryEZjp2%2Fhash-29503656?alt=media&token=a030a049-f6b3-4b87-ae6d-449bd917fd11'),
-                    //     ],
-                    //   ),
-                    // ),
-                    // ),
                     SizedBox(height: 20,),
-                    Center(
-                      child:Expanded(
-                      child:Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: <Widget>[
-                          Container(
-                                child:
-                                dataList.length == 0
-                                    ? Center(child: Text(
-                                  'no data', style: TextStyle(fontSize: 20),))
-                                    : ListView.builder(
-                                  itemCount: dataList.length,
-                                  itemBuilder: (_, index) {
-                                    return CardUI(name: dataList[index].name,
-                                        imgUrl: dataList[index].img,
-                                        context: context);
-                                  },
-                                ),
-                              ),
 
-                           SizedBox(height: 20,),
-                          InkWell(
-                             child: Container(
-                               height: 250,
-                               width: double.infinity,
-                               padding: EdgeInsets.all(20),
-                               margin: EdgeInsets.only(bottom: 20),
-                               decoration: BoxDecoration(
-                                   borderRadius: BorderRadius.circular(20),
-                                   image: DecorationImage(
-                                       image: NetworkImage('$image'),
-                                       fit: BoxFit.cover
-                                   ),
-                                   boxShadow: [
-                                     BoxShadow(
-                                         color: Colors.grey[900],
-                                         blurRadius: 10,
-                                         offset: Offset(0, 10)
-                                     )
-                                   ]
-                               ),
-                               child: Column(
-                                 crossAxisAlignment: CrossAxisAlignment.stretch,
-                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                 children: <Widget>[
-                                   Row(
-                                     crossAxisAlignment: CrossAxisAlignment.start,
-                                     children: <Widget>[
-                                       Expanded(
-                                         child: Column(
-                                           crossAxisAlignment: CrossAxisAlignment
-                                               .start,
-                                           children: <Widget>[
-                                             FadeAnimation(1, Text("Night ice cow",
-                                               style: TextStyle(color: Colors.white,
-                                                   fontSize: 30,
-                                                   fontWeight: FontWeight.bold),)),
-                                             SizedBox(height: 10,),
-                                             FadeAnimation(1.1, Text("Shoppers",
-                                               style: TextStyle(
-                                                   color: Colors.white,
-                                                   fontSize: 20),)),
-
-                                           ],
-                                         ),
-                                       ),
-                                       FadeAnimation(1.2, Container(
-                                         width: 35,
-                                         height: 35,
-                                         decoration: BoxDecoration(
-                                             shape: BoxShape.circle,
-                                             color: Colors.white
-                                         ),
-                                         child: Center(
-                                           child: Icon(
-                                             Icons.favorite_border, size: 20,),
-                                         ),
-                                       ))
-                                     ],
-                                   ), // пример карточки и визуала
-                                   FadeAnimation(1.2, Text("15\$", style: TextStyle(
-                                       color: Colors.white,
-                                       fontSize: 30,
-                                       fontWeight: FontWeight.bold),)),
-                                 ],
-                               ),
-                             ),
-                             onTap: () {
-                               Navigator.push(
-                                   context,
-                                   MaterialPageRoute(builder: (context) =>
-                                       ProductInformation()));
-                             },
-                           ),
-                          SizedBox(height: 20,),
-                        ],
-                      ),
-                    ),
-                    ),
-                    Container(
-                      height: 200,
-                      child: RaisedButton(
-                        child: Text('Обновить'),
-                        color: Colors.red,
-                        onPressed: (){
-                          getDataFromFirebaseAndBuildList();
-                          setState((){});
-                        },
-                      ),
-                    ),
-                    SizedBox(
-                      height: 40,
-                    ),
-
-                    SizedBox(
-                      height: 40,
-                    ),
-                    // child: Align(
-                    //   alignment: Alignment.bottomLeft,
-                    //   child: Padding(
-                    //     padding: const EdgeInsets.all(15.0),
-                    //     child: Text(
-                    //       'New collection',
-                    //       style:
-                    //           TextStyle(color: Colors.white, fontSize: 20),
+                    CardUI(),
+                    // Column(
+                    //   crossAxisAlignment: CrossAxisAlignment.stretch,
+                    //   children: <Widget>[
+                    //     InkWell(
+                    //       child: Container(
+                    //         height: 250,
+                    //         width: double.infinity,
+                    //         padding: EdgeInsets.all(20),
+                    //         margin: EdgeInsets.only(bottom: 20),
+                    //         decoration: BoxDecoration(
+                    //             borderRadius: BorderRadius.circular(20),
+                    //             image: DecorationImage(
+                    //                 image: NetworkImage('$image'),
+                    //                 fit: BoxFit.cover
+                    //             ),
+                    //             boxShadow: [
+                    //               BoxShadow(
+                    //                   color: Colors.grey[900],
+                    //                   blurRadius: 10,
+                    //                   offset: Offset(0, 10)
+                    //               )
+                    //             ]
+                    //         ),
+                    //         child: Column(
+                    //           crossAxisAlignment: CrossAxisAlignment.stretch,
+                    //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //           children: <Widget>[
+                    //             Row(
+                    //               crossAxisAlignment: CrossAxisAlignment.start,
+                    //               children: <Widget>[
+                    //                 Expanded(
+                    //                   child: Column(
+                    //                     crossAxisAlignment: CrossAxisAlignment
+                    //                         .start,
+                    //                     children: <Widget>[
+                    //                       FadeAnimation(1, Text("Night ice cow",
+                    //                         style: TextStyle(color: Colors.white,
+                    //                             fontSize: 30,
+                    //                             fontWeight: FontWeight.bold),)),
+                    //                       SizedBox(height: 10,),
+                    //                       FadeAnimation(1.1, Text("Shoppers",
+                    //                         style: TextStyle(
+                    //                             color: Colors.white,
+                    //                             fontSize: 20),)),
+                    //
+                    //                     ],
+                    //                   ),
+                    //                 ),
+                    //                 FadeAnimation(1.2, Container(
+                    //                   width: 35,
+                    //                   height: 35,
+                    //                   decoration: BoxDecoration(
+                    //                       shape: BoxShape.circle,
+                    //                       color: Colors.white
+                    //                   ),
+                    //                   child: Center(
+                    //                     child: Icon(
+                    //                       Icons.favorite_border, size: 20,),
+                    //                   ),
+                    //                 ))
+                    //               ],
+                    //             ), // пример карточки и визуала
+                    //             FadeAnimation(1.2, Text("15\$", style: TextStyle(
+                    //                 color: Colors.white,
+                    //                 fontSize: 30,
+                    //                 fontWeight: FontWeight.bold),)),
+                    //           ],
+                    //         ),
+                    //       ),
+                    //       onTap: () {
+                    //         Navigator.push(
+                    //             context,
+                    //             MaterialPageRoute(builder: (context) =>
+                    //                 ProductInformation()));
+                    //       },
                     //     ),
-                    //   ),
+                    //
+                    //   ],
                     // ),
 
                   ],
@@ -430,6 +370,8 @@ class Shopping extends State<Shop> {
         Data data = Data(
           img: values[key]["img"],
           name: values[key]["name"],
+          type: values[key]["type"],
+          cost: values[key]["cost"],
         );
         dataList.add(data);
       }
@@ -438,15 +380,96 @@ class Shopping extends State<Shop> {
   }
 }
 
-Widget CardUI({String name,String imgUrl, BuildContext context}) {
+Widget CardUI({String name,String type, String cost, String img, BuildContext context}) {
   return Card(
     color: Colors.orange,
     child: Center(
-      child: Container(
-        alignment: Alignment.center,
-        height: MediaQuery.of(context).size.height * 0.2,
-        child: Text('$name \n $imgUrl'),
+      child:Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          InkWell(
+            child: Container(
+              alignment: Alignment.center,
+              height: 250,
+              width: double.infinity,
+              padding: EdgeInsets.all(20),
+              margin: EdgeInsets.only(bottom: 20),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  image: DecorationImage(
+                      image: NetworkImage('$img'),
+                      fit: BoxFit.cover
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                        color: Colors.grey[900],
+                        blurRadius: 10,
+                        offset: Offset(0, 10)
+                    )
+                  ]
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment
+                              .start,
+                          children: <Widget>[
+                            FadeAnimation(1, Text('$name',
+                              style: TextStyle(color: Colors.white,
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.bold),)),
+                            SizedBox(height: 10,),
+                            FadeAnimation(1.1, Text('$type',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20),)),
+
+                          ],
+                        ),
+                      ),
+                      FadeAnimation(1.2, Container(
+                        width: 35,
+                        height: 35,
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white
+                        ),
+                        child: Center(
+                          child: Icon(
+                            Icons.favorite_border, size: 20,),
+                        ),
+                      ))
+                    ],
+                  ), // пример карточки и визуала
+                  FadeAnimation(1.2, Text('$cost\$', style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold),)),
+                ],
+              ),
+            ),
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) =>
+                      ProductInformation()));
+            },
+          ),
+
+        ],
       ),
+
+      // child: Container(
+      //   alignment: Alignment.center,
+      //   height: MediaQuery.of(context).size.height * 0.2,
+      //   child: Text('$name \n $imgUrl'),
+      // ),
     ),
   );
 }
