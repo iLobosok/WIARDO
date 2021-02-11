@@ -61,7 +61,7 @@ class _AdgProductState extends State<AddProduct> {
                       style: TextStyle(
                           fontSize: 30,
                           )),
-                  RegisterPet(),
+                  AddProducts(),
                 ]),
           )),
     );
@@ -71,14 +71,14 @@ class _AdgProductState extends State<AddProduct> {
 
 
 
-class RegisterPet extends StatefulWidget {
-  RegisterPet({Key key}) : super(key: key);
+class AddProducts extends StatefulWidget {
+  AddProducts({Key key}) : super(key: key);
 
   @override
-  _RegisterPetState createState() => _RegisterPetState();
+  _AddProductsState createState() => _AddProductsState();
 }
 
-class _RegisterPetState extends State<RegisterPet> {
+class _AddProductsState extends State<AddProducts> {
   final _formKey = GlobalKey<FormState>();
   final listOfPets = ["Shoppers", "Shirts", "T-Shirts", "Shoes", "Shorts", "Pants", "Masks", "Glasses"];
   String dropdownValue = 'Shoppers';
