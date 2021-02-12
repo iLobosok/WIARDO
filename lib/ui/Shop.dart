@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_login_screen/model/AddingProduct.dart';
+import 'package:flutter_login_screen/model/config.dart';
 import 'package:flutter_login_screen/services/helper.dart';
 import 'package:flutter_login_screen/ui/ProductInfo/ProductInfo.dart';
 import 'package:flutter_login_screen/ui/home/HomeScreen.dart';
@@ -21,7 +22,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:flutter_login_screen/database/Data.dart';
 import 'package:permission_handler/permission_handler.dart'; // For Image Picker
 import 'package:path/path.dart' as Path;
-import 'naborgovna/config.dart';
 
 class Shop extends StatefulWidget {
   final User user;
@@ -98,7 +98,7 @@ class Shopping extends State<Shop> {
     }
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.black,
       appBar: AppBar(
         title: Text(''),
         backgroundColor: Colors.black,
@@ -214,7 +214,7 @@ class Shopping extends State<Shop> {
                       style:
                       TextStyle(fontSize: 15,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black),
+                          color: Colors.white),
                     ),
                     SizedBox(
                       height: 15,
@@ -293,10 +293,10 @@ class Shopping extends State<Shop> {
       var values = snapshot.value['Data']; //получаем значения
       for (var key in keys) { // бежим по ключам и добавляем значение их пары в отдельный класс
         Data data = Data(
-          img: values[key]["img"],
+          img: values[key]["imgUrl"],
           name: values[key]["name"],
           type: values[key]["type"],
-          cost: values[key]["Cost"],
+          cost: values[key]["cost"],
         );
         dataList.add(data);
       }
@@ -307,6 +307,8 @@ class Shopping extends State<Shop> {
   void BuildWidgetList(){
     WidgetList.clear();
     for(int index = 0; index < dataList.length; index = index + 1){
+      setState(() {
+      });
       print(dataList);
       print(index);
       WidgetList.add(
@@ -331,6 +333,7 @@ Widget CardUI({String name,String type, String cost, String img, BuildContext co
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           InkWell(
+            borderRadius: BorderRadius.circular(20),
             child: Container(
               alignment: Alignment.center,
               height: 250,

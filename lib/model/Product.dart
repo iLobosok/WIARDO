@@ -7,7 +7,6 @@ class Product {
   String productID;
   Timestamp lastOnlineTimestamp = Timestamp.now();
   String productPictureURL = '';
-  bool selected = false;
 
   Product(
       {this.title,
@@ -29,7 +28,7 @@ class Product {
   Map<String, dynamic> toJson() {
     return {
       'title': this.title,
-      'descriprion': this.description,
+      'description': this.description,
       'productId': this.productID,
       'active': this.active,
       'ImageURL': this.productPictureURL,

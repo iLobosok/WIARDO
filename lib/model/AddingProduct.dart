@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -15,7 +18,7 @@ import 'package:flutter_login_screen/ui/Shop.dart';
 import 'dart:io';
 
 import '../main.dart';
-
+FirebaseStorage storage = FirebaseStorage.instance;
 File _image;
 
 void main() async {
@@ -25,7 +28,6 @@ void main() async {
 }
 
 class AddingProduct extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -39,9 +41,6 @@ class AddingProduct extends StatelessWidget {
 class AddProduct extends StatefulWidget {
   AddProduct({Key key, this.title, this.description}) : super(key: key);
   final String title, description;
-  GlobalKey<FormState> _key = new GlobalKey();
-  AutovalidateMode _validate = AutovalidateMode.disabled;
-
   @override
   _AdgProductState createState() => _AdgProductState();
 }
@@ -90,7 +89,8 @@ class _AddProductsState extends State<AddProducts> {
   AutovalidateMode _validate = AutovalidateMode.disabled;
   final costController = TextEditingController();
   final dbRef = FirebaseDatabase.instance.reference().child("Data");
-  String title, description, productID, product, password, confirmPassword,bio, image;
+  String title, description, productID, product, password, confirmPassword,bio;
+  var imgUrl;
 
   Future<void> retrieveLostData() async {
     final LostData response = await _imagePicker.getLostData();
@@ -103,48 +103,27 @@ class _AddProductsState extends State<AddProducts> {
       });
     }
   }
-  _onCameraClick() {
-    final action = CupertinoActionSheet(
-      message: Text(
-        "Add profile picture",
-        style: TextStyle(fontSize: 15.0),
-      ),
-      actions: <Widget>[
-        CupertinoActionSheetAction(
-          child: Text("Choose from gallery"),
-          isDefaultAction: false,
-          onPressed: () async {
-            Navigator.pop(context);
-            PickedFile image =
-            await _imagePicker.getImage(source: ImageSource.gallery,imageQuality: 50);
-            if (image != null)
-              setState(() {
-                _image = File(image.path);
-              });
-          },
-        ),
-        CupertinoActionSheetAction(
-          child: Text("Take a picture"),
-          isDestructiveAction: false,
-          onPressed: () async {
-            Navigator.pop(context);
-            PickedFile image =
-            await _imagePicker.getImage(source: ImageSource.camera);
-            if (image != null)
-              setState(() {
-                _image = File(image.path);
-              });
-          },
-        )
-      ],
-      cancelButton: CupertinoActionSheetAction(
-        child: Text("Cancel"),
-        onPressed: () {
-          Navigator.pop(context);
-        },
-      ),
-    );
-    showCupertinoModalPopup(context: context, builder: (context) => action);
+  _onCameraClick() async {
+    Random random = new Random();
+    int randomNumber = random.nextInt(9999999);
+    productID = '$randomNumber';
+    PickedFile image =
+    await _imagePicker.getImage(source: ImageSource.gallery,imageQuality: 50);
+    if (image != null)
+      setState(() {
+        _image = File(image.path);
+      });
+    _image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    Reference reference =
+    storage.ref().child("productImg/${productID}");
+
+    //Upload the file to firebase
+    UploadTask uploadTask = reference.putFile(_image);
+
+    TaskSnapshot taskSnapshot = await uploadTask;
+
+    imgUrl = await reference.getDownloadURL();
+    print(imgUrl);
   }
 
   Widget build(BuildContext context) {
@@ -295,11 +274,14 @@ class _AddProductsState extends State<AddProducts> {
                         color: Colors.green,
                         onPressed: () {
                           if (_formKey.currentState.validate()) {
+                            var profilePicUrl = '';
                             dbRef.push().set({
                               "name": titleController.text,
-                              "Description": descriptionController.text,
-                              "Cost": costController.text,
-                              "type": dropdownValue
+                              "description": descriptionController.text,
+                              "cost": costController.text,
+                              "type": dropdownValue,
+                              "imgUrl": imgUrl,
+                              "productID":productID,
                             }).then((_) {
                               Scaffold.of(context).showSnackBar(
                                   SnackBar(content: Text('Successfully Added',style: TextStyle(color: Colors.white),),backgroundColor: Colors.green,)
