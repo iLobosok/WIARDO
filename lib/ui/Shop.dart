@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_login_screen/model/AddingProduct.dart';
-import 'package:flutter_login_screen/model/config.dart';
 import 'package:flutter_login_screen/services/helper.dart';
 import 'package:flutter_login_screen/ui/ProductInfo/ProductInfo.dart';
 import 'package:flutter_login_screen/ui/home/HomeScreen.dart';
@@ -22,6 +21,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:flutter_login_screen/database/Data.dart';
 import 'package:permission_handler/permission_handler.dart'; // For Image Picker
 import 'package:path/path.dart' as Path;
+import 'naborgovna/config.dart';
 
 class Shop extends StatefulWidget {
   final User user;
@@ -36,7 +36,7 @@ class Shop extends StatefulWidget {
 
 class Shopping extends State<Shop> {
   final User user;
-
+  var WidgetList = List<Widget>();
   List<Data> dataList = [
   ]; //тут будет список виджетов данных для виджетов, котрый создастся при чтении данных с бд
   DatabaseReference databaseReference = FirebaseDatabase.instance
@@ -46,7 +46,6 @@ class Shopping extends State<Shop> {
 
   @override
   Widget build(BuildContext context) {
-
     getDataFromFirebaseAndBuildList(); //вызываем функцию, которая создаст список виджетов и отрисует их
     String imageUrl;
     int min = 1,
@@ -99,7 +98,7 @@ class Shopping extends State<Shop> {
     }
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(''),
         backgroundColor: Colors.black,
@@ -133,12 +132,12 @@ class Shopping extends State<Shop> {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Container(
                 width: double.infinity,
+
                 decoration: BoxDecoration(
                     color: Colors.black12,
                     borderRadius:
@@ -167,7 +166,7 @@ class Shopping extends State<Shop> {
                           child: CircleAvatar(
                             //circle avatar
                             radius: 30.0,
-                              backgroundImage: NetworkImage('https://cs13.pikabu.ru/video/2021/02/02/5/og_og_1612250143310255815.jpg'),
+                            backgroundImage: NetworkImage("https://cs13.pikabu.ru/video/2021/02/02/5/og_og_1612250143310255815.jpg"),
                             backgroundColor: Colors.transparent,
                           )
                       ),
@@ -266,92 +265,21 @@ class Shopping extends State<Shop> {
                     ),
                     SizedBox(height: 20,),
 
-                    CardUI(),
-                    // Column(
-                    //   crossAxisAlignment: CrossAxisAlignment.stretch,
-                    //   children: <Widget>[
-                    //     InkWell(
-                    //       child: Container(
-                    //         height: 250,
-                    //         width: double.infinity,
-                    //         padding: EdgeInsets.all(20),
-                    //         margin: EdgeInsets.only(bottom: 20),
-                    //         decoration: BoxDecoration(
-                    //             borderRadius: BorderRadius.circular(20),
-                    //             image: DecorationImage(
-                    //                 image: NetworkImage('$image'),
-                    //                 fit: BoxFit.cover
-                    //             ),
-                    //             boxShadow: [
-                    //               BoxShadow(
-                    //                   color: Colors.grey[900],
-                    //                   blurRadius: 10,
-                    //                   offset: Offset(0, 10)
-                    //               )
-                    //             ]
-                    //         ),
-                    //         child: Column(
-                    //           crossAxisAlignment: CrossAxisAlignment.stretch,
-                    //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    //           children: <Widget>[
-                    //             Row(
-                    //               crossAxisAlignment: CrossAxisAlignment.start,
-                    //               children: <Widget>[
-                    //                 Expanded(
-                    //                   child: Column(
-                    //                     crossAxisAlignment: CrossAxisAlignment
-                    //                         .start,
-                    //                     children: <Widget>[
-                    //                       FadeAnimation(1, Text("Night ice cow",
-                    //                         style: TextStyle(color: Colors.white,
-                    //                             fontSize: 30,
-                    //                             fontWeight: FontWeight.bold),)),
-                    //                       SizedBox(height: 10,),
-                    //                       FadeAnimation(1.1, Text("Shoppers",
-                    //                         style: TextStyle(
-                    //                             color: Colors.white,
-                    //                             fontSize: 20),)),
-                    //
-                    //                     ],
-                    //                   ),
-                    //                 ),
-                    //                 FadeAnimation(1.2, Container(
-                    //                   width: 35,
-                    //                   height: 35,
-                    //                   decoration: BoxDecoration(
-                    //                       shape: BoxShape.circle,
-                    //                       color: Colors.white
-                    //                   ),
-                    //                   child: Center(
-                    //                     child: Icon(
-                    //                       Icons.favorite_border, size: 20,),
-                    //                   ),
-                    //                 ))
-                    //               ],
-                    //             ), // пример карточки и визуала
-                    //             FadeAnimation(1.2, Text("15\$", style: TextStyle(
-                    //                 color: Colors.white,
-                    //                 fontSize: 30,
-                    //                 fontWeight: FontWeight.bold),)),
-                    //           ],
-                    //         ),
-                    //       ),
-                    //       onTap: () {
-                    //         Navigator.push(
-                    //             context,
-                    //             MaterialPageRoute(builder: (context) =>
-                    //                 ProductInformation()));
-                    //       },
-                    //     ),
-                    //
-                    //   ],
-                    // ),
+
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: <Widget>[
+                          if(WidgetList.isEmpty)
+                            CircularProgressIndicator()
+                          else
+                            ...WidgetList
+                        ],
+                      ),
 
                   ],
                 ),
               )
             ],
-
           ),
         ),
       ),
@@ -360,29 +288,44 @@ class Shopping extends State<Shop> {
 
   void getDataFromFirebaseAndBuildList() {
     databaseReference.once().then((DataSnapshot snapshot) { //получаем данные
-      dataList
-          .clear(); //очищаем список (дабы не возникло путаницы с повторением элементов)
+      dataList.clear(); //очищаем список (дабы не возникло путаницы с повторением элементов)
       var keys = snapshot.value['Data'].keys; //получаем ключи
       var values = snapshot.value['Data']; //получаем значения
-      print(keys); /*для наглядности */
-      print('$values');
       for (var key in keys) { // бежим по ключам и добавляем значение их пары в отдельный класс
         Data data = Data(
           img: values[key]["img"],
           name: values[key]["name"],
           type: values[key]["type"],
-          cost: values[key]["cost"],
+          cost: values[key]["Cost"],
         );
         dataList.add(data);
       }
-    }
+      BuildWidgetList();
+      }
     );
+  }
+  void BuildWidgetList(){
+    WidgetList.clear();
+    for(int index = 0; index < dataList.length; index = index + 1){
+      print(dataList);
+      print(index);
+      WidgetList.add(
+          CardUI(
+            context: context,
+            name: dataList[index].name,
+            img: dataList[index].img,
+            cost: dataList[index].cost,
+            type: dataList[index].type,
+          )
+      );
+    }
+    print(WidgetList);
   }
 }
 
 Widget CardUI({String name,String type, String cost, String img, BuildContext context}) {
   return Card(
-    color: Colors.orange,
+    color: Colors.transparent,
     child: Center(
       child:Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -464,13 +407,6 @@ Widget CardUI({String name,String type, String cost, String img, BuildContext co
 
         ],
       ),
-
-      // child: Container(
-      //   alignment: Alignment.center,
-      //   height: MediaQuery.of(context).size.height * 0.2,
-      //   child: Text('$name \n $imgUrl'),
-      // ),
     ),
   );
 }
-
