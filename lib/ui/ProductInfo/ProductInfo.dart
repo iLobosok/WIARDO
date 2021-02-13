@@ -3,11 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_login_screen/ui/Shop.dart';
 class ProductInformation extends StatefulWidget {
 
+  final img;
+  final name;
   @override
-  ProductInfo createState() => ProductInfo();
+  const ProductInformation({Key key, this.img, this.name}) : super(key: key);
+  ProductInfo createState() => ProductInfo(img: img, name: name);
 }
 
 class ProductInfo extends State<ProductInformation> {
+final img;
+final name;
+ProductInfo({this.img,this.name});
 
 bool _isFavorite = false;
   @override
@@ -21,7 +27,7 @@ bool _isFavorite = false;
               width: double.infinity,
               decoration: BoxDecoration(
                   image: DecorationImage(
-                      image: NetworkImage('https://firebasestorage.googleapis.com/v0/b/chat-b43aa.appspot.com/o/images%2Fid-0xiGjOHeZwfHJNxCHJJMtryEZjp2%2Fhash-29503656?alt=media&token=a030a049-f6b3-4b87-ae6d-449bd917fd11'),
+                      image: NetworkImage('$img'),
                       fit: BoxFit.cover
                   ),
                   boxShadow: [
@@ -84,7 +90,7 @@ bool _isFavorite = false;
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
-                          FadeAnimation(1.3, Text("Night cow", style: TextStyle(color: Colors.white, fontSize: 50, fontWeight: FontWeight.bold),)),
+                          FadeAnimation(1.3, Text("$name", style: TextStyle(color: Colors.white, fontSize: 50, fontWeight: FontWeight.bold),)),
                           SizedBox(height: 5,),
                           FadeAnimation(1.3, InkWell(child:Text("Details", style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),)),),
                           SizedBox(height: 20,),
