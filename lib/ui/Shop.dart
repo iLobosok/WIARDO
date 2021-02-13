@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_login_screen/model/AddingProduct.dart';
-import 'package:flutter_login_screen/model/config.dart';
 import 'package:flutter_login_screen/services/helper.dart';
 import 'package:flutter_login_screen/ui/ProductInfo/ProductInfo.dart';
 import 'package:flutter_login_screen/ui/home/HomeScreen.dart';
@@ -22,6 +21,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:flutter_login_screen/database/Data.dart';
 import 'package:permission_handler/permission_handler.dart'; // For Image Picker
 import 'package:path/path.dart' as Path;
+
+import 'naborgovna/config.dart';
 
 class Shop extends StatefulWidget {
   final User user;
@@ -55,12 +56,11 @@ class Shopping extends State<Shop> {
     int _current = 0;
     String image, tag, descript; //context;
     image =
-    'https://firebasestorage.googleapis.com/v0/b/chat-b43aa.appspot.com/o/images%2Fid-0xiGjOHeZwfHJNxCHJJMtryEZjp2%2Fhash-29503656?alt=media&token=a030a049-f6b3-4b87-ae6d-449bd917fd11';
+    'https://ae01.alicdn.com/kf/H16ae39cc62614d00906f217cc5e0d1089/QUANBO-Men-Red-Polo-Shirts-Cotton-Classic-Fit-Long-Sleeve-Polo-Shirt-Work-Casual-Knitted-Mens.jpg';
     List images_collection = [
-      'https://firebasestorage.googleapis.com/v0/b/chat-b43aa.appspot.com/o/images%2Fid-0xiGjOHeZwfHJNxCHJJMtryEZjp2%2Fhash-29503656?alt=media&token=a030a049-f6b3-4b87-ae6d-449bd917fd11',
-      'https://firebasestorage.googleapis.com/v0/b/chat-b43aa.appspot.com/o/images%2Fid-0xiGjOHeZwfHJNxCHJJMtryEZjp2%2Fhash-45474279?alt=media&token=c8400e7a-33c4-4ccf-8184-3759feb8c936',
-      'https://firebasestorage.googleapis.com/v0/b/chat-b43aa.appspot.com/o/images%2Fid-0xiGjOHeZwfHJNxCHJJMtryEZjp2%2Fhash-74849519?alt=media&token=466d8ff0-c712-46e4-a5d4-1762a30f2a0b',
-      'https://firebasestorage.googleapis.com/v0/b/chat-b43aa.appspot.com/o/images%2Fid-0xiGjOHeZwfHJNxCHJJMtryEZjp2%2Fhash-45474279?alt=media&token=c8400e7a-33c4-4ccf-8184-3759feb8c936',
+      'https://firebasestorage.googleapis.com/v0/b/chat-b43aa.appspot.com/o/photo_2020-06-25_18-49-54.jpg?alt=media&token=b20124ea-2e30-449b-9f71-273debc05348',
+      'https://firebasestorage.googleapis.com/v0/b/chat-b43aa.appspot.com/o/photo_2020-06-25_18-49-55%20(2).jpg?alt=media&token=aaa09d8d-8f52-4c79-bce0-74f4ce3a6cde',
+      'https://firebasestorage.googleapis.com/v0/b/chat-b43aa.appspot.com/o/photo_2020-06-25_18-49-55.jpg?alt=media&token=61e039d2-c60c-4c23-8c47-7057042d2a86',
     ];
     uploadImage() async {
       final _firebaseStorage = FirebaseStorage.instance;
@@ -166,7 +166,7 @@ class Shopping extends State<Shop> {
                           child: CircleAvatar(
                             //circle avatar
                             radius: 30.0,
-                            backgroundImage: NetworkImage('${user.profilePictureURL}'),
+                            backgroundImage: NetworkImage('https://cs13.pikabu.ru/video/2021/02/02/5/og_og_1612250143310255815.jpg'),
                             backgroundColor: Colors.transparent,
                           )
                       ),
@@ -266,15 +266,15 @@ class Shopping extends State<Shop> {
                     SizedBox(height: 20,),
 
 
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: <Widget>[
-                          if(WidgetList.isEmpty)
-                            CircularProgressIndicator()
-                          else
-                            ...WidgetList
-                        ],
-                      ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        if(WidgetList.isEmpty)
+                          Text('Wait for a пару секунд')
+                        else
+                          ...WidgetList,
+                      ],
+                    ),
 
                   ],
                 ),
@@ -301,16 +301,13 @@ class Shopping extends State<Shop> {
         dataList.add(data);
       }
       BuildWidgetList();
-      }
+    }
     );
+
   }
   void BuildWidgetList(){
     WidgetList.clear();
-    for(int index = 0; index < dataList.length; index = index + 1){
-      setState(() {
-      });
-      print(dataList);
-      print(index);
+    for(int index = 0; index < dataList.length; index = index + 1) {
       WidgetList.add(
           CardUI(
             context: context,
@@ -321,7 +318,7 @@ class Shopping extends State<Shop> {
           )
       );
     }
-    print(WidgetList);
+    setState((){});
   }
 }
 
@@ -404,7 +401,7 @@ Widget CardUI({String name,String type, String cost, String img, BuildContext co
               Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) =>
-                      ProductInformation()));
+                      ProductInformation(img: img, name: name,)));
             },
           ),
 
