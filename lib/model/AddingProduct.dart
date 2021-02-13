@@ -51,13 +51,16 @@ class _AdgProductState extends State<AddProduct> {
   Widget build(BuildContext context) {
 
     return Scaffold(
+      backgroundColor: Colors.grey[900],
       body: Center(
           child: SingleChildScrollView(
             child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
+                  SizedBox(height: 10,),
                   Text("Add your product",
                       style: TextStyle(
+                        color:Colors.white,
                           fontSize: 30,
                           )),
                   AddProducts(),
@@ -108,12 +111,6 @@ class _AddProductsState extends State<AddProducts> {
     Random random = new Random();
     int randomNumber = random.nextInt(9999999);
     productID = '$randomNumber';
-    PickedFile image =
-    await _imagePicker.getImage(source: ImageSource.gallery,imageQuality: 50);
-    if (image != null)
-      setState(() {
-        _image = File(image.path);
-      });
     _image = await ImagePicker.pickImage(
         source: ImageSource.gallery,
         imageQuality: 80
@@ -123,9 +120,7 @@ class _AddProductsState extends State<AddProducts> {
 
     //Upload the file to firebase
     UploadTask uploadTask = reference.putFile(_image);
-
     TaskSnapshot taskSnapshot = await uploadTask;
-
    imgUrl = '${await taskSnapshot.ref.getDownloadURL()}';
     return imgUrl;
   }
@@ -139,8 +134,10 @@ class _AddProductsState extends State<AddProducts> {
                 padding: EdgeInsets.all(20.0),
                 child: TextFormField(
                   controller: titleController,
+                  style: TextStyle(color: Colors.white),
                   decoration: InputDecoration(
                     hintText: "Name of item",
+                    hintStyle: TextStyle(color:Colors.white),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),
                     ),
@@ -158,8 +155,10 @@ class _AddProductsState extends State<AddProducts> {
                 padding: EdgeInsets.all(20.0),
                 child: TextFormField(
                   controller: descriptionController,
+                  style: TextStyle(color: Colors.white),
                   decoration: InputDecoration(
                     hintText: "Description of item",
+                    hintStyle: TextStyle(color:Colors.white),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),
                     ),
@@ -177,9 +176,12 @@ class _AddProductsState extends State<AddProducts> {
                 padding: EdgeInsets.all(20.0),
                 child: DropdownButtonFormField(
                   value: dropdownValue,
+                  style: TextStyle(color: Colors.white),
+                  dropdownColor: Colors.grey[800],
                   icon: Icon(Icons.arrow_downward),
                   decoration: InputDecoration(
                     hintText: "Select type of item",
+                    hintStyle: TextStyle(color:Colors.white),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),
                     ),
@@ -216,8 +218,11 @@ class _AddProductsState extends State<AddProducts> {
                 child: TextFormField(
                   keyboardType: TextInputType.number,
                   controller: costController,
+                  style: TextStyle(color: Colors.white),
                   decoration: InputDecoration(
-                    hintText: "Enter cost \$",
+                    hintText: "Enter cost in \$",
+                    hintStyle: TextStyle(color:Colors.white),
+
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),
                     ),
@@ -237,33 +242,30 @@ class _AddProductsState extends State<AddProducts> {
                 alignment: Alignment.bottomCenter,
                 children: <Widget>[
                   CircleAvatar(
-                    radius: 65,
+                    radius: 85,
                     backgroundColor: Colors.grey.shade400,
                     child: ClipOval(
+                      child:InkWell(
+                        onTap: (){
+                          _onCameraClick();
+                        },
                       child: SizedBox(
                         width: 170,
                         height: 170,
                         child: _image == null
                             ? Image.asset(
                           'assets/images/placeholder.png',
-                          fit: BoxFit.cover,
+                          fit: BoxFit.fill,
                         )
                             : Image.file(
                           _image,
                           fit: BoxFit.cover,
                         ),
                       ),
+                      ),
                     ),
                   ),
-                  Positioned(
-                    left: 80,
-                    right: 0,
-                    child: FloatingActionButton(
-                        backgroundColor: Colors.lightBlue,
-                        child: Icon(Icons.camera_alt),
-                        mini: true,
-                        onPressed: _onCameraClick),
-                  ),
+
               ],
             ),
               ),
@@ -273,7 +275,7 @@ class _AddProductsState extends State<AddProducts> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
                       ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(15),
                       child:RaisedButton(
                         color: Colors.green,
                         onPressed: () {
@@ -300,9 +302,8 @@ class _AddProductsState extends State<AddProducts> {
                           descriptionController.clear();
                           costController.clear();
                           titleController.clear();
-
                         },
-                        child: Text('Done', style: TextStyle(color: Colors.white),),
+                        child: Text('Add item', style: TextStyle(color: Colors.white),),
                       ),
                       ),
                     ],

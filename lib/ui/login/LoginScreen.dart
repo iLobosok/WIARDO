@@ -10,7 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:flutter_login_screen/model/User.dart';
 import 'package:flutter_login_screen/services/Authenticate.dart';
-import 'package:flutter_login_screen/ui/home/HomeScreen.dart';
+import 'package:flutter_login_screen/ui/home/Test.dart';
 import 'package:http/http.dart' as http;
 
 
@@ -309,7 +309,7 @@ class _LoginScreen extends State<LoginScreen> {
         .then((onValue) {
       MyAppState.currentUser = user;
       hideProgress();
-      pushAndRemoveUntil(context, HomeScreen(user: user), false);
+      pushAndRemoveUntil(context, HomeScreenx(user: user), false);
     });
   }
 
@@ -327,6 +327,6 @@ class _LoginScreen extends State<LoginScreen> {
     await FireStoreUtils.updateCurrentUser(user);
     MyAppState.currentUser = user;
     hideProgress();
-    pushAndRemoveUntil(context, HomeScreen(user: user), false);
+    pushAndRemoveUntil(context, HomeScreenx(user: user), false);
   }
 }

@@ -4,7 +4,6 @@ import 'package:flutter_login_screen/model/AddingProduct.dart';
 import 'package:flutter_login_screen/model/config.dart';
 import 'package:flutter_login_screen/services/helper.dart';
 import 'package:flutter_login_screen/ui/ProductInfo/ProductInfo.dart';
-import 'package:flutter_login_screen/ui/home/HomeScreen.dart';
 import 'package:flutter_login_screen/ui/home/Test.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:flutter_login_screen/database/Data.dart';
@@ -35,6 +34,23 @@ class Shop extends StatefulWidget {
   }
 }
 
+List randomImages =
+[
+  'https://cdn.pixabay.com/photo/2014/09/30/22/50/sandstone-467714_960_720.jpg',
+  'https://cdn.pixabay.com/photo/2020/06/15/15/34/fog-5302291_960_720.jpg',
+  'https://cdn.pixabay.com/photo/2020/12/23/14/41/forest-5855196_960_720.jpg',
+  'https://cdn.pixabay.com/photo/2020/10/21/09/49/beach-5672641_960_720.jpg',
+  'https://cdn.pixabay.com/photo/2020/12/18/15/29/mountains-5842346_960_720.jpg',
+  'https://cdn.pixabay.com/photo/2021/01/28/03/13/person-5956897_960_720.jpg',
+  'https://cdn.pixabay.com/photo/2020/12/10/08/44/mountains-5819651_960_720.jpg',
+  'https://cdn.pixabay.com/photo/2021/01/29/09/33/beach-5960371_960_720.jpg',
+  'https://cdn.pixabay.com/photo/2021/01/21/09/58/swan-5936863_960_720.jpg',
+];
+int min = 0;
+int max = randomImages.length-1;
+Random rnd = new Random();
+int r = min + rnd.nextInt(max - min);
+String image_to_print  = randomImages[r].toString();
 
 class Shopping extends State<Shop> {
   final User user;
@@ -164,12 +180,12 @@ class Shopping extends State<Shop> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(builder: (context) =>
-                                    HomeScreenx(user: user)));
+                                    HomeScreenx(user: user, )));
                           },
                           child: CircleAvatar(
                             //circle avatar
                             radius: 30.0,
-                            backgroundImage: NetworkImage('https://cs13.pikabu.ru/video/2021/02/02/5/og_og_1612250143310255815.jpg'),
+                            backgroundImage: NetworkImage('$image_to_print'),
                             backgroundColor: Colors.transparent,
                           )
                       ),
