@@ -114,7 +114,10 @@ class _AddProductsState extends State<AddProducts> {
       setState(() {
         _image = File(image.path);
       });
-    _image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    _image = await ImagePicker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 80
+    );
     Reference reference =
     storage.ref().child("productImg/${productID}");
 

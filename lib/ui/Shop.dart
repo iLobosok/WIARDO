@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_login_screen/model/AddingProduct.dart';
+import 'package:flutter_login_screen/model/config.dart';
 import 'package:flutter_login_screen/services/helper.dart';
 import 'package:flutter_login_screen/ui/ProductInfo/ProductInfo.dart';
 import 'package:flutter_login_screen/ui/home/HomeScreen.dart';
@@ -22,7 +23,6 @@ import 'package:flutter_login_screen/database/Data.dart';
 import 'package:permission_handler/permission_handler.dart'; // For Image Picker
 import 'package:path/path.dart' as Path;
 
-import 'naborgovna/config.dart';
 
 class Shop extends StatefulWidget {
   final User user;
@@ -34,6 +34,7 @@ class Shop extends StatefulWidget {
     return Shopping(user);
   }
 }
+
 
 class Shopping extends State<Shop> {
   final User user;
@@ -47,6 +48,7 @@ class Shopping extends State<Shop> {
 
   @override
   Widget build(BuildContext context) {
+
     getDataFromFirebaseAndBuildList(); //вызываем функцию, которая создаст список виджетов и отрисует их
     String imageUrl;
     int min = 1,
@@ -57,11 +59,12 @@ class Shopping extends State<Shop> {
     String image, tag, descript; //context;
     image =
     'https://ae01.alicdn.com/kf/H16ae39cc62614d00906f217cc5e0d1089/QUANBO-Men-Red-Polo-Shirts-Cotton-Classic-Fit-Long-Sleeve-Polo-Shirt-Work-Casual-Knitted-Mens.jpg';
+
     List images_collection = [
-      'https://firebasestorage.googleapis.com/v0/b/chat-b43aa.appspot.com/o/photo_2020-06-25_18-49-54.jpg?alt=media&token=b20124ea-2e30-449b-9f71-273debc05348',
-      'https://firebasestorage.googleapis.com/v0/b/chat-b43aa.appspot.com/o/photo_2020-06-25_18-49-55%20(2).jpg?alt=media&token=aaa09d8d-8f52-4c79-bce0-74f4ce3a6cde',
-      'https://firebasestorage.googleapis.com/v0/b/chat-b43aa.appspot.com/o/photo_2020-06-25_18-49-55.jpg?alt=media&token=61e039d2-c60c-4c23-8c47-7057042d2a86',
-    ];
+      'https://firebasestorage.googleapis.com/v0/b/chat-b43aa.appspot.com/o/Carousel%2F1.jpg?alt=media&token=aa20822b-9cb2-461c-95ab-ebb4d1418006',
+      'https://firebasestorage.googleapis.com/v0/b/chat-b43aa.appspot.com/o/Carousel%2F2.jpg?alt=media&token=d34dc814-ad96-4f92-b482-a80756cea4d2',
+      'https://firebasestorage.googleapis.com/v0/b/chat-b43aa.appspot.com/o/Carousel%2F3.jpg?alt=media&token=3049b47a-0daa-4533-8cf8-4112db302845',
+       ];
     uploadImage() async {
       final _firebaseStorage = FirebaseStorage.instance;
       final _imagePicker = ImagePicker();
