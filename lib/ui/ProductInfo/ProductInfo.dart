@@ -11,6 +11,7 @@ class ProductInformation extends StatefulWidget {
 }
 
 class ProductInfo extends State<ProductInformation> {
+final _scaffoldKey = GlobalKey<ScaffoldState>();
 final img;
 final name;
 ProductInfo({this.img,this.name});
@@ -19,6 +20,7 @@ bool _isFavorite = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       body: SingleChildScrollView(
           child: Hero(
             tag: 'red',
@@ -59,7 +61,6 @@ bool _isFavorite = false;
                             child: Icon(
                                 Icons.favorite_border,
                                 size: 20,
-
                             ),
                           ),
                         ),
@@ -105,9 +106,7 @@ bool _isFavorite = false;
                                 child: Text('Add to cart', style: TextStyle(fontWeight: FontWeight.bold),)
                             ),
                               onTap: (){
-                                Scaffold.of(context).showSnackBar(
-                                    SnackBar(content: Text('Successfully Added',style: TextStyle(color: Colors.white),),backgroundColor: Colors.green,)
-                                );
+                                _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text('Successfully Added',style: TextStyle(color: Colors.white),),backgroundColor: Colors.green,));
                               },
                             ),
                           )),
