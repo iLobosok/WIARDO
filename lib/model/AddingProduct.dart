@@ -90,7 +90,7 @@ class _AddProductsState extends State<AddProducts> {
   final costController = TextEditingController();
   final dbRef = FirebaseDatabase.instance.reference().child("Data");
   String title, description, productID, product, password, confirmPassword,bio;
-  var imgUrl;
+
 
   Future<void> retrieveLostData() async {
     final LostData response = await _imagePicker.getLostData();
@@ -103,6 +103,7 @@ class _AddProductsState extends State<AddProducts> {
       });
     }
   }
+  var imgUrl = '';
   _onCameraClick() async {
     Random random = new Random();
     int randomNumber = random.nextInt(9999999);
@@ -122,8 +123,8 @@ class _AddProductsState extends State<AddProducts> {
 
     TaskSnapshot taskSnapshot = await uploadTask;
 
-    imgUrl = await reference.getDownloadURL();
-    print(imgUrl);
+   imgUrl = '${await taskSnapshot.ref.getDownloadURL()}';
+    return imgUrl;
   }
 
   Widget build(BuildContext context) {

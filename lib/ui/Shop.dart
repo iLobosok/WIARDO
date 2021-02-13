@@ -166,7 +166,7 @@ class Shopping extends State<Shop> {
                           child: CircleAvatar(
                             //circle avatar
                             radius: 30.0,
-                            backgroundImage: NetworkImage("https://cs13.pikabu.ru/video/2021/02/02/5/og_og_1612250143310255815.jpg"),
+                            backgroundImage: NetworkImage('${user.profilePictureURL}'),
                             backgroundColor: Colors.transparent,
                           )
                       ),
