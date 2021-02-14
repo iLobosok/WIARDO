@@ -49,8 +49,8 @@ String image_to_print  = randomImages[r].toString();
 class Shopping extends State<Shop> {
   final User user;
   var WidgetList = List<Widget>();
-  List<Data> dataList = [
-  ]; //тут будет список виджетов данных для виджетов, котрый создастся при чтении данных с бд
+  List images_collection = [];
+  List<Data> dataList = []; //тут будет список виджетов данных для виджетов, котрый создастся при чтении данных с бд
   DatabaseReference databaseReference = FirebaseDatabase.instance
       .reference(); // инициализация бд
 
@@ -58,7 +58,7 @@ class Shopping extends State<Shop> {
 
   @override
   Widget build(BuildContext context) {
-
+    getDataFromFirebaseAndBuildCarousel();
     getDataFromFirebaseAndBuildList(); //вызываем функцию, которая создаст список виджетов и отрисует их
     String imageUrl;
     int min = 1,
@@ -70,11 +70,7 @@ class Shopping extends State<Shop> {
     image =
     'https://ae01.alicdn.com/kf/H16ae39cc62614d00906f217cc5e0d1089/QUANBO-Men-Red-Polo-Shirts-Cotton-Classic-Fit-Long-Sleeve-Polo-Shirt-Work-Casual-Knitted-Mens.jpg';
 
-    List images_collection = [
-      'https://firebasestorage.googleapis.com/v0/b/chat-b43aa.appspot.com/o/Carousel%2F1.jpg?alt=media&token=aa20822b-9cb2-461c-95ab-ebb4d1418006',
-      'https://firebasestorage.googleapis.com/v0/b/chat-b43aa.appspot.com/o/Carousel%2F2.jpg?alt=media&token=d34dc814-ad96-4f92-b482-a80756cea4d2',
-      'https://firebasestorage.googleapis.com/v0/b/chat-b43aa.appspot.com/o/Carousel%2F3.jpg?alt=media&token=3049b47a-0daa-4533-8cf8-4112db302845',
-    ];
+
     uploadImage() async {
       final _firebaseStorage = FirebaseStorage.instance;
       final _imagePicker = ImagePicker();
@@ -315,6 +311,17 @@ class Shopping extends State<Shop> {
         dataList.add(data);
       }
       BuildWidgetList();
+    }
+    );
+
+  }
+  void getDataFromFirebaseAndBuildCarousel() {
+    databaseReference.once().then((DataSnapshot snapshot) { //получаем данные
+      var keys = snapshot.value['PromoToday'].keys; //получаем ключи
+      var values = snapshot.value['PromoToday']; //получаем значения
+      for(var key in keys){
+        images_collection.add(values[key]);
+      }
     }
     );
 
