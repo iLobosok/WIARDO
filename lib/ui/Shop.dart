@@ -1,26 +1,20 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_login_screen/model/AddingProduct.dart';
-import 'package:flutter_login_screen/model/config.dart';
-import 'package:flutter_login_screen/services/helper.dart';
 import 'package:flutter_login_screen/ui/ProductInfo/ProductInfo.dart';
 import 'package:flutter_login_screen/ui/home/Test.dart';
-import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:flutter_login_screen/database/Data.dart';
 import 'dart:io';
 import 'package:flutter_login_screen/animation/FadeAnimation.dart';
 import 'dart:math';
-import 'package:lottie/lottie.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login_screen/model/User.dart';
-import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:flutter_login_screen/database/Data.dart';
 import 'package:permission_handler/permission_handler.dart'; // For Image Picker
 import 'package:path/path.dart' as Path;
+import 'naborgovna/config.dart';
 
 
 class Shop extends StatefulWidget {
@@ -80,7 +74,7 @@ class Shopping extends State<Shop> {
       'https://firebasestorage.googleapis.com/v0/b/chat-b43aa.appspot.com/o/Carousel%2F1.jpg?alt=media&token=aa20822b-9cb2-461c-95ab-ebb4d1418006',
       'https://firebasestorage.googleapis.com/v0/b/chat-b43aa.appspot.com/o/Carousel%2F2.jpg?alt=media&token=d34dc814-ad96-4f92-b482-a80756cea4d2',
       'https://firebasestorage.googleapis.com/v0/b/chat-b43aa.appspot.com/o/Carousel%2F3.jpg?alt=media&token=3049b47a-0daa-4533-8cf8-4112db302845',
-       ];
+    ];
     uploadImage() async {
       final _firebaseStorage = FirebaseStorage.instance;
       final _imagePicker = ImagePicker();
@@ -316,6 +310,7 @@ class Shopping extends State<Shop> {
           name: values[key]["name"],
           type: values[key]["type"],
           cost: values[key]["cost"],
+          description: values[key]["description"],
         );
         dataList.add(data);
       }
@@ -334,6 +329,7 @@ class Shopping extends State<Shop> {
             img: dataList[index].img,
             cost: dataList[index].cost,
             type: dataList[index].type,
+            description: dataList[index].description
           )
       );
     }
@@ -341,7 +337,7 @@ class Shopping extends State<Shop> {
   }
 }
 
-Widget CardUI({String name,String type, String cost, String img, BuildContext context}) {
+Widget CardUI({String name,String type, String cost, String img, BuildContext context, String description}) {
   return Card(
     color: Colors.transparent,
     child: Center(
@@ -420,7 +416,13 @@ Widget CardUI({String name,String type, String cost, String img, BuildContext co
               Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) =>
-                      ProductInformation(img: img, name: name,)));
+                      ProductInformation(
+                        img: img,
+                        name: name,
+                        description: description,
+                      )
+                  )
+              );
             },
           ),
 
