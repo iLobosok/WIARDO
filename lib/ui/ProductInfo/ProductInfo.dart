@@ -1,7 +1,7 @@
 import 'package:flutter_login_screen/animation/FadeAnimation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_login_screen/model/config.dart';
 import 'package:flutter_login_screen/ui/Shop.dart';
-import 'package:flutter_login_screen/ui/naborgovna/config.dart';
 class ProductInformation extends StatefulWidget {
   final img;
   final name;
@@ -137,7 +137,7 @@ class ProductInfo extends State<ProductInformation> {
                             ),
                             )
                           ),
-                          SizedBox(height: 30,),
+                      SizedBox(height: 30,),
                         ],
                       ),
                     )),
@@ -156,38 +156,42 @@ class ProductInfo extends State<ProductInformation> {
        builder: (ctx) {
          return Container(
            decoration: BoxDecoration(
-             color: Colors.white,
+             color: Colors.black87,
              borderRadius: BorderRadius.only(topRight: Radius.circular(40), topLeft: Radius.circular(40),),
-             border: Border.all(width: 3,color: Colors.white, style: BorderStyle.solid),
+             border: Border.all(width: 3,color: Colors.black12, style: BorderStyle.solid),
 
            ),
                 height: MediaQuery
                   .of(context)
                   .size
-                  .height * 0.4,
+                  .height * 0.33,
                 child: Padding(
                   padding: EdgeInsets.all(Paddings.getPadding(context, 0.02)),
                   child: Center(
-                    child: Column(
-                        children: [
+                    child: ListView(
+                        children:  [
                           Padding(
                             padding: EdgeInsets.all(Paddings.getPadding(context, 0.03)),
                             child: Align(
                               alignment: Alignment.centerLeft,
-                              child: Text("Details",
+                              child: Center(
+                                child:Text("Details",
                                 style: TextStyle(
-                                  color: Colors.black,
+                                  color: Colors.white,
                                   fontSize: 40,
                                   fontWeight: FontWeight.bold
                                 ),
                               ),
+                              ),
                             ),
                           ),
-                          Text("$description"),
+                      SingleChildScrollView(
+                       child:Text("$description", style: TextStyle(color:Colors.white, ),),
+                      ),
                         ],
                     ),
                   ),
-                ),
+                  ),
           );
         }
     );

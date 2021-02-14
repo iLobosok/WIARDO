@@ -1,5 +1,3 @@
-import 'dart:js';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_login_screen/constants.dart' as Constants;
@@ -12,7 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'utils.dart';
 bool start = false;
 class OnboardingScreen extends StatefulWidget {
-  @override
+  @override  
   _OnboardingScreenState createState() => _OnboardingScreenState();
 }
 

@@ -1,5 +1,6 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_login_screen/model/AddingProduct.dart';
+import 'package:flutter_login_screen/model/config.dart';
 import 'package:flutter_login_screen/ui/ProductInfo/ProductInfo.dart';
 import 'package:flutter_login_screen/ui/home/Test.dart';
 import 'package:flutter_login_screen/database/Data.dart';
@@ -14,7 +15,6 @@ import 'package:flutter_login_screen/model/User.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart'; // For Image Picker
 import 'package:path/path.dart' as Path;
-import 'naborgovna/config.dart';
 
 
 class Shop extends StatefulWidget {
