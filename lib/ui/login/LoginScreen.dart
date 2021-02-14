@@ -10,7 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:flutter_login_screen/model/User.dart';
 import 'package:flutter_login_screen/services/Authenticate.dart';
-import 'package:flutter_login_screen/ui/home/Test.dart';
+import 'package:flutter_login_screen/ui/home/ProfileScreen.dart';
 import 'package:http/http.dart' as http;
 
 

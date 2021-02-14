@@ -2,7 +2,6 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_login_screen/model/AddingProduct.dart';
 import 'package:flutter_login_screen/model/config.dart';
 import 'package:flutter_login_screen/ui/ProductInfo/ProductInfo.dart';
-import 'package:flutter_login_screen/ui/home/Test.dart';
 import 'package:flutter_login_screen/database/Data.dart';
 import 'dart:io';
 import 'package:flutter_login_screen/animation/FadeAnimation.dart';
@@ -15,6 +14,8 @@ import 'package:flutter_login_screen/model/User.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart'; // For Image Picker
 import 'package:path/path.dart' as Path;
+
+import 'home/ProfileScreen.dart';
 
 
 class Shop extends StatefulWidget {
@@ -60,52 +61,6 @@ class Shopping extends State<Shop> {
   Widget build(BuildContext context) {
     getDataFromFirebaseAndBuildCarousel();
     getDataFromFirebaseAndBuildList(); //вызываем функцию, которая создаст список виджетов и отрисует их
-    String imageUrl;
-    int min = 1,
-        max = 99999999;
-    Random rnd = new Random();
-    int HASHT = min + rnd.nextInt(max - min);
-    int _current = 0;
-    String image, tag, descript; //context;
-    image =
-    'https://ae01.alicdn.com/kf/H16ae39cc62614d00906f217cc5e0d1089/QUANBO-Men-Red-Polo-Shirts-Cotton-Classic-Fit-Long-Sleeve-Polo-Shirt-Work-Casual-Knitted-Mens.jpg';
-
-
-    uploadImage() async {
-      final _firebaseStorage = FirebaseStorage.instance;
-      final _imagePicker = ImagePicker();
-      PickedFile image;
-      //Check Permissions
-      await Permission.photos.request();
-
-      var permissionStatus = await Permission.photos.status;
-
-      if (permissionStatus.isGranted) {
-        //Select Image
-        image = await _imagePicker.getImage(source: ImageSource.gallery,
-            imageQuality: 80,
-            maxHeight: 480,
-            maxWidth: 640);
-        var file = File(image.path);
-
-        if (image != null) {
-          //Upload to Firebase
-          var snapshot = await _firebaseStorage.ref()
-
-              .child('images/id-${user.userID}/img_$HASHT.jpg')
-              .putFile(file);
-          var downloadUrl = await snapshot.ref.getDownloadURL();
-          setState(() {
-            imageUrl = downloadUrl;
-          });
-        } else {
-          print('No Image Path Received');
-        }
-      } else {
-        print('Permission not granted. Try Again with permission access');
-      }
-    }
-
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
