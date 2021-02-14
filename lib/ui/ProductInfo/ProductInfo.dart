@@ -1,22 +1,23 @@
 import 'package:flutter_login_screen/animation/FadeAnimation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login_screen/ui/Shop.dart';
+import 'package:flutter_login_screen/ui/naborgovna/config.dart';
 class ProductInformation extends StatefulWidget {
-
   final img;
   final name;
+  final description;
   @override
-  const ProductInformation({Key key, this.img, this.name}) : super(key: key);
-  ProductInfo createState() => ProductInfo(img: img, name: name);
+  const ProductInformation({Key key, this.img, this.name,this.description}) : super(key: key);
+  ProductInfo createState() => ProductInfo(img: img, name: name, description: description);
 }
 
 class ProductInfo extends State<ProductInformation> {
-final _scaffoldKey = GlobalKey<ScaffoldState>();
-final img;
-final name;
-ProductInfo({this.img,this.name});
-
-bool _isFavorite = false;
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+  final img;
+  final name;
+  final String description;
+  ProductInfo({this.img,this.name,this.description});
+  bool _isFavorite = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -76,7 +77,8 @@ bool _isFavorite = false;
                     left: 0,
                     width: MediaQuery.of(context).size.width,
                     height: 500,
-                    child: FadeAnimation(1, Container(
+                    child: FadeAnimation(1.5,
+                    Container(
                       padding: EdgeInsets.all(20),
                       decoration: BoxDecoration(
                           gradient: LinearGradient(
@@ -91,25 +93,50 @@ bool _isFavorite = false;
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
-                          FadeAnimation(1.3, Text("$name", style: TextStyle(color: Colors.white, fontSize: 50, fontWeight: FontWeight.bold),)),
+                          FadeAnimation(1.3,
+                              Text(
+                                "$name",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 50,
+                                    fontWeight: FontWeight.bold
+                                ),
+                              )
+                          ),
                           SizedBox(height: 5,),
-                          FadeAnimation(1.3, InkWell(child:Text("Details", style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),)),),
-                          SizedBox(height: 20,),
-                          FadeAnimation(1.5, Container(
-                            height: 50,
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(15)
-                            ),
-                            child: InkWell(
-                              child:Center(
-                                child: Text('Add to cart', style: TextStyle(fontWeight: FontWeight.bold),)
-                            ),
+                          FadeAnimation(1.3,
+                            InkWell(
+                                child:Text(
+                                  "Details",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold
+                                  ),
+                                ),
                               onTap: (){
-                                _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text('Successfully Added',style: TextStyle(color: Colors.white),),backgroundColor: Colors.green,));
+                                  displayBottomSheet(context: context, description: description);
                               },
                             ),
-                          )),
+                          ),
+                          SizedBox(height: 20,),
+                          FadeAnimation(1.5,
+                             Container(
+                              height: 50,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(15)
+                              ),
+                              child: InkWell(
+                                child:Center(
+                                  child: Text('Add to cart', style: TextStyle(fontWeight: FontWeight.bold),)
+                              ),
+                                onTap: (){
+                                  _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text('Successfully Added',style: TextStyle(color: Colors.white),),backgroundColor: Colors.green,));
+                                },
+                            ),
+                            )
+                          ),
                           SizedBox(height: 30,),
                         ],
                       ),
@@ -122,4 +149,50 @@ bool _isFavorite = false;
       ),
     );
   }
+  void displayBottomSheet({BuildContext context, String description}) {
+    showModalBottomSheet(
+      backgroundColor: Colors.transparent,
+       context: context,
+       builder: (ctx) {
+         return Container(
+           decoration: BoxDecoration(
+             color: Colors.white,
+             borderRadius: BorderRadius.only(topRight: Radius.circular(40), topLeft: Radius.circular(40),),
+             border: Border.all(width: 3,color: Colors.white, style: BorderStyle.solid),
+
+           ),
+                height: MediaQuery
+                  .of(context)
+                  .size
+                  .height * 0.4,
+                child: Padding(
+                  padding: EdgeInsets.all(Paddings.getPadding(context, 0.02)),
+                  child: Center(
+                    child: Column(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.all(Paddings.getPadding(context, 0.03)),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text("Details",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 40,
+                                  fontWeight: FontWeight.bold
+                                ),
+                              ),
+                            ),
+                          ),
+                          Text("$description"),
+                        ],
+                    ),
+                  ),
+                ),
+          );
+        }
+    );
+  }
 }
+
+
+
