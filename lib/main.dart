@@ -5,17 +5,15 @@ import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_login_screen/model/User.dart';
+import 'package:flutter_login_screen/services/Authenticate.dart';
+import 'package:flutter_login_screen/services/helper.dart';
 import 'package:flutter_login_screen/ui/Shop.dart';
 import 'package:flutter_login_screen/ui/onBoarding/OnBoarding.dart';
-import 'model/Product.dart';
-import 'model/User.dart';
-import 'services/Authenticate.dart';
-import 'services/helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'constants.dart' as Constants;
 import 'ui/auth/AuthScreen.dart';
-
 
 void main() => runApp(new MyApp());
 
@@ -26,7 +24,6 @@ class MyApp extends StatefulWidget {
 
 class MyAppState extends State<MyApp> with WidgetsBindingObserver {
   static User currentUser;
-  static Product currentProduct;
   StreamSubscription tokenStream;
 
   // Set default `_initialized` and `_error` state to false
@@ -51,28 +48,31 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+        statusBarColor: Color(Constants.COLOR_PRIMARY_DARK)));
+    // Show error message if initialization failed
     if (_error) {
       return MaterialApp(
           home: Scaffold(
-        body: Container(
-          color: Colors.white,
-          child: Center(
-              child: Column(
-            children: [
-              Icon(
-                Icons.error_outline,
-                color: Colors.red,
-                size: 25,
-              ),
-              SizedBox(height: 16),
-              Text(
-                'Failed to initialise firebase!',
-                style: TextStyle(color: Colors.red, fontSize: 25),
-              ),
-            ],
-          )),
-        ),
-      ));
+            body: Container(
+              color: Colors.white,
+              child: Center(
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.error_outline,
+                        color: Colors.red,
+                        size: 25,
+                      ),
+                      SizedBox(height: 16),
+                      Text(
+                        'Failed to initialise firebase!',
+                        style: TextStyle(color: Colors.red, fontSize: 25),
+                      ),
+                    ],
+                  )),
+            ),
+          ));
     }
 
     // Show a loader until FlutterFire is initialized
@@ -141,17 +141,17 @@ class OnBoardingState extends State<OnBoarding> {
       auth.User firebaseUser = auth.FirebaseAuth.instance.currentUser;
       if (firebaseUser != null) {
         User user = await FireStoreUtils().getCurrentUser(firebaseUser.uid);
-        if (user != null && user.ban != true) {
+        if (user != null) {
           MyAppState.currentUser = user;
-          pushReplacement(context, Shop(user: user));
-              // new HomeScreen(user: user));
+          pushReplacement(context, new Shop(user: user));
         } else {
           pushReplacement(context, new AuthScreen());
         }
+      } else {
+        pushReplacement(context, new AuthScreen());
       }
-    }
-    else {
-      pushReplacement(context, new OnboardingScreen());
+    } else {
+      pushReplacement(context, new OnBoardingScreen());
     }
   }
 
@@ -164,7 +164,7 @@ class OnBoardingState extends State<OnBoarding> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[800],
+      backgroundColor: Color(Constants.COLOR_PRIMARY),
       body: Center(
         child: CircularProgressIndicator(
           backgroundColor: Colors.white,

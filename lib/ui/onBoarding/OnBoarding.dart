@@ -1,226 +1,177 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_login_screen/constants.dart' as Constants;
 import 'package:flutter_login_screen/services/helper.dart';
-import 'package:flutter_login_screen/ui/auth/AuthScreen.dart';
-import 'package:flutter_login_screen/ui/signUp/SignUpScreen.dart';
-import 'package:lottie/lottie.dart';
+import 'package:page_view_indicators/circle_page_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'utils.dart';
-bool start = false;
-class OnboardingScreen extends StatefulWidget {
-  @override  
-  _OnboardingScreenState createState() => _OnboardingScreenState();
+import '../../constants.dart' as Constants;
+import '../auth/AuthScreen.dart';
+
+final _currentPageNotifier = ValueNotifier<int>(0);
+
+final List<String> _titlesList = [
+  'Flutter Onboarding',
+  'Firebase Auth',
+  'Facebook Login',
+  'Instaflutter.com'
+];
+
+final List<String> _subtitlesList = [
+  'Build your onboarding flow in seconds.',
+  'Use Firebase for user managements.',
+  'Leaverage Facebook to log in user easily.',
+  'Get more awesome templates'
+];
+
+final List<dynamic> _imageList = [
+  Icons.developer_mode,
+  Icons.layers,
+  Icons.account_circle,
+  'assets/images/ic_launcher_round.png'
+];
+final List<Widget> _pages = [];
+
+List<Widget> populatePages(BuildContext context) {
+  _pages.clear();
+  _titlesList.asMap().forEach((index, value) => _pages.add(getPage(
+      _imageList.elementAt(index), value, _subtitlesList.elementAt(index))));
+  _pages.add(getLastPage(context));
+  return _pages;
 }
 
-Future<bool> setFinishedOnBoarding() async {
-  bool start = true;
-  final SharedPreferences prefs = await SharedPreferences.getInstance();
-  return prefs.setBool(Constants.FINISHED_ON_BOARDING, true);
-
+Widget _buildCircleIndicator() {
+  return CirclePageIndicator(
+    selectedDotColor: Colors.white,
+    dotColor: Colors.white30,
+    selectedSize: 8,
+    size: 6.5,
+    itemCount: _pages.length,
+    currentPageNotifier: _currentPageNotifier,
+  );
 }
 
-
-class _OnboardingScreenState extends State<OnboardingScreen> {
-  final int _numPages = 3;
-  final PageController _pageController = PageController(initialPage: 0);
-  int _currentPage = 0;
-
-  List<Widget> _buildPageIndicator() {
-    List<Widget> list = [];
-    for (int i = 0; i < _numPages; i++) {
-      list.add(i == _currentPage ? _indicator(true) : _indicator(false));
-    }
-    return list;
-  }
-
-  Widget _indicator(bool isActive) {
-    return AnimatedContainer(
-      duration: Duration(milliseconds: 150),
-      margin: EdgeInsets.symmetric(horizontal: 8.0),
-      height: 8.0,
-      width: isActive ? 24.0 : 16.0,
-      decoration: BoxDecoration(
-        color: isActive ? Colors.blueAccent : Color(0xFFBBBAD3),
-        borderRadius: BorderRadius.all(Radius.circular(12)),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle.light,
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-          ),
+Widget getPage(dynamic image, String title, String subTitle) {
+  return Center(
+    child: Container(
+      color: Color(Constants.COLOR_PRIMARY),
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.only(top: 100.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Container(
-                height: 600.0,
-                child: PageView(
-                  physics: ClampingScrollPhysics(),
-                  controller: _pageController,
-                  onPageChanged: (int page) {
-                    setState(() {
-                      _currentPage = page;
-                    });
-                  },
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.all(40.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            'Find your style\naround the world',
-                            style: kTitleStyle,
-                          ),
-                          SizedBox(height: 30.0),
-                          Center(
-                            child: Lottie.network(
-                              //Lottie
-                              'https://assets7.lottiefiles.com/packages/lf20_sSF6EG.json',
-                              width: 250,
-                              height: 250,
-                              fit: BoxFit.fill,
-                            ),
-                          ),
-                          SizedBox(height: 55.0),
-                          Text(
-                            'You can find or sell your designer clothes. Make account as seller and start sell',
-                            style: kSubtitleStyle,
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(40.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            'Connect with designers\n',
-                            style: kTitleStyle,
-                          ),
-                          SizedBox(height: 30.0),
-                          Center(
-                            child: Lottie.network(
-                              //Lottie
-                              'https://assets5.lottiefiles.com/packages/lf20_decvxrvx.json',
-                              width: 350,
-                              height: 250,
-                              fit: BoxFit.fill,
-                            ),
-                          ),
-                          SizedBox(height: 55.0),
-                          Text(
-                            'Find your personal favourite designers and chat together to discuss your offer',
-                            style: kSubtitleStyle,
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(40.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            'You can start career\nlike designer',
-                            style: kTitleStyle,
-                          ),
-                          SizedBox(height: 30.0),
-                          Center(
-                            child: Lottie.network(
-                              //Lottie
-                              'https://assets8.lottiefiles.com/datafiles/6WfDdm3ooQTEs1L/data.json',
-                              width: 250,
-                              height: 250,
-                              fit: BoxFit.fill,
-                            ),
-                          ),
-                          SizedBox(height: 55.0),
-                          Text(
-                            'Create your designer clothes, upload items, and sell',
-                            style: kSubtitleStyle,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+              Padding(
+                padding: const EdgeInsets.all(40.0),
+                child: image is String
+                    ? Image.asset(
+                  image,
+                  width: 150,
+                  height: 150,
+                  fit: BoxFit.cover,
+                )
+                    : new Icon(
+                  image,
+                  color: Colors.white,
+                  size: 150,
                 ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: _buildPageIndicator(),
+              Text(
+                title,
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.bold),
               ),
-              _currentPage != _numPages - 1
-                  ? Expanded(
-                child: Align(
-                  alignment: FractionalOffset.bottomRight,
-                  child: FlatButton(
-                    onPressed: () {
-                      _pageController.nextPage(
-                        duration: Duration(milliseconds: 500),
-                        curve: Curves.ease,
-                      );
-                    },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Text(
-                          'Next',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 22.0,
-                          ),
-                        ),
-                        SizedBox(width: 10.0),
-
-                      ],
-                    ),
-                  ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  subTitle,
+                  style: TextStyle(color: Colors.white70, fontSize: 17.0),
                 ),
               )
-                  : Text(''),
             ],
           ),
         ),
       ),
-      bottomSheet: _currentPage == _numPages - 1
-          ? Container(
-        height: 100.0,
-        width: double.infinity,
-        color: Colors.white,
-        child: InkWell(
-          onTap: () {
-            setFinishedOnBoarding();
-            pushReplacement(context, new AuthScreen());
-          },
-          child: Center(
-            child: Padding(
-              padding: EdgeInsets.only(bottom: 30.0),
-              child: Text(
-                'Get started',
-                style: TextStyle(
-                  color: Color(0xFF5B16D0),
-                  fontSize: 20.0,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
-        ),
-      )
-          : Text(''),
-    );
-  }
+    ),
+  );
 }
 
+Widget getLastPage(BuildContext context) {
+  return Center(
+    child: Container(
+      color: Color(Constants.COLOR_PRIMARY),
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 40.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(40.0),
+                child: new Icon(
+                  Icons.code,
+                  color: Colors.white,
+                  size: 120,
+                ),
+              ),
+              Text(
+                'Jump straight into the action.',
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.bold),
+              ),
+              Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: OutlineButton(
+                    onPressed: () {
+                      setFinishedOnBoarding();
+                      pushReplacement(context, new AuthScreen());
+                    },
+                    child: Text(
+                      "Get Started",
+                      style: TextStyle(
+                          fontSize: 20.0,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    borderSide: BorderSide(color: Colors.white),
+                    shape: StadiumBorder(),
+                  ))
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
+}
 
+Future<bool> setFinishedOnBoarding() async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  return prefs.setBool(Constants.FINISHED_ON_BOARDING, true);
+}
+
+class OnBoardingScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        body: Stack(
+          children: <Widget>[
+            PageView(
+              children: populatePages(context),
+              onPageChanged: (int index) {
+                _currentPageNotifier.value = index;
+              },
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 30.0),
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: _buildCircleIndicator(),
+              ),
+            )
+          ],
+        ));
+  }
+}

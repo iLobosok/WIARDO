@@ -11,11 +11,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login_screen/model/User.dart';
+import 'package:flutter_login_screen/ui/home/Test.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart'; // For Image Picker
 import 'package:path/path.dart' as Path;
 
-import 'home/ProfileScreen.dart';
 
 
 class Shop extends StatefulWidget {
@@ -47,6 +47,7 @@ Random rnd = new Random();
 int r = min + rnd.nextInt(max - min);
 String image_to_print  = randomImages[r].toString();
 
+
 class Shopping extends State<Shop> {
   final User user;
   var WidgetList = List<Widget>();
@@ -54,9 +55,7 @@ class Shopping extends State<Shop> {
   List<Data> dataList = []; //тут будет список виджетов данных для виджетов, котрый создастся при чтении данных с бд
   DatabaseReference databaseReference = FirebaseDatabase.instance
       .reference(); // инициализация бд
-
   Shopping(this.user);
-
   @override
   Widget build(BuildContext context) {
     getDataFromFirebaseAndBuildCarousel();
@@ -125,12 +124,12 @@ class Shopping extends State<Shop> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(builder: (context) =>
-                                    HomeScreenx(user: user, )));
+                                    HomeScreenx(user: user,)));
                           },
                           child: CircleAvatar(
                             //circle avatar
                             radius: 30.0,
-                            backgroundImage: NetworkImage('$image_to_print'),
+                            backgroundImage: NetworkImage('${user.profilePictureURL}'),
                             backgroundColor: Colors.transparent,
                           )
                       ),
@@ -303,7 +302,7 @@ Widget CardUI({String name,String type, String cost, String img, BuildContext co
   return Card(
     color: Colors.transparent,
     child: Center(
-      child:Column(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           InkWell(
