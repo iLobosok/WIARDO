@@ -11,7 +11,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login_screen/model/User.dart';
-import 'package:flutter_login_screen/ui/home/Test.dart';
+import 'package:flutter_login_screen/ui/home/HomeScreen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart'; // For Image Picker
 import 'package:path/path.dart' as Path;
@@ -124,7 +124,7 @@ class Shopping extends State<Shop> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(builder: (context) =>
-                                    HomeScreenx(user: user,)));
+                                    HomeScreen(user: user,)));
                           },
                           child: CircleAvatar(
                             //circle avatar
@@ -294,7 +294,6 @@ class Shopping extends State<Shop> {
           )
       );
     }
-    setState((){});
   }
 }
 
