@@ -1,11 +1,12 @@
+import 'dart:async';
 import 'dart:math';
 import 'dart:ui';
 import 'package:flutter_login_screen/animation/AnimationProfile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_login_screen/database/Data.dart';
 import 'package:flutter_login_screen/model/User.dart';
+import 'package:rounded_loading_button/rounded_loading_button.dart';
 
 List randomImages =
 [
@@ -24,9 +25,15 @@ int max = randomImages.length-1;
 Random rnd = new Random();
 int r = min + rnd.nextInt(max - min);
 String image_to_print  = randomImages[r].toString();
+final RoundedLoadingButtonController _btnController = new RoundedLoadingButtonController();
 
+void _doSomething() async {
+  Timer(Duration(seconds: 2), () {
+    _btnController.success();
+  });
+}
 class HomeScreenx extends StatefulWidget {
-  final User user;
+  final Users user;
 
   HomeScreenx({Key key, @required this.user}) : super(key: key);
 
@@ -37,7 +44,8 @@ class HomeScreenx extends StatefulWidget {
 }
 
 class _HomeState extends State<HomeScreenx> {
-  final User user;
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+  final Users user;
   String imseller = 'Seller';
   _HomeState(this.user);
   @override
@@ -50,13 +58,14 @@ class _HomeState extends State<HomeScreenx> {
       user.profilePictureURL = image_to_print;
     }
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: Colors.black,
       body: Stack(
         children: <Widget>[
           CustomScrollView(
             slivers: <Widget>[
               SliverAppBar(
-                expandedHeight: 450,
+                expandedHeight: 400,
                 backgroundColor: Colors.black,
                 flexibleSpace: FlexibleSpaceBar(
                   collapseMode: CollapseMode.pin,
@@ -122,10 +131,15 @@ class _HomeState extends State<HomeScreenx> {
                         SizedBox(height: 10,),
                         FadeAnimation(1.6,
                             InkWell(
-                              onTap: () {Clipboard.setData(new ClipboardData(text: '${user.userID}'));},
+                              onTap: () {
+                                Clipboard.setData(new ClipboardData(text: '${user.userID}'));
+                                var scaffoldKey = _scaffoldKey;
+                                scaffoldKey.currentState.showSnackBar(SnackBar(content: Text('Copied!',style: TextStyle(color: Colors.white),),backgroundColor: Colors.green,));
+                              },
                               child:Text('${user.userID}', style: TextStyle(color: Colors.grey),),)
                         ),
                         SizedBox(height: 120,)
+
                       ],
                     ),
                   )
@@ -138,7 +152,7 @@ class _HomeState extends State<HomeScreenx> {
             child: Container(
               child: Align(
                 alignment: Alignment.bottomCenter,
-                child: FadeAnimation(2,
+                child: user.seller == true ? FadeAnimation(2,
                   InkWell(
                     onTap: ()
                     {
@@ -161,41 +175,11 @@ class _HomeState extends State<HomeScreenx> {
                     ),
                   ),
                   ),
-                ),
+                ) : null,
               ),
             ),
           )
         ],
-      ),
-    );
-  }
-
-  Widget makeVideo({image}) {
-    return AspectRatio(
-      aspectRatio: 1.5/ 1,
-      child: Container(
-        margin: EdgeInsets.only(right: 20),
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            image: DecorationImage(
-                image: AssetImage(image),
-                fit: BoxFit.cover
-            )
-        ),
-        child: Container(
-          decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  begin: Alignment.bottomRight,
-                  colors: [
-                    Colors.black.withOpacity(.9),
-                    Colors.black.withOpacity(.3)
-                  ]
-              )
-          ),
-          child: Align(
-            child: Icon(Icons.play_arrow, color: Colors.white, size: 70,),
-          ),
-        ),
       ),
     );
   }

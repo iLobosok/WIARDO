@@ -1,5 +1,6 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_login_screen/model/AddingProduct.dart';
+import 'package:flutter_login_screen/model/User.dart';
 import 'package:flutter_login_screen/model/config.dart';
 import 'package:flutter_login_screen/ui/ProductInfo/ProductInfo.dart';
 import 'package:flutter_login_screen/ui/home/Test.dart';
@@ -11,14 +12,13 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_login_screen/model/User.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart'; // For Image Picker
 import 'package:path/path.dart' as Path;
 
 
 class Shop extends StatefulWidget {
-  final User user;
+  final Users user;
 
   const Shop({Key key, this.user}) : super(key: key);
 
@@ -47,7 +47,7 @@ int r = min + rnd.nextInt(max - min);
 String image_to_print  = randomImages[r].toString();
 
 class Shopping extends State<Shop> {
-  final User user;
+  final Users user;
   var WidgetList = List<Widget>();
   List images_collection = [];
   List<Data> dataList = []; //тут будет список виджетов данных для виджетов, котрый создастся при чтении данных с бд

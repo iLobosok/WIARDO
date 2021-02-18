@@ -4,7 +4,7 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 
-class User {
+class Users {
   String email = '';
   String firstName = '';
   String bio = '';
@@ -20,7 +20,7 @@ class User {
   bool seller = false;
   String appIdentifier = '${Platform.operatingSystem}';
 
-  User(
+  Users(
       {this.email,
       this.firstName,
         this.seller,
@@ -39,8 +39,8 @@ class User {
     return '$firstName $lastName';
   }
 
-  factory User.fromJson(Map<String, dynamic> parsedJson) {
-    return new User(
+  factory Users.fromJson(Map<String, dynamic> parsedJson) {
+    return new Users(
         email: parsedJson['email'] ?? '',
         subs: parsedJson['subscribers'] ?? 0,
         seller: parsedJson['seller'] ?? false,

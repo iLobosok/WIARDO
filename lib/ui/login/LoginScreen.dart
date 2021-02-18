@@ -192,7 +192,7 @@ class _LoginScreen extends State<LoginScreen> {
                                 auth.FacebookAuthProvider.credential(
                                     result.accessToken.token))
                             .then((auth.UserCredential authResult) async {
-                          User user = await _fireStoreUtils
+                          Users user = await _fireStoreUtils
                               .getCurrentUser(authResult.user.uid);
                           if (user == null) {
                             _createUserFromFacebookLogin(
@@ -227,7 +227,7 @@ class _LoginScreen extends State<LoginScreen> {
     if (_key.currentState.validate()) {
       _key.currentState.save();
       showProgress(context, 'Logging in, please wait...', false);
-      User user = await loginWithUserNameAndPassword();
+      Users user = await loginWithUserNameAndPassword();
       if (user != null && user.ban != true)
         pushAndRemoveUntil(context, Shop(user: user), false);
             //HomeScreen(user: user), false);
@@ -238,7 +238,7 @@ class _LoginScreen extends State<LoginScreen> {
     }
   }
 
-  Future<User> loginWithUserNameAndPassword() async {
+  Future<Users> loginWithUserNameAndPassword() async {
     try {
       auth.UserCredential result = await auth.FirebaseAuth.instance
           .signInWithEmailAndPassword(
@@ -247,9 +247,9 @@ class _LoginScreen extends State<LoginScreen> {
           .collection(Constants.USERS)
           .doc(result.user.uid)
           .get();
-      User user;
+      Users user;
       if (documentSnapshot != null && documentSnapshot.exists) {
-        user = User.fromJson(documentSnapshot.data());
+        user = Users.fromJson(documentSnapshot.data());
         user.active = true;
         await FireStoreUtils.updateCurrentUser(user);
         hideProgress();
@@ -295,7 +295,7 @@ class _LoginScreen extends State<LoginScreen> {
     final graphResponse = await http.get('https://graph.facebook.com/v2'
         '.12/me?fields=name,first_name,last_name,email,picture.type(large)&access_token=$token');
     final profile = json.decode(graphResponse.body);
-    User user = User(
+    Users user = Users(
         firstName: profile['first_name'],
         lastName: profile['last_name'],
         email: profile['email'],
@@ -314,7 +314,7 @@ class _LoginScreen extends State<LoginScreen> {
   }
 
   void _syncUserDataWithFacebookData(
-      FacebookLoginResult result, User user) async {
+      FacebookLoginResult result, Users user) async {
     final token = result.accessToken.token;
     final graphResponse = await http.get('https://graph.facebook.com/v2'
         '.12/me?fields=name,first_name,last_name,email,picture.type(large)&access_token=$token');

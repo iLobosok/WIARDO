@@ -25,7 +25,7 @@ class MyApp extends StatefulWidget {
 }
 
 class MyAppState extends State<MyApp> with WidgetsBindingObserver {
-  static User currentUser;
+  static Users currentUser;
   static Product currentProduct;
   StreamSubscription tokenStream;
 
@@ -140,7 +140,7 @@ class OnBoardingState extends State<OnBoarding> {
     if (finishedOnBoarding) {
       auth.User firebaseUser = auth.FirebaseAuth.instance.currentUser;
       if (firebaseUser != null) {
-        User user = await FireStoreUtils().getCurrentUser(firebaseUser.uid);
+        Users user = await FireStoreUtils().getCurrentUser(firebaseUser.uid);
         if (user != null && user.ban != true) {
           MyAppState.currentUser = user;
           pushReplacement(context, Shop(user: user));

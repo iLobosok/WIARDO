@@ -401,7 +401,7 @@ class _SignUpState extends State<SignUpScreen> {
           profilePicUrl = await FireStoreUtils()
               .uploadUserImageToFireStorage(_image, result.user.uid);
         }
-        User user = User(
+        Users user = Users(
             email: email,
             firstName: firstName,
             phoneNumber: mobile,
