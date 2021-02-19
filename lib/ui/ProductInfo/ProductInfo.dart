@@ -1,26 +1,45 @@
 import 'package:flutter_login_screen/animation/FadeAnimation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login_screen/model/config.dart';
-import 'package:flutter_login_screen/ui/Shop.dart';
+import 'package:url_launcher/url_launcher.dart';
 class ProductInformation extends StatefulWidget {
   final img;
+  final insta;
   final name;
   final description;
+  final String inss;
+
   @override
-  const ProductInformation({Key key, this.img, this.name,this.description}) : super(key: key);
-  ProductInfo createState() => ProductInfo(img: img, name: name, description: description);
+  const ProductInformation({Key key, this.img, this.name,this.description, this.insta, this.inss}) : super(key: key);
+  ProductInfo createState() => ProductInfo(img: img, name: name, description: description, inst: inss);
 }
+
 
 class ProductInfo extends State<ProductInformation> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final img;
   final name;
   final String description;
-  ProductInfo({this.img,this.name,this.description});
+  final String inst;
+  ProductInfo({this.inst, this.img,this.name,this.description});
   bool _isFavorite = false;
+
+  _launchURL() async {
+    String url = 'https://www.instagram.com/$inst/';
+    if (await canLaunch(url)) {
+    await launch(url);
+    } else {
+    throw 'Could not launch $url';
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        elevation: 0.0,
+        backgroundColor: Colors.transparent,
+        iconTheme: IconThemeData(color: Colors.white),
+      ),
       key: _scaffoldKey,
       body: SingleChildScrollView(
           child: Hero(
@@ -129,13 +148,14 @@ class ProductInfo extends State<ProductInformation> {
                               ),
                               child: InkWell(
                                 child:Center(
-                                  child: Text('Add to cart', style: TextStyle(fontWeight: FontWeight.bold),)
+                                  child: Text('Buy', style: TextStyle(fontWeight: FontWeight.bold),)
                               ),
                                 onTap: (){
-                                  _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text('Successfully Added',style: TextStyle(color: Colors.white),),backgroundColor: Colors.green,));
+                                  _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text('Moving to seller profile..',style: TextStyle(color: Colors.white),),backgroundColor: Colors.green,));
+                                  _launchURL();
                                 },
                             ),
-                            )
+                            ),
                           ),
                       SizedBox(height: 30,),
                         ],

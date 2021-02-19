@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class Product {
   String title = '';
   String description = '';
+  String instagram = '';
   bool active = false;
   String productID;
   Timestamp lastOnlineTimestamp = Timestamp.now();
@@ -10,6 +11,7 @@ class Product {
 
   Product(
       {this.title,
+        this.instagram,
         this.description,
         this.productID,
         this.productPictureURL,
@@ -19,6 +21,7 @@ class Product {
   factory Product.fromJson(Map<String, dynamic> parsedJson) {
     return new Product(
         title: parsedJson['title'] ?? '',
+        instagram: parsedJson['instagram'] ?? '',
         description: parsedJson['description'] ?? '',
         productID: parsedJson['ProductID'] ?? '',
         active: parsedJson['active'] ?? false,
@@ -27,6 +30,7 @@ class Product {
 
   Map<String, dynamic> toJson() {
     return {
+      'instagram' : this.instagram,
       'title': this.title,
       'description': this.description,
       'productId': this.productID,

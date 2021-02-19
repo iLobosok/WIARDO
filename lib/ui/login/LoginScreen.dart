@@ -37,9 +37,10 @@ class _LoginScreen extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[900],
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-        iconTheme: IconThemeData(color: Colors.black),
+        iconTheme: IconThemeData(color: Colors.white),
         elevation: 0.0,
       ),
       body: Form(
@@ -50,12 +51,14 @@ class _LoginScreen extends State<LoginScreen> {
             Padding(
               padding:
                   const EdgeInsets.only(top: 32.0, right: 16.0, left: 16.0),
-              child: Text(
+              child: Center(
+                child:Text(
                 'Sign In',
                 style: TextStyle(
-                    color: Color(Constants.COLOR_PRIMARY),
+                    color: Colors.white,
                     fontSize: 25.0,
                     fontWeight: FontWeight.bold),
+              ),
               ),
             ),
             ConstrainedBox(
@@ -64,6 +67,7 @@ class _LoginScreen extends State<LoginScreen> {
                 padding:
                     const EdgeInsets.only(top: 32.0, right: 24.0, left: 24.0),
                 child: TextFormField(
+                  style: TextStyle(color: Colors.white),
                     textAlignVertical: TextAlignVertical.center,
                     textInputAction: TextInputAction.next,
                     validator: validateEmail,
@@ -80,6 +84,7 @@ class _LoginScreen extends State<LoginScreen> {
                             new EdgeInsets.only(left: 16, right: 16),
                         fillColor: Colors.white,
                         hintText: 'E-mail Address',
+                        hintStyle: TextStyle(color:Colors.white),
                         focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(25.0),
                             borderSide: BorderSide(
@@ -96,6 +101,7 @@ class _LoginScreen extends State<LoginScreen> {
                 padding:
                     const EdgeInsets.only(top: 32.0, right: 24.0, left: 24.0),
                 child: TextFormField(
+                    style: TextStyle(color: Colors.white),
                     textAlignVertical: TextAlignVertical.center,
                     validator: validatePassword,
                     onSaved: (String val) {
@@ -113,6 +119,7 @@ class _LoginScreen extends State<LoginScreen> {
                             new EdgeInsets.only(left: 16, right: 16),
                         fillColor: Colors.white,
                         hintText: 'Password',
+                        hintStyle: TextStyle(color:Colors.white),
                         focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(25.0),
                             borderSide: BorderSide(
@@ -145,75 +152,6 @@ class _LoginScreen extends State<LoginScreen> {
                       borderRadius: BorderRadius.circular(25.0),
                       side:
                           BorderSide(color: Color(Constants.COLOR_PRIMARY))),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(32.0),
-              child: Center(
-                child: Text(
-                  'OR',
-                  style: TextStyle(color: Colors.black),
-                ),
-              ),
-            ),
-            Padding(
-              padding:
-                  const EdgeInsets.only(right: 40.0, left: 40.0, bottom: 20),
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(minWidth: double.infinity),
-                child: RaisedButton.icon(
-                  label: Text(
-                    'Facebook Login',
-                    style:
-                        TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  icon: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Image.asset(
-                      'assets/images/facebook_logo.png',
-                      color: Colors.white,
-                      height: 30,
-                      width: 30,
-                    ),
-                  ),
-                  color: Color(Constants.FACEBOOK_BUTTON_COLOR),
-                  textColor: Colors.white,
-                  splashColor: Color(Constants.FACEBOOK_BUTTON_COLOR),
-                  onPressed: () async {
-                    final facebookLogin = FacebookLogin();
-                    final result = await facebookLogin.logIn(['email']);
-                    switch (result.status) {
-                      case FacebookLoginStatus.loggedIn:
-                        showProgress(
-                            context, 'Logging in, please wait...', false);
-                        await auth.FirebaseAuth.instance
-                            .signInWithCredential(
-                                auth.FacebookAuthProvider.credential(
-                                    result.accessToken.token))
-                            .then((auth.UserCredential authResult) async {
-                          Users user = await _fireStoreUtils
-                              .getCurrentUser(authResult.user.uid);
-                          if (user == null) {
-                            _createUserFromFacebookLogin(
-                                result, authResult.user.uid);
-                          } else {
-                            _syncUserDataWithFacebookData(result, user);
-                          }
-                        });
-                        break;
-                      case FacebookLoginStatus.cancelledByUser:
-                        break;
-                      case FacebookLoginStatus.error:
-                        showAlertDialog(context, 'Error',
-                            'Couldn\'t login via facebook.');
-                        break;
-                    }
-                  },
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25.0),
-                      side: BorderSide(
-                          color: Color(Constants.FACEBOOK_BUTTON_COLOR))),
                 ),
               ),
             ),
@@ -287,46 +225,5 @@ class _LoginScreen extends State<LoginScreen> {
       print(e.toString());
       return null;
     }
-  }
-
-  void _createUserFromFacebookLogin(
-      FacebookLoginResult result, String userID) async {
-    final token = result.accessToken.token;
-    final graphResponse = await http.get('https://graph.facebook.com/v2'
-        '.12/me?fields=name,first_name,last_name,email,picture.type(large)&access_token=$token');
-    final profile = json.decode(graphResponse.body);
-    Users user = Users(
-        firstName: profile['first_name'],
-        lastName: profile['last_name'],
-        email: profile['email'],
-        profilePictureURL: profile['picture']['data']['url'],
-        active: true,
-        userID: userID);
-    await FireStoreUtils.firestore
-        .collection(Constants.USERS)
-        .doc(userID)
-        .set(user.toJson())
-        .then((onValue) {
-      MyAppState.currentUser = user;
-      hideProgress();
-      pushAndRemoveUntil(context, HomeScreenx(user: user), false);
-    });
-  }
-
-  void _syncUserDataWithFacebookData(
-      FacebookLoginResult result, Users user) async {
-    final token = result.accessToken.token;
-    final graphResponse = await http.get('https://graph.facebook.com/v2'
-        '.12/me?fields=name,first_name,last_name,email,picture.type(large)&access_token=$token');
-    final profile = json.decode(graphResponse.body);
-    user.profilePictureURL = profile['picture']['data']['url'];
-    user.firstName = profile['first_name'];
-    user.lastName = profile['last_name'];
-    user.email = profile['email'];
-    user.active = true;
-    await FireStoreUtils.updateCurrentUser(user);
-    MyAppState.currentUser = user;
-    hideProgress();
-    pushAndRemoveUntil(context, HomeScreenx(user: user), false);
   }
 }

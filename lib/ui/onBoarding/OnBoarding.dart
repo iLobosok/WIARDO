@@ -55,7 +55,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         value: SystemUiOverlayStyle.light,
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Colors.grey[900],
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -76,9 +76,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Text(
+                          Center(child:Text(
                             'Find your style\naround the world',
                             style: kTitleStyle,
+                          ),
                           ),
                           SizedBox(height: 30.0),
                           Center(
@@ -103,9 +104,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Text(
+                          Center(
+                      child:Text(
                             'Connect with designers\n',
                             style: kTitleStyle,
+                          ),
                           ),
                           SizedBox(height: 30.0),
                           Center(
@@ -130,10 +133,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Text(
+                         Center(child: Text(
                             'You can start career\nlike designer',
                             style: kTitleStyle,
                           ),
+                         ),
                           SizedBox(height: 30.0),
                           Center(
                             child: Lottie.network(
@@ -197,7 +201,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           ? Container(
         height: 100.0,
         width: double.infinity,
-        color: Colors.white,
+        color: Colors.grey[900],
         child: InkWell(
           onTap: () {
             setFinishedOnBoarding();
@@ -209,7 +213,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               child: Text(
                 'Get started',
                 style: TextStyle(
-                  color: Color(0xFF5B16D0),
+                  color: Colors.white,
                   fontSize: 20.0,
                   fontWeight: FontWeight.bold,
                 ),

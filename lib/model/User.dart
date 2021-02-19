@@ -16,6 +16,7 @@ class Users {
   Timestamp lastOnlineTimestamp = Timestamp.now();
   String userID;
   String profilePictureURL = '';
+  String insta = '';
   bool selected = false;
   bool seller = false;
   String appIdentifier = '${Platform.operatingSystem}';
@@ -25,6 +26,7 @@ class Users {
       this.firstName,
         this.seller,
         this.subs,
+        this.insta,
       this.bio,
       this.phoneNumber,
       this.lastName,
@@ -47,6 +49,7 @@ class Users {
         firstName: parsedJson['firstName'] ?? '',
         lastName: parsedJson['lastName'] ?? '',
         bio: parsedJson['bio'] ?? '',
+        insta: parsedJson['instagram'] ?? '',
         active: parsedJson['active'] ?? false,
         ban: parsedJson['banned'] ?? false,
         lastOnlineTimestamp: parsedJson['lastOnlineTimestamp'],
@@ -61,6 +64,7 @@ class Users {
       'email': this.email,
       'subcribers' : this.subs,
       'seller': this.seller,
+      'instagram' : this.insta,
       'firstName': this.firstName,
       'lastName': this.lastName,
       'phoneNumber': this.phoneNumber,

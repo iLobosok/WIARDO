@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +16,23 @@ import '../../services/helper.dart';
 import '../Shop.dart';
 
 File _image;
-
+List randomImages =
+[
+  'https://cdn.pixabay.com/photo/2014/09/30/22/50/sandstone-467714_960_720.jpg',
+  'https://cdn.pixabay.com/photo/2020/06/15/15/34/fog-5302291_960_720.jpg',
+  'https://cdn.pixabay.com/photo/2020/12/23/14/41/forest-5855196_960_720.jpg',
+  'https://cdn.pixabay.com/photo/2020/10/21/09/49/beach-5672641_960_720.jpg',
+  'https://cdn.pixabay.com/photo/2020/12/18/15/29/mountains-5842346_960_720.jpg',
+  'https://cdn.pixabay.com/photo/2021/01/28/03/13/person-5956897_960_720.jpg',
+  'https://cdn.pixabay.com/photo/2020/12/10/08/44/mountains-5819651_960_720.jpg',
+  'https://cdn.pixabay.com/photo/2021/01/29/09/33/beach-5960371_960_720.jpg',
+  'https://cdn.pixabay.com/photo/2021/01/21/09/58/swan-5936863_960_720.jpg',
+];
+int min = 0;
+int max = randomImages.length-1;
+Random rnd = new Random();
+int r = min + rnd.nextInt(max - min);
+String image_to_print  = randomImages[r].toString();
 class SignUpScreen extends StatefulWidget {
   @override
   State createState() => _SignUpState();
@@ -26,7 +43,7 @@ class _SignUpState extends State<SignUpScreen> {
   TextEditingController _passwordController = new TextEditingController();
   GlobalKey<FormState> _key = new GlobalKey();
   AutovalidateMode _validate = AutovalidateMode.disabled;
-  String firstName, lastName, email, mobile, password, confirmPassword,bio;
+  String firstName, lastName, email, mobile, password, confirmPassword,bio, insta;
 
   bool sellerx = false;
 
@@ -37,13 +54,15 @@ class _SignUpState extends State<SignUpScreen> {
     }
 
     return Scaffold(
+      backgroundColor: Colors.grey[900],
       appBar: AppBar(
         elevation: 0.0,
         backgroundColor: Colors.transparent,
-        iconTheme: IconThemeData(color: Colors.black),
+        iconTheme: IconThemeData(color: Colors.white),
       ),
       body: SingleChildScrollView(
         child: new Container(
+          color: Colors.grey[900],
           margin: new EdgeInsets.only(left: 16.0, right: 16, bottom: 16),
           child: new Form(
             key: _key,
@@ -69,10 +88,6 @@ class _SignUpState extends State<SignUpScreen> {
 
   _onCameraClick() {
     final action = CupertinoActionSheet(
-      message: Text(
-        "Add profile picture",
-        style: TextStyle(fontSize: 15.0),
-      ),
       actions: <Widget>[
         CupertinoActionSheetAction(
           child: Text("Choose from gallery"),
@@ -80,26 +95,13 @@ class _SignUpState extends State<SignUpScreen> {
           onPressed: () async {
             Navigator.pop(context);
             PickedFile image =
-                await _imagePicker.getImage(source: ImageSource.gallery,imageQuality: 50);
+                await _imagePicker.getImage(source: ImageSource.gallery,imageQuality: 70);
             if (image != null)
               setState(() {
                 _image = File(image.path);
               });
           },
         ),
-        CupertinoActionSheetAction(
-          child: Text("Take a picture"),
-          isDestructiveAction: false,
-          onPressed: () async {
-            Navigator.pop(context);
-            PickedFile image =
-                await _imagePicker.getImage(source: ImageSource.camera);
-            if (image != null)
-              setState(() {
-                _image = File(image.path);
-              });
-          },
-        )
       ],
       cancelButton: CupertinoActionSheetAction(
         child: Text("Cancel"),
@@ -116,13 +118,13 @@ class _SignUpState extends State<SignUpScreen> {
       children: <Widget>[
         new Align(
             alignment: Alignment.topLeft,
-            child: Text(
+            child: Center(child:Text(
               'Create new account',
               style: TextStyle(
-                  color: Color(Constants.COLOR_PRIMARY),
+                  color: Colors.white,
                   fontWeight: FontWeight.bold,
                   fontSize: 25.0),
-            )),
+            )),),
         Padding(
           padding:
           const EdgeInsets.only(left: 8.0, top: 32, right: 8, bottom: 8),
@@ -131,7 +133,7 @@ class _SignUpState extends State<SignUpScreen> {
             children: <Widget>[
               CircleAvatar(
                 radius: 65,
-                backgroundColor: Colors.grey.shade400,
+                backgroundImage: NetworkImage('$image_to_print'),
                 child: ClipOval(
                   child: SizedBox(
                     width: 170,
@@ -166,6 +168,7 @@ class _SignUpState extends State<SignUpScreen> {
                 padding:
                 const EdgeInsets.only(top: 16.0, right: 8.0, left: 8.0),
                 child: TextFormField(
+                    style: TextStyle(color: Colors.white),
                     validator: validateName,
                     onSaved: (String val) {
                       firstName = val;
@@ -176,6 +179,7 @@ class _SignUpState extends State<SignUpScreen> {
                         contentPadding: new EdgeInsets.symmetric(
                             vertical: 8, horizontal: 16),
                         fillColor: Colors.white,
+                        hintStyle: TextStyle(color:Colors.white),
                         hintText: 'First Name',
                         focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(25.0),
@@ -191,6 +195,7 @@ class _SignUpState extends State<SignUpScreen> {
                 padding:
                 const EdgeInsets.only(top: 16.0, right: 8.0, left: 8.0),
                 child: TextFormField(
+                    style: TextStyle(color: Colors.white),
                     validator: validateName,
                     onSaved: (String val) {
                       lastName = val;
@@ -201,6 +206,7 @@ class _SignUpState extends State<SignUpScreen> {
                         contentPadding: new EdgeInsets.symmetric(
                             vertical: 8, horizontal: 16),
                         fillColor: Colors.white,
+                        hintStyle: TextStyle(color:Colors.white),
                         hintText: 'Last Name',
                         focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(25.0),
@@ -216,6 +222,7 @@ class _SignUpState extends State<SignUpScreen> {
                 padding:
                 const EdgeInsets.only(top: 16.0, right: 8.0, left: 8.0),
                 child: TextFormField(
+                    style: TextStyle(color: Colors.white),
                     keyboardType: TextInputType.phone,
                     textInputAction: TextInputAction.next,
                     onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
@@ -227,6 +234,7 @@ class _SignUpState extends State<SignUpScreen> {
                         contentPadding: new EdgeInsets.symmetric(
                             vertical: 8, horizontal: 16),
                         fillColor: Colors.white,
+                        hintStyle: TextStyle(color:Colors.white),
                         hintText: 'Mobile Number',
                         focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(25.0),
@@ -242,6 +250,7 @@ class _SignUpState extends State<SignUpScreen> {
                 padding:
                 const EdgeInsets.only(top: 16.0, right: 8.0, left: 8.0),
                 child: TextFormField(
+                    style: TextStyle(color: Colors.white),
                     keyboardType: TextInputType.emailAddress,
                     textInputAction: TextInputAction.next,
                     onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
@@ -253,6 +262,7 @@ class _SignUpState extends State<SignUpScreen> {
                         contentPadding: new EdgeInsets.symmetric(
                             vertical: 8, horizontal: 16),
                         fillColor: Colors.white,
+                        hintStyle: TextStyle(color:Colors.white),
                         hintText: 'Email Address',
                         focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(25.0),
@@ -267,6 +277,7 @@ class _SignUpState extends State<SignUpScreen> {
             child: Padding(
               padding: const EdgeInsets.only(top: 16.0, right: 8.0, left: 8.0),
               child: TextFormField(
+                  style: TextStyle(color: Colors.white,height: 0.8, fontSize: 18.0),
                   obscureText: true,
                   textInputAction: TextInputAction.next,
                   onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
@@ -275,12 +286,12 @@ class _SignUpState extends State<SignUpScreen> {
                   onSaved: (String val) {
                     password = val;
                   },
-                  style: TextStyle(height: 0.8, fontSize: 18.0),
                   cursorColor: Color(Constants.COLOR_PRIMARY),
                   decoration: InputDecoration(
                       contentPadding:
                       new EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                       fillColor: Colors.white,
+                      hintStyle: TextStyle(color:Colors.white),
                       hintText: 'Password',
                       focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(25.0),
@@ -296,6 +307,7 @@ class _SignUpState extends State<SignUpScreen> {
           child: Padding(
             padding: const EdgeInsets.only(top: 16.0, right: 8.0, left: 8.0),
             child: TextFormField(
+                style: TextStyle(color: Colors.white,height: 0.8, fontSize: 18.0),
                 textInputAction: TextInputAction.done,
                 onFieldSubmitted: (_) {
                   _sendToServer();
@@ -306,12 +318,12 @@ class _SignUpState extends State<SignUpScreen> {
                 onSaved: (String val) {
                   confirmPassword = val;
                 },
-                style: TextStyle(height: 0.8, fontSize: 18.0),
                 cursorColor: Color(Constants.COLOR_PRIMARY),
                 decoration: InputDecoration(
                     contentPadding:
                     new EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                     fillColor: Colors.white,
+                    hintStyle: TextStyle(color:Colors.white),
                     hintText: 'Confirm Password',
                     focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(25.0),
@@ -328,6 +340,7 @@ class _SignUpState extends State<SignUpScreen> {
                 padding:
                 const EdgeInsets.only(top: 16.0, right: 8.0, left: 8.0),
                 child: TextFormField(
+                    style: TextStyle(color: Colors.white),
                   onSaved: (String val) {
                       bio = val;
                     },
@@ -338,6 +351,7 @@ class _SignUpState extends State<SignUpScreen> {
                         contentPadding: new EdgeInsets.symmetric(
                             vertical: 8, horizontal: 16),
                         fillColor: Colors.white,
+                        hintStyle: TextStyle(color:Colors.white),
                         hintText: 'Bio: Designer, 23 y.o.',
                         focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(25.0),
@@ -352,7 +366,7 @@ class _SignUpState extends State<SignUpScreen> {
     unselectedWidgetColor: Colors.white,
     ),
         child:CheckboxListTile(
-          title: Text("I'm seller?", style: TextStyle(color: Colors.blueAccent),),
+          title: Text("Am i seller?", style: TextStyle(color: Colors.blueAccent),),
           value: sellerx,
           checkColor: Colors.green,
           activeColor: Colors.white,
@@ -363,6 +377,33 @@ class _SignUpState extends State<SignUpScreen> {
           },
           ),
     ),
+        ConstrainedBox(
+            constraints: BoxConstraints(minWidth: double.infinity),
+            child: Padding(
+                padding:
+                const EdgeInsets.only(top: 16.0, right: 8.0, left: 8.0),
+                child: TextFormField(
+                    style: TextStyle(color: Colors.white),
+                    onSaved: (String val) {
+                      insta = val;
+                    },
+                    autovalidateMode: _validate,
+                    textInputAction: TextInputAction.next,
+                    onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
+                    decoration: InputDecoration(
+                        contentPadding: new EdgeInsets.symmetric(
+                            vertical: 8, horizontal: 16),
+                        fillColor: Colors.white,
+                        hintStyle: TextStyle(color:Colors.white),
+                        hintText: 'Your instagram',
+                        focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(25.0),
+                            borderSide: BorderSide(
+                                color: Color(Constants.COLOR_PRIMARY),
+                                width: 2.0)),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                        ))))),
         Padding(
           padding: const EdgeInsets.only(right: 40.0, left: 40.0, top: 40.0),
           child: ConstrainedBox(
@@ -386,9 +427,13 @@ class _SignUpState extends State<SignUpScreen> {
       ],
     );
   }
-
+  bool haventinsta = false;
   _sendToServer() async {
-    if (_key.currentState.validate()) {
+    if (insta == '')
+      {
+        haventinsta = true;
+      }
+    if (_key.currentState.validate() || insta == false) {
       _key.currentState.save();
       showProgress(context, 'Please wait...', false);
       var profilePicUrl = '';
@@ -408,6 +453,7 @@ class _SignUpState extends State<SignUpScreen> {
             ban: false,
             seller: sellerx,
             bio: bio,
+            insta: insta,
             userID: result.user.uid,
             active: true,
             lastName: lastName,

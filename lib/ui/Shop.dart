@@ -354,6 +354,7 @@ class Shopping extends State<Shop> {
             name: dataList[index].name,
             img: dataList[index].img,
             cost: dataList[index].cost,
+            insta: user.insta,
             type: dataList[index].type,
             description: dataList[index].description
           )
@@ -363,7 +364,7 @@ class Shopping extends State<Shop> {
   }
 }
 
-Widget CardUI({String name,String type, String cost, String img, BuildContext context, String description}) {
+Widget CardUI({String name,String type, String cost, String img, String insta, BuildContext context, String description}) {
   return Card(
     color: Colors.transparent,
     child: Center(
@@ -439,10 +440,12 @@ Widget CardUI({String name,String type, String cost, String img, BuildContext co
               ),
             ),
             onTap: () {
+
               Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) =>
                       ProductInformation(
+                        inss: insta,
                         img: img,
                         name: name,
                         description: description,

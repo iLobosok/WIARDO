@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_login_screen/model/Product.dart';
+import 'package:flutter_login_screen/model/User.dart';
 import 'package:flutter_login_screen/services/Authenticate.dart';
 import 'package:flutter_login_screen/services/helper.dart';
 import 'package:flutter_login_screen/constants.dart';
@@ -39,7 +40,9 @@ class AddingProduct extends StatelessWidget {
 }
 
 class AddProduct extends StatefulWidget {
-  AddProduct({Key key, this.title, this.description}) : super(key: key);
+  final Users user;
+
+  AddProduct({Key key, @required this.user, this.title, this.description}) : super(key: key);
   final String title, description;
   @override
   _AdgProductState createState() => _AdgProductState();
@@ -57,7 +60,7 @@ class _AdgProductState extends State<AddProduct> {
             child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  SizedBox(height: 10,),
+                  SizedBox(height: 15,),
                   Text("Add your product",
                       style: TextStyle(
                         color:Colors.white,
@@ -92,7 +95,7 @@ class _AddProductsState extends State<AddProducts> {
   AutovalidateMode _validate = AutovalidateMode.disabled;
   final costController = TextEditingController();
   final dbRef = FirebaseDatabase.instance.reference().child("Data");
-  String title, description, productID, product, password, confirmPassword,bio;
+  String title, description, productID, product, insta;
 
 
   Future<void> retrieveLostData() async {

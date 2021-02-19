@@ -12,17 +12,18 @@ class AuthScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[900],
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            SizedBox(height: 80,),
             Center(
               child: Lottie.network(
                 //Lottie
-                'https://assets8.lottiefiles.com/packages/lf20_jcikwtux.json',
-                width: 250,
-                height: 300,
+                'https://assets1.lottiefiles.com/packages/lf20_XRLjtE.json',
+                width: 350,
+                repeat: true,
+                height: 520,
                 fit: BoxFit.fill,
               ),
             ),
@@ -30,7 +31,7 @@ class AuthScreen extends StatelessWidget {
               'Register your account',
               textAlign: TextAlign.center,
               style: TextStyle(
-                  color: Color(Constants.COLOR_PRIMARY),
+                  color: Colors.white,
                   fontSize: 25.0,
                   fontWeight: FontWeight.bold),
             ),
@@ -38,7 +39,7 @@ class AuthScreen extends StatelessWidget {
               padding: const EdgeInsets.all(16.0),
               child: Text(
                 'Explore new wave of futuristic wear',
-                style: TextStyle(fontSize: 18),
+                style: TextStyle(fontSize: 18, color: Colors.white),
                 textAlign: TextAlign.center,
               ),
             ),
@@ -69,10 +70,11 @@ class AuthScreen extends StatelessWidget {
               child: ConstrainedBox(
                 constraints: const BoxConstraints(minWidth: double.infinity),
                 child: FlatButton(
-                  textColor: Colors.black54,
+                  color: Colors.white,
+                  textColor: Colors.white,
                   child: Text(
                     'Sign Up',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(Constants.COLOR_PRIMARY)),
                   ),
                   onPressed: () {
                     push(context, new SignUpScreen());
