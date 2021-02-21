@@ -16,7 +16,7 @@ class Users {
   Timestamp lastOnlineTimestamp = Timestamp.now();
   String userID;
   String profilePictureURL = '';
-  String insta = '';
+  String insta;
   bool selected = false;
   bool seller = false;
   String appIdentifier = '${Platform.operatingSystem}';

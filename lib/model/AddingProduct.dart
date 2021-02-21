@@ -1,58 +1,34 @@
 import 'dart:math';
-
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_login_screen/model/User.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_login_screen/model/Product.dart';
-import 'package:flutter_login_screen/model/User.dart';
-import 'package:flutter_login_screen/services/Authenticate.dart';
-import 'package:flutter_login_screen/services/helper.dart';
-import 'package:flutter_login_screen/constants.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:flutter_login_screen/constants.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_login_screen/ui/Shop.dart';
 import 'dart:io';
 
-import '../main.dart';
 FirebaseStorage storage = FirebaseStorage.instance;
 File _image;
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  runApp(AddingProduct());
-}
-
-class AddingProduct extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Products',
-      home: AddProduct(title: 'Adding product'),
-    );
-  }
-}
 
 class AddProduct extends StatefulWidget {
   final Users user;
 
-  AddProduct({Key key, @required this.user, this.title, this.description}) : super(key: key);
-  final String title, description;
+  AddProduct({Key key, @required this.user, this.title, this.description, this.inst}) : super(key: key);
+  final String title, description, inst;
   @override
-  _AdgProductState createState() => _AdgProductState();
+  _AdgProductState createState() {
+    return _AdgProductState(user);
+  }
 }
 
 class _AdgProductState extends State<AddProduct> {
-
+  final Users user;
+  _AdgProductState(this.user);
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: Colors.grey[900],
       body: Center(
@@ -66,24 +42,28 @@ class _AdgProductState extends State<AddProduct> {
                         color:Colors.white,
                           fontSize: 30,
                           )),
-                  AddProducts(),
+                  AddProducts(user: user,),
                 ]),
           )),
     );
-
   }
 }
 
 
 
 class AddProducts extends StatefulWidget {
-  AddProducts({Key key}) : super(key: key);
+  final Users user;
+  AddProducts({Key key, @required this.user}) : super(key: key);
 
   @override
-  _AddProductsState createState() => _AddProductsState();
+  _AddProductsState createState() {
+    return _AddProductsState(user);
+  }
 }
 
 class _AddProductsState extends State<AddProducts> {
+  final Users user;
+  _AddProductsState(this.user);
   final _formKey = GlobalKey<FormState>();
   final listOfPets = ["Shoppers", "Shirts", "T-Shirts", "Shoes", "Shorts", "Pants", "Masks", "Glasses"];
   String dropdownValue = 'Shoppers';
@@ -95,9 +75,7 @@ class _AddProductsState extends State<AddProducts> {
   AutovalidateMode _validate = AutovalidateMode.disabled;
   final costController = TextEditingController();
   final dbRef = FirebaseDatabase.instance.reference().child("Data");
-  String title, description, productID, product, insta;
-
-
+  String title, description, productID, product, inst;
   Future<void> retrieveLostData() async {
     final LostData response = await _imagePicker.getLostData();
     if (response == null) {
@@ -111,6 +89,7 @@ class _AddProductsState extends State<AddProducts> {
   }
   var imgUrl = '';
   _onCameraClick() async {
+   inst = '${user.insta.toString()}';
     Random random = new Random();
     int randomNumber = random.nextInt(9999999);
     productID = '$randomNumber';
@@ -124,7 +103,7 @@ class _AddProductsState extends State<AddProducts> {
     //Upload the file to firebase
     UploadTask uploadTask = reference.putFile(_image);
     TaskSnapshot taskSnapshot = await uploadTask;
-   imgUrl = '${await taskSnapshot.ref.getDownloadURL()}';
+    imgUrl = '${await taskSnapshot.ref.getDownloadURL()}';
     return imgUrl;
   }
 
@@ -288,6 +267,7 @@ class _AddProductsState extends State<AddProducts> {
                               "name": titleController.text,
                               "description": descriptionController.text,
                               "cost": costController.text,
+                              "instagram" : inst.toString(),
                               "type": dropdownValue,
                               "imgUrl": imgUrl,
                               "productID":productID,

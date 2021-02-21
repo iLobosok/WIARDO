@@ -119,9 +119,9 @@ class Shopping extends State<Shop> {
         leading: user.seller == true ? InkWell(
           onTap: () {
             Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => AddingProduct()));
-            //uploadImage();
+              context,
+              MaterialPageRoute(builder: (context) =>
+                  AddProduct(user: user,)));
           },
           child: Icon(
             Icons.add,
@@ -325,6 +325,7 @@ class Shopping extends State<Shop> {
           name: values[key]["name"],
           type: values[key]["type"],
           cost: values[key]["cost"],
+          inst: values[key]["instagram"],
           description: values[key]["description"],
         );
         dataList.add(data);
@@ -354,7 +355,7 @@ class Shopping extends State<Shop> {
             name: dataList[index].name,
             img: dataList[index].img,
             cost: dataList[index].cost,
-            insta: user.insta,
+            inst: dataList[index].inst,
             type: dataList[index].type,
             description: dataList[index].description
           )
@@ -364,7 +365,7 @@ class Shopping extends State<Shop> {
   }
 }
 
-Widget CardUI({String name,String type, String cost, String img, String insta, BuildContext context, String description}) {
+Widget CardUI({String name,String type, String cost, String img, String inst, BuildContext context, String description}) {
   return Card(
     color: Colors.transparent,
     child: Center(
@@ -445,7 +446,7 @@ Widget CardUI({String name,String type, String cost, String img, String insta, B
                   context,
                   MaterialPageRoute(builder: (context) =>
                       ProductInformation(
-                        inss: insta,
+                        inst: inst,
                         img: img,
                         name: name,
                         description: description,

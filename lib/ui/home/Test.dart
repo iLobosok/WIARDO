@@ -50,6 +50,7 @@ class _HomeState extends State<HomeScreenx> {
   _HomeState(this.user);
   @override
   Widget build(BuildContext context) {
+
     if ((user.seller) != true)
     {
       imseller = 'Buyer';

@@ -67,7 +67,7 @@ class _LoginScreen extends State<LoginScreen> {
                 padding:
                     const EdgeInsets.only(top: 32.0, right: 24.0, left: 24.0),
                 child: TextFormField(
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(color: Colors.white,fontSize: 18.0),
                     textAlignVertical: TextAlignVertical.center,
                     textInputAction: TextInputAction.next,
                     validator: validateEmail,
@@ -76,7 +76,6 @@ class _LoginScreen extends State<LoginScreen> {
                     },
                     onFieldSubmitted: (_) =>
                         FocusScope.of(context).nextFocus(),
-                    style: TextStyle(fontSize: 18.0),
                     keyboardType: TextInputType.emailAddress,
                     cursorColor: Color(Constants.COLOR_PRIMARY),
                     decoration: InputDecoration(
@@ -101,7 +100,7 @@ class _LoginScreen extends State<LoginScreen> {
                 padding:
                     const EdgeInsets.only(top: 32.0, right: 24.0, left: 24.0),
                 child: TextFormField(
-                    style: TextStyle(color: Colors.white),
+                    style: TextStyle(color: Colors.white,fontSize: 18.0),
                     textAlignVertical: TextAlignVertical.center,
                     validator: validatePassword,
                     onSaved: (String val) {
@@ -112,7 +111,6 @@ class _LoginScreen extends State<LoginScreen> {
                     },
                     obscureText: true,
                     textInputAction: TextInputAction.done,
-                    style: TextStyle(fontSize: 18.0),
                     cursorColor: Color(Constants.COLOR_PRIMARY),
                     decoration: InputDecoration(
                         contentPadding:

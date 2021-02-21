@@ -4,14 +4,13 @@ import 'package:flutter_login_screen/model/config.dart';
 import 'package:url_launcher/url_launcher.dart';
 class ProductInformation extends StatefulWidget {
   final img;
-  final insta;
   final name;
   final description;
-  final String inss;
+  final String inst;
 
   @override
-  const ProductInformation({Key key, this.img, this.name,this.description, this.insta, this.inss}) : super(key: key);
-  ProductInfo createState() => ProductInfo(img: img, name: name, description: description, inst: inss);
+  const ProductInformation({Key key, this.img, this.name,this.description, this.inst}) : super(key: key);
+  ProductInfo createState() => ProductInfo(img: img, name: name, description: description, inst: inst);
 }
 
 
@@ -35,11 +34,6 @@ class ProductInfo extends State<ProductInformation> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0.0,
-        backgroundColor: Colors.transparent,
-        iconTheme: IconThemeData(color: Colors.white),
-      ),
       key: _scaffoldKey,
       body: SingleChildScrollView(
           child: Hero(
