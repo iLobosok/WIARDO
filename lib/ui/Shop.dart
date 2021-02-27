@@ -16,6 +16,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart'; // For Image Picker
 import 'package:path/path.dart' as Path;
 
+import 'favorites/favorites.dart';
+
 
 class Shop extends StatefulWidget {
   final Users user;
@@ -50,7 +52,8 @@ class Shopping extends State<Shop> {
   final Users user;
   var WidgetList = List<Widget>();
   List images_collection = [];
-  List<Data> dataList = []; //тут будет список виджетов данных для виджетов, котрый создастся при чтении данных с бд
+  List<Data> dataList = [
+  ]; //тут будет список виджетов данных для виджетов, котрый создастся при чтении данных с бд
   DatabaseReference databaseReference = FirebaseDatabase.instance
       .reference(); // инициализация бд
 
@@ -60,6 +63,7 @@ class Shopping extends State<Shop> {
   Widget build(BuildContext context) {
     getDataFromFirebaseAndBuildCarousel();
     getDataFromFirebaseAndBuildList(); //вызываем функцию, которая создаст список виджетов и отрисует их
+    setState(() {});
     String imageUrl;
     int min = 1,
         max = 99999999;
@@ -79,11 +83,10 @@ class Shopping extends State<Shop> {
       await Permission.photos.request();
 
       var permissionStatus = await Permission.photos.status;
-      if (user.profilePictureURL == '' || user.profilePictureURL == null)
-        {
-          // проверка на имение картинки, если нет - присваиваем рандомную
-          user.profilePictureURL = '$image_to_print';
-        }
+      if (user.profilePictureURL == '' || user.profilePictureURL == null) {
+        // проверка на имение картинки, если нет - присваиваем рандомную
+        user.profilePictureURL = '$image_to_print';
+      }
       if (permissionStatus.isGranted) {
         //Select Image
         image = await _imagePicker.getImage(source: ImageSource.gallery,
@@ -119,9 +122,9 @@ class Shopping extends State<Shop> {
         leading: user.seller == true ? InkWell(
           onTap: () {
             Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) =>
-                  AddProduct(user: user,)));
+                context,
+                MaterialPageRoute(builder: (context) =>
+                    AddProduct(user: user,)));
           },
           child: Icon(
             Icons.add,
@@ -133,7 +136,9 @@ class Shopping extends State<Shop> {
               padding: EdgeInsets.only(left: 20.0),
               child: GestureDetector(
                 onTap: () {
-                  //favourite list of cards
+                  Navigator.push(context, MaterialPageRoute(
+                      builder: (context) =>
+                          Favorites())); //favourite list of cards
                 },
                 child: Icon(
                   Icons.star_outline,
@@ -181,7 +186,10 @@ class Shopping extends State<Shop> {
                           fontSize: 25,
                           fontWeight: FontWeight.bold),
                     ),
-                    SizedBox(width: MediaQuery.of(context).size.width * 0.39,),
+                    SizedBox(width: MediaQuery
+                        .of(context)
+                        .size
+                        .width * 0.39,),
                     Align(
                       alignment: FractionalOffset(3, 3),
                       child: InkWell(
@@ -189,12 +197,13 @@ class Shopping extends State<Shop> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(builder: (context) =>
-                                    HomeScreenx(user: user, )));
+                                    HomeScreenx(user: user,)));
                           },
                           child: CircleAvatar(
                             //circle avatar
                             radius: 30.0,
-                            backgroundImage: NetworkImage('${user.profilePictureURL}'),
+                            backgroundImage: NetworkImage(
+                                'https://i.ytimg.com/vi/DwL3CaKIuoA/maxresdefault.jpg'),
                             backgroundColor: Colors.transparent,
                           )
                       ),
@@ -207,7 +216,8 @@ class Shopping extends State<Shop> {
                 height: 20,
               ),
               Container(
-                padding:  EdgeInsets.symmetric(horizontal: Paddings.getPadding(context, 0.02)),
+                padding: EdgeInsets.symmetric(
+                    horizontal: Paddings.getPadding(context, 0.02)),
                 child: Container(
                   padding: EdgeInsets.all(5),
                   decoration: BoxDecoration(
@@ -249,7 +259,10 @@ class Shopping extends State<Shop> {
                     ),
                     Container(
                       height: 200,
-                      width: MediaQuery.of(context).size.width,
+                      width: MediaQuery
+                          .of(context)
+                          .size
+                          .width,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(5),
                         child: CarouselSlider(
@@ -293,16 +306,29 @@ class Shopping extends State<Shop> {
                     ),
                     SizedBox(height: 20,),
 
-
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: <Widget>[
-                        if(WidgetList.isEmpty)
-                          Text('Wait for a пару секунд')
-                        else
-                          ...WidgetList,
-                      ],
+                    Container(
+                      child: dataList.length == 0
+                          ? Center(child: Text('no data', style: TextStyle(
+                          fontSize: 20),))
+                          : ListView.builder(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: dataList.length,
+                          itemBuilder: (_, index) {
+                            print(index);
+                            return CardUI(
+                                name: dataList[index].name,
+                                img: dataList[index].img,
+                                inst: dataList[index].inst,
+                                description: dataList[index].description,
+                                type: dataList[index].type,
+                                cost: dataList[index].cost,
+                                context: context
+                            );
+                          }
+                      ),
                     ),
+
 
                   ],
                 ),
@@ -316,7 +342,8 @@ class Shopping extends State<Shop> {
 
   void getDataFromFirebaseAndBuildList() {
     databaseReference.once().then((DataSnapshot snapshot) { //получаем данные
-      dataList.clear(); //очищаем список (дабы не возникло путаницы с повторением элементов)
+      dataList
+          .clear(); //очищаем список (дабы не возникло путаницы с повторением элементов)
       var keys = snapshot.value['Data'].keys; //получаем ключи
       var values = snapshot.value['Data']; //получаем значения
       for (var key in keys) { // бежим по ключам и добавляем значение их пары в отдельный класс
@@ -330,38 +357,19 @@ class Shopping extends State<Shop> {
         );
         dataList.add(data);
       }
-      BuildWidgetList();
     }
     );
-
   }
+
   void getDataFromFirebaseAndBuildCarousel() {
     databaseReference.once().then((DataSnapshot snapshot) { //получаем данные
       var keys = snapshot.value['PromoToday'].keys; //получаем ключи
       var values = snapshot.value['PromoToday']; //получаем значения
-      for(var key in keys){
+      for (var key in keys) {
         images_collection.add(values[key]);
       }
     }
     );
-
-  }
-  void BuildWidgetList(){
-    WidgetList.clear();
-    for(int index = 0; index < dataList.length; index = index + 1) {
-      WidgetList.add(
-          CardUI(
-            context: context,
-            name: dataList[index].name,
-            img: dataList[index].img,
-            cost: dataList[index].cost,
-            inst: dataList[index].inst,
-            type: dataList[index].type,
-            description: dataList[index].description
-          )
-      );
-    }
-    setState((){});
   }
 }
 
