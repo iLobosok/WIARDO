@@ -62,24 +62,57 @@ class ProductInfo extends State<ProductInformation> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                         SizedBox(height: 10,),
                         InkWell(
+                          child:Container(
+                            width: 45,
+                            height: 45,
+                            child: Icon(
+                              Icons.arrow_back,
+                              color: Colors.white,
+                              size: 20,
+                            ),
+                          ),
+                          onTap: (){
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                         SizedBox(height: 10,),
+
+                        _isFavorite == true ? InkWell(
+                          child:Container(
+                            width: 35,
+                            height: 35,
+                            child: Center(
+                              child: Icon(
+                                Icons.favorite_border,
+                                size: 20,
+                                color: Colors.red,
+                              ),
+                            ),
+                          ),
+                          onTap: (){
+                            _isFavorite = false;
+                            setState(() {
+
+                            });
+                          },
+                        ) : InkWell (
                         child:Container(
                           width: 35,
                           height: 35,
-                          decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.white
-                          ),
                           child: Center(
                             child: Icon(
                                 Icons.favorite_border,
                                 size: 20,
+                              color: Colors.white,
                             ),
                           ),
                         ),
                           onTap: (){
-                            _isFavorite = !_isFavorite;
+                            _isFavorite = true;
+                            setState(() {
+
+                            });
                           },
                         ),
                       ],

@@ -25,13 +25,8 @@ int max = randomImages.length-1;
 Random rnd = new Random();
 int r = min + rnd.nextInt(max - min);
 String image_to_print  = randomImages[r].toString();
-final RoundedLoadingButtonController _btnController = new RoundedLoadingButtonController();
 
-void _doSomething() async {
-  Timer(Duration(seconds: 2), () {
-    _btnController.success();
-  });
-}
+
 class HomeScreenx extends StatefulWidget {
   final Users user;
 

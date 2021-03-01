@@ -16,7 +16,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart'; // For Image Picker
 import 'package:path/path.dart' as Path;
 
-import 'favorites/favorites.dart';
 
 
 class Shop extends StatefulWidget {
@@ -132,21 +131,21 @@ class Shopping extends State<Shop> {
           ),
         ) : null,
         actions: <Widget>[
-          Padding(
-              padding: EdgeInsets.only(left: 20.0),
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.push(context, MaterialPageRoute(
-                      builder: (context) =>
-                          Favorites())); //favourite list of cards
-                },
-                child: Icon(
-                  Icons.star_outline,
-                  size: 26.0,
-                  color: Colors.white,
-                ),
-              )
-          ),
+          // Padding(
+          //     padding: EdgeInsets.only(left: 20.0),
+          //     child: GestureDetector(
+          //       onTap: () {
+          //         Navigator.push(context, MaterialPageRoute(
+          //             builder: (context) =>
+          //                 Favorites())); //favourite list of cards
+          //       },
+          //       child: Icon(
+          //         Icons.star_outline,
+          //         size: 26.0,
+          //         color: Colors.white,
+          //       ),
+          //     )
+          // ),
           Padding(
               padding: EdgeInsets.only(left: 20.0),
               child: GestureDetector(
@@ -342,8 +341,7 @@ class Shopping extends State<Shop> {
 
   void getDataFromFirebaseAndBuildList() {
     databaseReference.once().then((DataSnapshot snapshot) { //получаем данные
-      dataList
-          .clear(); //очищаем список (дабы не возникло путаницы с повторением элементов)
+      dataList.clear(); //очищаем список (дабы не возникло путаницы с повторением элементов)
       var keys = snapshot.value['Data'].keys; //получаем ключи
       var values = snapshot.value['Data']; //получаем значения
       for (var key in keys) { // бежим по ключам и добавляем значение их пары в отдельный класс
@@ -357,6 +355,8 @@ class Shopping extends State<Shop> {
         );
         dataList.add(data);
       }
+      setState(() {}
+      );
     }
     );
   }
