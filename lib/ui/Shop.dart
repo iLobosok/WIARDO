@@ -1,5 +1,6 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_login_screen/model/AddingProduct.dart';
+import 'package:flutter_login_screen/model/Favourite.dart';
 import 'package:flutter_login_screen/model/User.dart';
 import 'package:flutter_login_screen/model/config.dart';
 import 'package:flutter_login_screen/ui/ProductInfo/ProductInfo.dart';
@@ -131,30 +132,16 @@ class Shopping extends State<Shop> {
           ),
         ) : null,
         actions: <Widget>[
-          // Padding(
-          //     padding: EdgeInsets.only(left: 20.0),
-          //     child: GestureDetector(
-          //       onTap: () {
-          //         Navigator.push(context, MaterialPageRoute(
-          //             builder: (context) =>
-          //                 Favorites())); //favourite list of cards
-          //       },
-          //       child: Icon(
-          //         Icons.star_outline,
-          //         size: 26.0,
-          //         color: Colors.white,
-          //       ),
-          //     )
-          // ),
           Padding(
               padding: EdgeInsets.only(left: 20.0),
               child: GestureDetector(
                 onTap: () {
-                  //menu button: change theme, log out and other
-
+                  Navigator.push(context, MaterialPageRoute(
+                      builder: (context) =>
+                          Favourite())); //favourite list of cards
                 },
                 child: Icon(
-                  Icons.menu_rounded,
+                  Icons.favorite_border,
                   size: 26.0,
                   color: Colors.white,
                 ),
@@ -201,8 +188,8 @@ class Shopping extends State<Shop> {
                           child: CircleAvatar(
                             //circle avatar
                             radius: 30.0,
-                            backgroundImage: NetworkImage(
-                                'https://i.ytimg.com/vi/DwL3CaKIuoA/maxresdefault.jpg'),
+                            foregroundImage: NetworkImage('${user.profilePictureURL}'),
+                            backgroundImage: NetworkImage('https://i.ytimg.com/vi/DwL3CaKIuoA/maxresdefault.jpg'),
                             backgroundColor: Colors.transparent,
                           )
                       ),
@@ -223,6 +210,7 @@ class Shopping extends State<Shop> {
                       color: Colors.grey[900],
                       borderRadius: BorderRadius.circular(15)),
                   child: TextField(
+                    style: TextStyle(color: Colors.white),
                     decoration: InputDecoration(
                         border: InputBorder.none,
                         prefixIcon: Icon(
@@ -230,8 +218,7 @@ class Shopping extends State<Shop> {
                           color: Colors.white,
                         ),
                         hintText: "Search something",
-                        hintStyle:
-                        TextStyle(color: Colors.grey, fontSize: 15)),
+                        hintStyle: TextStyle(color: Colors.grey, fontSize: 15)),
                   ),
                 ),
               ),

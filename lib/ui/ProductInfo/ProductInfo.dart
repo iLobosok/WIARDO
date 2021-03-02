@@ -66,9 +66,13 @@ class ProductInfo extends State<ProductInformation> {
                           child:Container(
                             width: 45,
                             height: 45,
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.white
+                            ),
                             child: Icon(
                               Icons.arrow_back,
-                              color: Colors.white,
+                              color: Colors.black,
                               size: 20,
                             ),
                           ),
@@ -82,6 +86,10 @@ class ProductInfo extends State<ProductInformation> {
                           child:Container(
                             width: 35,
                             height: 35,
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.white
+                            ),
                             child: Center(
                               child: Icon(
                                 Icons.favorite_border,
@@ -100,11 +108,15 @@ class ProductInfo extends State<ProductInformation> {
                         child:Container(
                           width: 35,
                           height: 35,
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.white
+                          ),
                           child: Center(
                             child: Icon(
                                 Icons.favorite_border,
                                 size: 20,
-                              color: Colors.white,
+                              color: Colors.black,
                             ),
                           ),
                         ),
