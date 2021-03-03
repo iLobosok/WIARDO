@@ -453,6 +453,7 @@ class _SignUpState extends State<SignUpScreen> {
             ban: false,
             seller: sellerx,
             bio: bio,
+            favorites: {},
             insta: insta,
             userID: result.user.uid,
             active: true,
