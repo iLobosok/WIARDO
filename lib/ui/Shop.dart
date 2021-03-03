@@ -58,12 +58,16 @@ class Shopping extends State<Shop> {
       .reference(); // инициализация бд
 
   Shopping(this.user);
-
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    // TODO: implement initState
+    super.initState();
     getDataFromFirebaseAndBuildCarousel();
     getDataFromFirebaseAndBuildList(); //вызываем функцию, которая создаст список виджетов и отрисует их
-    setState(() {});
+  }
+  @override
+  Widget build(BuildContext context) {
+
     String imageUrl;
     int min = 1,
         max = 99999999;
@@ -188,8 +192,7 @@ class Shopping extends State<Shop> {
                           child: CircleAvatar(
                             //circle avatar
                             radius: 30.0,
-                            foregroundImage: NetworkImage('${user.profilePictureURL}'),
-                            backgroundImage: NetworkImage('https://i.ytimg.com/vi/DwL3CaKIuoA/maxresdefault.jpg'),
+                            backgroundImage: NetworkImage('https://i.ytimg.com/vi/DwL3CaKIuoA/maxresdefault.jpg'),//${user.profilePictureURL}
                             backgroundColor: Colors.transparent,
                           )
                       ),
@@ -309,6 +312,7 @@ class Shopping extends State<Shop> {
                                 description: dataList[index].description,
                                 type: dataList[index].type,
                                 cost: dataList[index].cost,
+                                productID: dataList[index].productID,
                                 context: context
                             );
                           }
@@ -333,17 +337,19 @@ class Shopping extends State<Shop> {
       var values = snapshot.value['Data']; //получаем значения
       for (var key in keys) { // бежим по ключам и добавляем значение их пары в отдельный класс
         Data data = Data(
-          img: values[key]["imgUrl"],
-          name: values[key]["name"],
-          type: values[key]["type"],
-          cost: values[key]["cost"],
-          inst: values[key]["instagram"],
-          description: values[key]["description"],
+            img: values[key]["imgUrl"],
+            name: values[key]["name"],
+            type: values[key]["type"],
+            cost: values[key]["cost"],
+            inst: values[key]["instagram"],
+            description: values[key]["description"],
+            productID: values[key]["productID"]
         );
         dataList.add(data);
       }
-      setState(() {}
-      );
+      setState(() {
+
+      });
     }
     );
   }
@@ -360,7 +366,7 @@ class Shopping extends State<Shop> {
   }
 }
 
-Widget CardUI({String name,String type, String cost, String img, String inst, BuildContext context, String description}) {
+Widget CardUI({String name,String type, String cost, String img, String inst, BuildContext context, String description, String productID}) {
   return Card(
     color: Colors.transparent,
     child: Center(
@@ -445,6 +451,9 @@ Widget CardUI({String name,String type, String cost, String img, String inst, Bu
                         img: img,
                         name: name,
                         description: description,
+                        productID: productID,
+                        type: type,
+                        cost: cost,
                       )
                   )
               );
