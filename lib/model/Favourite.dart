@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_login_screen/model/User.dart';
 import 'package:flutter_login_screen/ui/ProductInfo/ProductInfo.dart';
@@ -20,21 +22,27 @@ class Favourite extends StatefulWidget {
 
 class Favouriteping extends State<Favourite> {
   final Users user;
-  var WidgetList = List<Widget>();
+  final firestoreInstance = FirebaseFirestore.instance;
+  
   List images_collection = [];
-  List<Data> dataList = [
-  ]; //тут будет список виджетов данных для виджетов, котрый создастся при чтении данных с бд
+  List<Data> dataList = []; //тут будет список виджетов данных для виджетов, котрый создастся при чтении данных с бд
   DatabaseReference databaseReference = FirebaseDatabase.instance
       .reference(); // инициализация бд
 
   Favouriteping(this.user);
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getDataFromFirebaseAndBuildList();
 
+  }
   @override
   Widget build(BuildContext context) {
-    getDataFromFirebaseAndBuildCarousel();
-    getDataFromFirebaseAndBuildList(); //вызываем функцию, которая создаст список виджетов и отрисует их
-    setState(() {});
-
+    //getDataFromFirebaseAndBuildList(); //вызываем функцию, которая создаст список виджетов и отрисует их
+    //setState(() {});
+    //print("dataList $dataList");
+    //print("dataList len ${dataList.length}");
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -62,12 +70,12 @@ class Favouriteping extends State<Favourite> {
                   children: <Widget>[
                     SizedBox(height: 20,),
                     Center(
-                      child:Text(
-                      'Your favourites items',
-                      style: TextStyle(color: Colors.white,
-                          fontSize: 25,
-                          fontWeight: FontWeight.bold),
-                    ),
+                      child: Text(
+                        'Your favourites items',
+                        style: TextStyle(color: Colors.white,
+                            fontSize: 25,
+                            fontWeight: FontWeight.bold),
+                      ),
                     ),
                   ],
                 ),
@@ -75,163 +83,156 @@ class Favouriteping extends State<Favourite> {
               SizedBox(
                 height: 40,
               ),
-                    // тут должен отображаться отдельный список с понравившимися карточками (надо ещё настроить правильное получение их в getdatafromFirebase)
-                    Container(
-                      child: dataList.length == 0
-                          ? Center(child: Text('no data', style: TextStyle(
-                          fontSize: 20),))
-                          : ListView.builder(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount: dataList.length,
-                          itemBuilder: (_, index) {
-                            print(index);
-                            return CardUI(
-                                name: dataList[index].name,
-                                img: dataList[index].img,
-                                inst: dataList[index].inst,
-                                description: dataList[index].description,
-                                type: dataList[index].type,
-                                cost: dataList[index].cost,
-                                context: context
-                            );
-                          }
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              // тут должен отображаться отдельный список с понравившимися карточками (надо ещё настроить правильное получение их в getdatafromFirebase)
+             Container(
+               child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: dataList.length,
+                      itemBuilder: (_, index) {
+                        print('hello');
+                        return CardUI(
+                            name: dataList[index].name,
+                            img: dataList[index].img,
+                            inst: dataList[index].inst,
+                            description: dataList[index].description,
+                            type: dataList[index].type,
+                            cost: dataList[index].cost,
+                            context: context
+                        );
+
+                      }
+                  ),
+             ),
+              
+            ],
           ),
+        ),
+      ),
     );
   }
 
   void getDataFromFirebaseAndBuildList() {
-    databaseReference.once().then((DataSnapshot snapshot) { //получаем данные
-      dataList.clear(); //очищаем список (дабы не возникло путаницы с повторением элементов)
-      var keys = snapshot.value['Data'].keys; //получаем ключи
-      var values = snapshot.value['Data']; //получаем значения
-      for (var key in keys) { // бежим по ключам и добавляем значение их пары в отдельный класс
+    var firebaseUser = FirebaseAuth.instance.currentUser;
+    dataList.clear();
+    firestoreInstance
+        .collection("users")
+        .doc(firebaseUser.uid)
+        .get()
+        .then((DocumentSnapshot ds) {
+      Map favs = ds['favorites'];
+      var values = favs.values; //получаем значения
+      for (var i in values) {
         Data data = Data(
-          img: values[key]["imgUrl"],
-          name: values[key]["name"],
-          type: values[key]["type"],
-          cost: values[key]["cost"],
-          inst: values[key]["instagram"],
-          description: values[key]["description"],
+            img: i[1],
+            name: i[2],
+            type: i[3],
+            cost: i[4],
+            inst: i[6],
+            description: i[5],
+            productID: i[0]
         );
         dataList.add(data);
       }
-      setState(() {}
-      );
+      print(dataList);
+      setState(() {});
     }
     );
   }
 
-  void getDataFromFirebaseAndBuildCarousel() {
-    databaseReference.once().then((DataSnapshot snapshot) { //получаем данные
-      var keys = snapshot.value['PromoToday'].keys; //получаем ключи
-      var values = snapshot.value['PromoToday']; //получаем значения
-      for (var key in keys) {
-        images_collection.add(values[key]);
-      }
-    }
-    );
-  }
-}
 
-Widget CardUI({String name,String type, String cost, String img, String inst, BuildContext context, String description}) {
-  return Card(
-    color: Colors.transparent,
-    child: Center(
-      child:Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          InkWell(
-            borderRadius: BorderRadius.circular(20),
-            child: Container(
-              alignment: Alignment.center,
-              height: 200,
-              width: double.infinity,
-              padding: EdgeInsets.all(20),
-              margin: EdgeInsets.only(bottom: 20),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  image: DecorationImage(
-                      image: NetworkImage('$img'),
-                      fit: BoxFit.cover
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                        color: Colors.grey[900],
-                        blurRadius: 10,
-                        offset: Offset(0, 10)
-                    )
-                  ]
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment
-                              .start,
-                          children: <Widget>[
-                            FadeAnimation(1, Text('$name',
-                              style: TextStyle(color: Colors.white,
-                                  fontSize: 25,
-                                  fontWeight: FontWeight.bold),)),
-                            SizedBox(height: 10,),
-                            FadeAnimation(1.1, Text('$type',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 15),)),
-
-                          ],
-                        ),
-                      ),
-                      FadeAnimation(1.2, Container(
-                        width: 35,
-                        height: 35,
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.white
-                        ),
-                        child: Center(
-                          child: Icon(
-                            Icons.delete_outline_outlined, size: 20,),
-                        ),
-                      ))
-                    ],
-                  ), // пример карточки и визуала
-                  FadeAnimation(1.2, Text('$cost\$', style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold),)),
-                ],
-              ),
-            ),
-            onTap: () {
-
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) =>
-                      ProductInformation(
-                        inst: inst,
-                        img: img,
-                        name: name,
-                        description: description,
+  Widget CardUI({String name, String type, String cost, String img, String inst, BuildContext context, String description}) {
+    return Card(
+      color: Colors.transparent,
+      child: Center(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            InkWell(
+              borderRadius: BorderRadius.circular(20),
+              child: Container(
+                alignment: Alignment.center,
+                height: 200,
+                width: double.infinity,
+                padding: EdgeInsets.all(20),
+                margin: EdgeInsets.only(bottom: 20),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    image: DecorationImage(
+                        image: NetworkImage('$img'),
+                        fit: BoxFit.cover
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                          color: Colors.grey[900],
+                          blurRadius: 10,
+                          offset: Offset(0, 10)
                       )
-                  )
-              );
-            },
-          ),
+                    ]
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment
+                                .start,
+                            children: <Widget>[
+                              FadeAnimation(1, Text('$name',
+                                style: TextStyle(color: Colors.white,
+                                    fontSize: 25,
+                                    fontWeight: FontWeight.bold),)),
+                              SizedBox(height: 10,),
+                              FadeAnimation(1.1, Text('$type',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 15),)),
 
-        ],
+                            ],
+                          ),
+                        ),
+                        FadeAnimation(1.2, Container(
+                          width: 35,
+                          height: 35,
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.white
+                          ),
+                          child: Center(
+                            child: Icon(
+                              Icons.delete_outline_outlined, size: 20,),
+                          ),
+                        ))
+                      ],
+                    ), // пример карточки и визуала
+                    FadeAnimation(1.2, Text('$cost\$', style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 30,
+                        fontWeight: FontWeight.bold),)),
+                  ],
+                ),
+              ),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) =>
+                        ProductInformation(
+                          inst: inst,
+                          img: img,
+                          name: name,
+                          description: description,
+                        )
+                    )
+                );
+              },
+            ),
+
+          ],
+        ),
       ),
-    ),
-  );
+    );
+  }
 }
