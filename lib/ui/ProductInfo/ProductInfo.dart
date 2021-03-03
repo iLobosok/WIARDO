@@ -1,27 +1,59 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_login_screen/animation/FadeAnimation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login_screen/model/config.dart';
 import 'package:url_launcher/url_launcher.dart';
 class ProductInformation extends StatefulWidget {
   final img;
+  final cost;
+  final type;
   final name;
   final description;
   final String inst;
+  final String productID;
 
   @override
-  const ProductInformation({Key key, this.img, this.name,this.description, this.inst}) : super(key: key);
-  ProductInfo createState() => ProductInfo(img: img, name: name, description: description, inst: inst);
+  const ProductInformation({
+    Key key,
+    this.img,
+    this.cost,
+    this.type,
+    this.name,
+    this.description,
+    this.inst,
+    this.productID
+  }) : super(key: key);
+  ProductInfo createState() => ProductInfo(
+      img: img,
+      cost:cost,
+      type: type,
+      name: name,
+      description: description,
+      inst: inst,
+      productId: productID);
 }
 
 
 class ProductInfo extends State<ProductInformation> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  final img;
-  final name;
+  final String img;
+  final String name;
+  final String cost;
+  final String type;
   final String description;
   final String inst;
-  ProductInfo({this.inst, this.img,this.name,this.description});
+  final String productId;
   bool _isFavorite = false;
+  ProductInfo({
+    this.inst,
+    this.img,
+    this.cost,
+    this.type,
+    this.name,
+    this.description,
+    this.productId
+  });
 
   _launchURL() async {
     String url = 'https://www.instagram.com/$inst/';
@@ -33,6 +65,7 @@ class ProductInfo extends State<ProductInformation> {
   }
   @override
   Widget build(BuildContext context) {
+    final firestoreInstance = FirebaseFirestore.instance;
     return Scaffold(
       key: _scaffoldKey,
       body: SingleChildScrollView(
@@ -123,7 +156,23 @@ class ProductInfo extends State<ProductInformation> {
                           onTap: (){
                             _isFavorite = true;
                             setState(() {
-
+                              var firebaseUser = FirebaseAuth.instance.currentUser;
+                              firestoreInstance
+                                  .collection("users")
+                                  .doc(firebaseUser.uid)
+                                  .get()
+                                  .then((DocumentSnapshot ds) {
+                                    Map favs = ds['favorites'];
+                                    Map<String, List<String>> currentInfo = {productId: [productId,img,name,type,cost,description,inst]};
+                                    favs.addAll(currentInfo);
+                                    print(favs);
+                                    firestoreInstance
+                                      .collection("users")
+                                      .doc(firebaseUser.uid)
+                                      .update({"favorites": favs}).then((_) {
+                                        print("success!");
+                                      });
+                                  });
                             });
                           },
                         ),
