@@ -85,8 +85,10 @@ class Favouriteping extends State<Favourite> {
               ),
               // тут должен отображаться отдельный список с понравившимися карточками (надо ещё настроить правильное получение их в getdatafromFirebase)
              Container(
+
                child: ListView.builder(
                       shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
                       itemCount: dataList.length,
                       itemBuilder: (_, index) {
                         print('hello');
