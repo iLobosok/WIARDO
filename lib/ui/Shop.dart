@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_login_screen/model/AddingProduct.dart';
 import 'package:flutter_login_screen/model/Favourite.dart';
@@ -54,8 +56,8 @@ class Shopping extends State<Shop> {
   List images_collection = [];
   List<Data> dataList = [
   ]; //тут будет список виджетов данных для виджетов, котрый создастся при чтении данных с бд
-  DatabaseReference databaseReference = FirebaseDatabase.instance
-      .reference(); // инициализация бд
+  DatabaseReference databaseReference = FirebaseDatabase.instance.reference(); // инициализация бд
+  final firestoreInstance = FirebaseFirestore.instance;
 
   Shopping(this.user);
   @override
@@ -63,7 +65,12 @@ class Shopping extends State<Shop> {
     // TODO: implement initState
     super.initState();
     getDataFromFirebaseAndBuildCarousel();
-    getDataFromFirebaseAndBuildList(); //вызываем функцию, которая создаст список виджетов и отрисует их
+    getDataFromFirebaseAndBuildList();
+    if (user.profilePictureURL == '' || user.profilePictureURL == null) {
+      // проверка на имение картинки, если нет - присваиваем рандомную
+      user.profilePictureURL = '$image_to_print';
+      setState(() {});
+    }//вызываем функцию, которая создаст список виджетов и отрисует их
   }
   @override
   Widget build(BuildContext context) {
@@ -364,104 +371,128 @@ class Shopping extends State<Shop> {
     }
     );
   }
-}
-
-Widget CardUI({String name,String type, String cost, String img, String inst, BuildContext context, String description, String productID}) {
-  return Card(
-    color: Colors.transparent,
-    child: Center(
-      child:Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          InkWell(
-            borderRadius: BorderRadius.circular(20),
-            child: Container(
-              alignment: Alignment.center,
-              height: 250,
-              width: double.infinity,
-              padding: EdgeInsets.all(20),
-              margin: EdgeInsets.only(bottom: 20),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  image: DecorationImage(
-                      image: NetworkImage('$img'),
-                      fit: BoxFit.cover
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                        color: Colors.grey[900],
-                        blurRadius: 10,
-                        offset: Offset(0, 10)
-                    )
-                  ]
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment
-                              .start,
-                          children: <Widget>[
-                            FadeAnimation(1, Text('$name',
-                              style: TextStyle(color: Colors.white,
-                                  fontSize: 30,
-                                  fontWeight: FontWeight.bold),)),
-                            SizedBox(height: 10,),
-                            FadeAnimation(1.1, Text('$type',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20),)),
-
-                          ],
-                        ),
-                      ),
-                      FadeAnimation(1.2, Container(
-                        width: 35,
-                        height: 35,
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.white
-                        ),
-                        child: Center(
-                          child: Icon(
-                            Icons.favorite_border, size: 20,),
-                        ),
-                      ))
-                    ],
-                  ), // пример карточки и визуала
-                  FadeAnimation(1.2, Text('$cost\$', style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold),)),
-                ],
-              ),
-            ),
-            onTap: () {
-
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) =>
-                      ProductInformation(
-                        inst: inst,
-                        img: img,
-                        name: name,
-                        description: description,
-                        productID: productID,
-                        type: type,
-                        cost: cost,
+  Widget CardUI({String name,String type, String cost, String img, String inst, BuildContext context, String description, String productID}) {
+    return Card(
+      color: Colors.transparent,
+      child: Center(
+        child:Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            InkWell(
+              borderRadius: BorderRadius.circular(20),
+              child: Container(
+                alignment: Alignment.center,
+                height: 250,
+                width: double.infinity,
+                padding: EdgeInsets.all(20),
+                margin: EdgeInsets.only(bottom: 20),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    image: DecorationImage(
+                        image: NetworkImage('$img'),
+                        fit: BoxFit.cover
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                          color: Colors.grey[900],
+                          blurRadius: 10,
+                          offset: Offset(0, 10)
                       )
-                  )
-              );
-            },
-          ),
+                    ]
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment
+                                .start,
+                            children: <Widget>[
+                              FadeAnimation(1, Text('$name',
+                                style: TextStyle(color: Colors.white,
+                                    fontSize: 30,
+                                    fontWeight: FontWeight.bold),)),
+                              SizedBox(height: 10,),
+                              FadeAnimation(1.1, Text('$type',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20),)),
 
-        ],
+                            ],
+                          ),
+                        ),
+                        FadeAnimation(1.2, InkWell(
+                          child: Container(
+                            width: 35,
+                            height: 35,
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.white
+                            ),
+                            child: Center(
+                              child: Icon(
+                                Icons.favorite_border, size: 20,),
+                            ),
+                          ),
+                          onTap: (){
+                            setState(() {
+                              var firebaseUser = FirebaseAuth.instance.currentUser;
+                              firestoreInstance
+                                  .collection("users")
+                                  .doc(firebaseUser.uid)
+                                  .get()
+                                  .then((DocumentSnapshot ds) {
+                                Map favs = ds['favorites'];
+                                Map<String, List<String>> currentInfo = {productID: [productID,img,name,type,cost,description,inst]};
+                                favs.addAll(currentInfo);
+                                print(favs);
+                                firestoreInstance
+                                    .collection("users")
+                                    .doc(firebaseUser.uid)
+                                    .update({"favorites": favs}).then((_) {
+                                  print("success!");
+                                });
+                              });
+                            });
+                          },
+                        )
+                        )
+                      ],
+                    ), // пример карточки и визуала
+                    FadeAnimation(1.2, Text('$cost\$', style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 30,
+                        fontWeight: FontWeight.bold),)),
+                  ],
+                ),
+              ),
+              onTap: () {
+
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) =>
+                        ProductInformation(
+                          inst: inst,
+                          img: img,
+                          name: name,
+                          description: description,
+                          productID: productID,
+                          type: type,
+                          cost: cost,
+                        )
+                    )
+                );
+              },
+            ),
+
+          ],
+        ),
       ),
-    ),
-  );
+    );
+  }
 }
+
