@@ -57,43 +57,50 @@ class Favouriteping extends State<Favourite> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Container(
-                width: double.infinity,
-
-                decoration: BoxDecoration(
-                    color: Colors.black12,
-                    borderRadius:
-                    BorderRadius.vertical(bottom: Radius.circular(30))),
-                padding: EdgeInsets.all(20.0),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    SizedBox(height: 20,),
-                    Center(
-                      child: Text(
-                        'Your favourites items',
-                        style: TextStyle(color: Colors.white,
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold),
+               Container(
+                  decoration: BoxDecoration(
+                      color: Colors.black12,
+                      borderRadius:
+                      BorderRadius.vertical(bottom: Radius.circular(30))),
+                  padding: EdgeInsets.all(20.0),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      SizedBox(height: 20,),
+                      Center(
+                        child: Text(
+                          'Your favourites items',
+                          style: TextStyle(color: Colors.white,
+                              fontSize: 25,
+                              fontWeight: FontWeight.bold),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
+
               SizedBox(
                 height: 40,
               ),
               // тут должен отображаться отдельный список с понравившимися карточками (надо ещё настроить правильное получение их в getdatafromFirebase)
              Container(
-
-               child: ListView.builder(
+               child: dataList.length == 0
+               ? Container(
+                   height: MediaQuery.of(context).size.height * 0.6,
+                   width: MediaQuery.of(context).size.width,
+                   child: Align(
+                    alignment: Alignment.center,
+                       child:CircularProgressIndicator()
+                   )
+               )
+               : ListView.builder(
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
                       itemCount: dataList.length,
                       itemBuilder: (_, index) {
-                        print('hello');
                         return CardUI(
                             name: dataList[index].name,
+                            productID: dataList[index].productID,
                             img: dataList[index].img,
                             inst: dataList[index].inst,
                             description: dataList[index].description,
@@ -142,7 +149,7 @@ class Favouriteping extends State<Favourite> {
   }
 
 
-  Widget CardUI({String name, String type, String cost, String img, String inst, BuildContext context, String description}) {
+  Widget CardUI({String name, String productID, String type, String cost, String img, String inst, BuildContext context, String description}) {
     return Card(
       color: Colors.transparent,
       child: Center(
@@ -196,18 +203,27 @@ class Favouriteping extends State<Favourite> {
                             ],
                           ),
                         ),
-                        FadeAnimation(1.2, Container(
-                          width: 35,
-                          height: 35,
-                          decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.white
+                        FadeAnimation(1.2, InkWell(
+                          child: Container(
+                            width: 35,
+                            height: 35,
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.white
+                            ),
+                            child: Center(
+                              child: Icon(
+                                Icons.delete_outline_outlined, size: 20,),
+                            ),
                           ),
-                          child: Center(
-                            child: Icon(
-                              Icons.delete_outline_outlined, size: 20,),
-                          ),
-                        ))
+                          onTap: (){
+                            print("deleted!");
+                            deleteItem(productID: productID);
+                            //getDataFromFirebaseAndBuildList();
+                            setState(() {});
+                          },
+                        ),
+                        )
                       ],
                     ), // пример карточки и визуала
                     FadeAnimation(1.2, Text('$cost\$', style: TextStyle(
@@ -226,6 +242,9 @@ class Favouriteping extends State<Favourite> {
                           img: img,
                           name: name,
                           description: description,
+                          productID: productID,
+                          type: type,
+                          cost: cost,
                         )
                     )
                 );
@@ -237,4 +256,22 @@ class Favouriteping extends State<Favourite> {
       ),
     );
   }
+  
+  void deleteItem({String productID}){
+    var firebaseUser = FirebaseAuth.instance.currentUser;
+    firestoreInstance
+        .collection("users")
+        .doc(firebaseUser.uid)
+        .get()
+        .then((DocumentSnapshot ds) {
+      Map favs = ds['favorites'];
+      favs.remove("$productID");
+      firestoreInstance
+          .collection("users")
+          .doc(firebaseUser.uid)
+          .update({"favorites": favs}).then((_) {
+        getDataFromFirebaseAndBuildList();
+      });
+  });
+}
 }
