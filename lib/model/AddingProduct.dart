@@ -95,7 +95,7 @@ class _AddProductsState extends State<AddProducts> {
     productID = '$randomNumber';
     _image = await ImagePicker.pickImage(
         source: ImageSource.gallery,
-        imageQuality: 80
+        imageQuality: 60
     );
     Reference reference =
     storage.ref().child("productImg/${productID}");
