@@ -134,7 +134,6 @@ class ProductInfo extends State<ProductInformation> {
                           onTap: (){
                             _isFavorite = false;
                             setState(() {
-
                             });
                           },
                         ) : InkWell (

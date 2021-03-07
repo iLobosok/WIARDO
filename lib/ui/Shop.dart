@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_login_screen/model/AddingProduct.dart';
 import 'package:flutter_login_screen/model/Favourite.dart';
@@ -56,8 +54,8 @@ class Shopping extends State<Shop> {
   List images_collection = [];
   List<Data> dataList = [
   ]; //тут будет список виджетов данных для виджетов, котрый создастся при чтении данных с бд
-  DatabaseReference databaseReference = FirebaseDatabase.instance.reference(); // инициализация бд
-  final firestoreInstance = FirebaseFirestore.instance;
+  DatabaseReference databaseReference = FirebaseDatabase.instance
+      .reference(); // инициализация бд
 
   Shopping(this.user);
   @override
@@ -65,16 +63,16 @@ class Shopping extends State<Shop> {
     // TODO: implement initState
     super.initState();
     getDataFromFirebaseAndBuildCarousel();
-    getDataFromFirebaseAndBuildList();
-    if (user.profilePictureURL == '' || user.profilePictureURL == null) {
-      // проверка на имение картинки, если нет - присваиваем рандомную
-      user.profilePictureURL = '$image_to_print';
-      setState(() {});
-    }//вызываем функцию, которая создаст список виджетов и отрисует их
+    getDataFromFirebaseAndBuildList(); //вызываем функцию, которая создаст список виджетов и отрисует их
   }
   @override
   Widget build(BuildContext context) {
+  if (user.profilePictureURL == null) {
+    user.profilePictureURL = '${image_to_print}';
+    setState(() {
 
+    });
+  }
     String imageUrl;
     int min = 1,
         max = 99999999;
@@ -82,47 +80,6 @@ class Shopping extends State<Shop> {
     int HASHT = min + rnd.nextInt(max - min);
     int _current = 0;
     String image, tag, descript; //context;
-    image =
-    'https://ae01.alicdn.com/kf/H16ae39cc62614d00906f217cc5e0d1089/QUANBO-Men-Red-Polo-Shirts-Cotton-Classic-Fit-Long-Sleeve-Polo-Shirt-Work-Casual-Knitted-Mens.jpg';
-
-
-    uploadImage() async {
-      final _firebaseStorage = FirebaseStorage.instance;
-      final _imagePicker = ImagePicker();
-      PickedFile image;
-      //Check Permissions
-      await Permission.photos.request();
-
-      var permissionStatus = await Permission.photos.status;
-      if (user.profilePictureURL == '' || user.profilePictureURL == null) {
-        // проверка на имение картинки, если нет - присваиваем рандомную
-        user.profilePictureURL = '$image_to_print';
-      }
-      if (permissionStatus.isGranted) {
-        //Select Image
-        image = await _imagePicker.getImage(source: ImageSource.gallery,
-            imageQuality: 80,
-            maxHeight: 480,
-            maxWidth: 640);
-        var file = File(image.path);
-
-        if (image != null) {
-          //Upload to Firebase
-          var snapshot = await _firebaseStorage.ref()
-
-              .child('images/id-${user.userID}/img_$HASHT.jpg')
-              .putFile(file);
-          var downloadUrl = await snapshot.ref.getDownloadURL();
-          setState(() {
-            imageUrl = downloadUrl;
-          });
-        } else {
-          print('No Image Path Received');
-        }
-      } else {
-        print('Permission not granted. Try Again with permission access');
-      }
-    }
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -199,7 +156,7 @@ class Shopping extends State<Shop> {
                           child: CircleAvatar(
                             //circle avatar
                             radius: 30.0,
-                            backgroundImage: NetworkImage('${user.profilePictureURL}'),
+                            backgroundImage: NetworkImage('$image_to_print'),
                             backgroundColor: Colors.transparent,
                           )
                       ),
@@ -371,128 +328,106 @@ class Shopping extends State<Shop> {
     }
     );
   }
-  Widget CardUI({String name,String type, String cost, String img, String inst, BuildContext context, String description, String productID}) {
-    return Card(
-      color: Colors.transparent,
-      child: Center(
-        child:Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            InkWell(
-              borderRadius: BorderRadius.circular(20),
-              child: Container(
-                alignment: Alignment.center,
-                height: 250,
-                width: double.infinity,
-                padding: EdgeInsets.all(20),
-                margin: EdgeInsets.only(bottom: 20),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    image: DecorationImage(
-                        image: NetworkImage('$img'),
-                        fit: BoxFit.cover
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                          color: Colors.grey[900],
-                          blurRadius: 10,
-                          offset: Offset(0, 10)
-                      )
-                    ]
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment
-                                .start,
-                            children: <Widget>[
-                              FadeAnimation(1, Text('$name',
-                                style: TextStyle(color: Colors.white,
-                                    fontSize: 30,
-                                    fontWeight: FontWeight.bold),)),
-                              SizedBox(height: 10,),
-                              FadeAnimation(1.1, Text('$type',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 20),)),
-
-                            ],
-                          ),
-                        ),
-                        FadeAnimation(1.2, InkWell(
-                          child: Container(
-                            width: 35,
-                            height: 35,
-                            decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.white
-                            ),
-                            child: Center(
-                              child: Icon(
-                                Icons.favorite_border, size: 20,),
-                            ),
-                          ),
-                          onTap: (){
-                            setState(() {
-                              var firebaseUser = FirebaseAuth.instance.currentUser;
-                              firestoreInstance
-                                  .collection("users")
-                                  .doc(firebaseUser.uid)
-                                  .get()
-                                  .then((DocumentSnapshot ds) {
-                                Map favs = ds['favorites'];
-                                Map<String, List<String>> currentInfo = {productID: [productID,img,name,type,cost,description,inst]};
-                                favs.addAll(currentInfo);
-                                print(favs);
-                                firestoreInstance
-                                    .collection("users")
-                                    .doc(firebaseUser.uid)
-                                    .update({"favorites": favs}).then((_) {
-                                  print("success!");
-                                });
-                              });
-                            });
-                          },
-                        )
-                        )
-                      ],
-                    ), // пример карточки и визуала
-                    FadeAnimation(1.2, Text('$cost\$', style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold),)),
-                  ],
-                ),
-              ),
-              onTap: () {
-
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) =>
-                        ProductInformation(
-                          inst: inst,
-                          img: img,
-                          name: name,
-                          description: description,
-                          productID: productID,
-                          type: type,
-                          cost: cost,
-                        )
-                    )
-                );
-              },
-            ),
-
-          ],
-        ),
-      ),
-    );
-  }
 }
 
+Widget CardUI({String name,String type, String cost, String img, String inst, BuildContext context, String description, String productID}) {
+  return Card(
+    color: Colors.transparent,
+    child: Center(
+      child:Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          InkWell(
+            borderRadius: BorderRadius.circular(20),
+            child: Container(
+              alignment: Alignment.center,
+              height: 250,
+              width: double.infinity,
+              padding: EdgeInsets.all(20),
+              margin: EdgeInsets.only(bottom: 20),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  image: DecorationImage(
+                      image: NetworkImage('$img'),
+                      fit: BoxFit.cover
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                        color: Colors.grey[900],
+                        blurRadius: 10,
+                        offset: Offset(0, 10)
+                    )
+                  ]
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment
+                              .start,
+                          children: <Widget>[
+                            FadeAnimation(1, Text('$name',
+                              style: TextStyle(color: Colors.white,
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.bold),)),
+                            SizedBox(height: 10,),
+                            FadeAnimation(1.1, Text('$type',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20),)),
+
+                          ],
+                        ),
+                      ),
+                      FadeAnimation(1.2, Container(
+                        width: 35,
+                        height: 35,
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white
+                        ),
+                        child: InkWell(
+                          child:Center(
+                          child: Icon(
+                            Icons.favorite_border, size: 20,),
+                        ),
+                      ),
+                      ))
+                    ],
+                  ), // пример карточки и визуала
+                  FadeAnimation(1.2, Text('$cost\$', style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold),)),
+                ],
+              ),
+            ),
+            onTap: () {
+
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) =>
+                      ProductInformation(
+                        inst: inst,
+                        img: img,
+                        name: name,
+                        description: description,
+                        productID: productID,
+                        type: type,
+                        cost: cost,
+                      )
+                  )
+              );
+            },
+          ),
+
+        ],
+      ),
+    ),
+  );
+}
