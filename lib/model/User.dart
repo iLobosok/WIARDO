@@ -9,6 +9,7 @@ class Users {
   String firstName = '';
   String bio = '';
   Map favorites = {};
+  Map MyItems = {};
   String lastName = '';
   String phoneNumber = '';
   bool active = false;
@@ -28,6 +29,7 @@ class Users {
         this.seller,
         this.subs,
         this.insta,
+        this.MyItems,
         this.favorites,
       this.bio,
       this.phoneNumber,
@@ -54,6 +56,7 @@ class Users {
         insta: parsedJson['instagram'] ?? '',
         active: parsedJson['active'] ?? false,
         favorites: parsedJson['favorites'] ?? {},
+        MyItems: parsedJson['MyItems'] ?? {},
         ban: parsedJson['banned'] ?? false,
         lastOnlineTimestamp: parsedJson['lastOnlineTimestamp'],
         phoneNumber: parsedJson['phoneNumber'] ?? '',
@@ -69,6 +72,7 @@ class Users {
       'seller': this.seller,
       'instagram' : this.insta,
       'favorites': this.favorites,
+      'MyItems' : this.MyItems,
       'firstName': this.firstName,
       'lastName': this.lastName,
       'phoneNumber': this.phoneNumber,

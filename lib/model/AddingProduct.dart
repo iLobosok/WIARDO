@@ -1,4 +1,6 @@
 import 'dart:math';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_login_screen/model/User.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
@@ -16,8 +18,8 @@ File _image;
 class AddProduct extends StatefulWidget {
   final Users user;
 
-  AddProduct({Key key, @required this.user, this.title, this.description, this.inst}) : super(key: key);
-  final String title, description, inst;
+  AddProduct({Key key, @required this.user, this.title,}) : super(key: key);
+  final String title;
   @override
   _AdgProductState createState() {
     return _AdgProductState(user);
@@ -25,6 +27,7 @@ class AddProduct extends StatefulWidget {
 }
 
 class _AdgProductState extends State<AddProduct> {
+
   final Users user;
   _AdgProductState(this.user);
   @override
@@ -89,10 +92,12 @@ class _AddProductsState extends State<AddProducts> {
   }
   var imgUrl = '';
   _onCameraClick() async {
-   inst = '${user.insta.toString()}';
+   inst = '${user.insta.toString()}'; // присваивание Инсты
+
     Random random = new Random();
     int randomNumber = random.nextInt(9999999);
     productID = '$randomNumber';
+
     _image = await ImagePicker.pickImage(
         source: ImageSource.gallery,
         imageQuality: 60
@@ -108,6 +113,7 @@ class _AddProductsState extends State<AddProducts> {
   }
 
   Widget build(BuildContext context) {
+    final firestoreInstance = FirebaseFirestore.instance;
     return Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -258,9 +264,28 @@ class _AddProductsState extends State<AddProducts> {
                     children: <Widget>[
                       ClipRRect(
                   borderRadius: BorderRadius.circular(15),
-                      child:RaisedButton(
+                        child:RaisedButton(
                         color: Colors.green,
                         onPressed: () {
+                          setState(() {
+                            var firebaseUser = FirebaseAuth.instance.currentUser;
+                            firestoreInstance
+                                .collection("users")
+                                .doc(firebaseUser.uid)
+                                .get()
+                                .then((DocumentSnapshot dss) {
+                              Map myItems = dss['MyItems'];
+                              Map<String, List<String>> currentInfo = {productID: [productID,imgUrl,titleController.text,dropdownValue,inst,description]};
+                              myItems.addAll(currentInfo);
+                              print(myItems);
+                              firestoreInstance
+                                  .collection("users")
+                                  .doc(firebaseUser.uid)
+                                  .update({"MyItems": myItems}).then((_) {
+                                print("success!");
+                              });
+                            });
+                          });
                           if (_formKey.currentState.validate()) {
                             var profilePicUrl = '';
                             dbRef.push().set({
