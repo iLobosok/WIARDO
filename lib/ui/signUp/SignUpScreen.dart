@@ -95,7 +95,7 @@ class _SignUpState extends State<SignUpScreen> {
           onPressed: () async {
             Navigator.pop(context);
             PickedFile image =
-                await _imagePicker.getImage(source: ImageSource.gallery,imageQuality: 70);
+                await _imagePicker.getImage(source: ImageSource.gallery,imageQuality: 55);
             if (image != null)
               setState(() {
                 _image = File(image.path);
@@ -452,6 +452,7 @@ class _SignUpState extends State<SignUpScreen> {
             phoneNumber: mobile,
             ban: false,
             seller: sellerx,
+            VIP: false,
             bio: bio,
             favorites: {},
             MyItems: {},

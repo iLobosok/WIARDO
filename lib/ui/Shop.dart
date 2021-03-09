@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_login_screen/model/AddingProduct.dart';
 import 'package:flutter_login_screen/model/Favourite.dart';
@@ -6,16 +7,12 @@ import 'package:flutter_login_screen/model/config.dart';
 import 'package:flutter_login_screen/ui/ProductInfo/ProductInfo.dart';
 import 'package:flutter_login_screen/ui/home/Test.dart';
 import 'package:flutter_login_screen/database/Data.dart';
-import 'dart:io';
 import 'package:flutter_login_screen/animation/FadeAnimation.dart';
 import 'dart:math';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:permission_handler/permission_handler.dart'; // For Image Picker
-import 'package:path/path.dart' as Path;
+import 'package:flutter_login_screen/ui/searchservice.dart';
 
 
 
@@ -49,6 +46,37 @@ int r = min + rnd.nextInt(max - min);
 String image_to_print  = randomImages[r].toString();
 
 class Shopping extends State<Shop> {
+  /*var queryResultSet = [];
+  var tempSearchStore = [];
+
+  initiateSearch(value) {
+    if (value.length == 0) {
+      setState(() {
+        queryResultSet = [];
+        tempSearchStore = [];
+      });
+    }
+
+    var capitalizedValue =
+        value.substring(0, 1).toUpperCase() + value.substring(1);
+
+    if (queryResultSet.length == 0 && value.length == 1) {
+      SearchService().searchByName(value).then((QuerySnapshot docs) {
+        for (int i = 0; i < docs.documents.length; ++i) {
+          queryResultSet.add(docs.documents[i].data);
+        }
+      });
+    } else {
+      tempSearchStore = [];
+      queryResultSet.forEach((element) {
+        if (element['businessName'].startsWith(capitalizedValue)) {
+          setState(() {
+            tempSearchStore.add(element);
+          });
+        }
+      });
+    }
+  }*/
   final Users user;
   var WidgetList = List<Widget>();
   List images_collection = [];
@@ -133,7 +161,6 @@ class Shopping extends State<Shop> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-
                     Text(
                       'Find Your\nSwag',
                       style: TextStyle(color: Colors.white,
@@ -161,7 +188,6 @@ class Shopping extends State<Shop> {
                           )
                       ),
                     ),
-
                   ],
                 ),
               ),
@@ -177,6 +203,9 @@ class Shopping extends State<Shop> {
                       color: Colors.grey[900],
                       borderRadius: BorderRadius.circular(15)),
                   child: TextField(
+                   /* onChanged: (val) {
+                      initiateSearch(val);
+                    },*/
                     style: TextStyle(color: Colors.white),
                     decoration: InputDecoration(
                         border: InputBorder.none,
@@ -189,6 +218,17 @@ class Shopping extends State<Shop> {
                   ),
                 ),
               ),
+             /* SizedBox(height: 10.0),
+              GridView.count(
+                  padding: EdgeInsets.only(left: 10.0, right: 10.0),
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 4.0,
+                  mainAxisSpacing: 4.0,
+                  primary: false,
+                  shrinkWrap: true,
+                  children: tempSearchStore.map((element) {
+                    return buildResultCard(element);
+                  }).toList()),*/
               SizedBox(
                 height: 40,
               ),
@@ -431,3 +471,22 @@ Widget CardUI({String name,String type, String cost, String img, String inst, Bu
     ),
   );
 }
+/*
+
+Widget buildResultCard(data) {
+  return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+      elevation: 2.0,
+      child: Container(
+          child: Center(
+              child: Text(data['firstName'],
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 20.0,
+                ),
+              )
+          )
+      )
+  );
+}*/

@@ -15,6 +15,7 @@ class Users {
   bool active = false;
   int subs = 1;
   bool ban = false;
+  bool VIP = false;
   Timestamp lastOnlineTimestamp = Timestamp.now();
   String userID;
   String profilePictureURL = '';
@@ -30,6 +31,7 @@ class Users {
         this.subs,
         this.insta,
         this.MyItems,
+        this.VIP,
         this.favorites,
       this.bio,
       this.phoneNumber,
@@ -54,6 +56,7 @@ class Users {
         lastName: parsedJson['lastName'] ?? '',
         bio: parsedJson['bio'] ?? '',
         insta: parsedJson['instagram'] ?? '',
+        VIP: parsedJson['vip'] ?? false,
         active: parsedJson['active'] ?? false,
         favorites: parsedJson['favorites'] ?? {},
         MyItems: parsedJson['MyItems'] ?? {},
@@ -72,6 +75,7 @@ class Users {
       'seller': this.seller,
       'instagram' : this.insta,
       'favorites': this.favorites,
+      'vip' : this.VIP,
       'MyItems' : this.MyItems,
       'firstName': this.firstName,
       'lastName': this.lastName,
