@@ -97,7 +97,7 @@ class _HomeState extends State<HomeScreenx> {
                                 FadeAnimation(1, Text('${user.firstName} ${user.lastName}', style:
                                 TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 40),)),
                                 SizedBox(width: 10,),
-                        FadeAnimation(1, user.VIP == true ? Image.asset(
+                                  FadeAnimation(1, user.VIP == true ? Image.asset(
                                   'assets/images/verificated.png',
                                   fit: BoxFit.fill,
                                   height: 25,

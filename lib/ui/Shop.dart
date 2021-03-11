@@ -92,11 +92,18 @@ class Shopping extends State<Shop> {
     super.initState();
     getDataFromFirebaseAndBuildCarousel();
     getDataFromFirebaseAndBuildList(); //вызываем функцию, которая создаст список виджетов и отрисует их
+ setState(() {
+   user.profilePictureURL;
+ });
+  if (user.profilePictureURL == '' || user.profilePictureURL == null)
+    {
+      user.profilePictureURL == image_to_print;
+    }
   }
   @override
   Widget build(BuildContext context) {
   if (user.profilePictureURL == null) {
-    user.profilePictureURL = '${image_to_print}';
+    user.profilePictureURL = '${user.profilePictureURL}';
     setState(() {
 
     });
@@ -126,7 +133,10 @@ class Shopping extends State<Shop> {
             Icons.add,
             color: Colors.white, // add custom icons also
           ),
-        ) : null,
+        ) : Icon(
+        Icons.add,
+        color: Colors.black, // add custom icons also
+      ),
         actions: <Widget>[
           Padding(
               padding: EdgeInsets.only(left: 20.0),

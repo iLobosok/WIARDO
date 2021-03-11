@@ -77,8 +77,8 @@ class _AddProductsState extends State<AddProducts> {
   GlobalKey<FormState> _key = new GlobalKey();
   AutovalidateMode _validate = AutovalidateMode.disabled;
   final costController = TextEditingController();
-  final dbRef = FirebaseDatabase.instance.reference().child("Data");
   String title, description, productID, product, inst;
+
   Future<void> retrieveLostData() async {
     final LostData response = await _imagePicker.getLostData();
     if (response == null) {
@@ -111,7 +111,6 @@ class _AddProductsState extends State<AddProducts> {
     imgUrl = '${await taskSnapshot.ref.getDownloadURL()}';
     return imgUrl;
   }
-
   Widget build(BuildContext context) {
     final firestoreInstance = FirebaseFirestore.instance;
     return Form(
@@ -287,6 +286,7 @@ class _AddProductsState extends State<AddProducts> {
                             });
                           });
                           if (_formKey.currentState.validate()) {
+                            DatabaseReference dbRef = FirebaseDatabase.instance.reference().child("Data/${user.userID}");
                             var profilePicUrl = '';
                             dbRef.push().set({
                               "name": titleController.text,
