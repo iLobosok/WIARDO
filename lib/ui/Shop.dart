@@ -375,6 +375,9 @@ class Shopping extends State<Shop> {
       for (var key in keys) {
         images_collection.add(values[key]);
       }
+      setState(() {
+
+      });
     }
     );
   }

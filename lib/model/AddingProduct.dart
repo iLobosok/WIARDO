@@ -1,6 +1,4 @@
 import 'dart:math';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_login_screen/model/User.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
@@ -18,8 +16,8 @@ File _image;
 class AddProduct extends StatefulWidget {
   final Users user;
 
-  AddProduct({Key key, @required this.user, this.title,}) : super(key: key);
-  final String title;
+  AddProduct({Key key, @required this.user, this.title, this.description, this.inst}) : super(key: key);
+  final String title, description, inst;
   @override
   _AdgProductState createState() {
     return _AdgProductState(user);
@@ -27,7 +25,6 @@ class AddProduct extends StatefulWidget {
 }
 
 class _AdgProductState extends State<AddProduct> {
-
   final Users user;
   _AdgProductState(this.user);
   @override
@@ -43,8 +40,8 @@ class _AdgProductState extends State<AddProduct> {
                   Text("Add your product",
                       style: TextStyle(
                         color:Colors.white,
-                          fontSize: 30,
-                          )),
+                        fontSize: 30,
+                      )),
                   AddProducts(user: user,),
                 ]),
           )),
@@ -77,8 +74,8 @@ class _AddProductsState extends State<AddProducts> {
   GlobalKey<FormState> _key = new GlobalKey();
   AutovalidateMode _validate = AutovalidateMode.disabled;
   final costController = TextEditingController();
+  final dbRef = FirebaseDatabase.instance.reference().child("Data");
   String title, description, productID, product, inst;
-
   Future<void> retrieveLostData() async {
     final LostData response = await _imagePicker.getLostData();
     if (response == null) {
@@ -92,16 +89,18 @@ class _AddProductsState extends State<AddProducts> {
   }
   var imgUrl = '';
   _onCameraClick() async {
-   inst = '${user.insta.toString()}'; // присваивание Инсты
-
+    inst = '${user.insta.toString()}';
     Random random = new Random();
     int randomNumber = random.nextInt(9999999);
     productID = '$randomNumber';
-
     _image = await ImagePicker.pickImage(
         source: ImageSource.gallery,
-        imageQuality: 60
+        imageQuality: 80
     );
+    if (_image != null)
+      setState(() {
+        _image = File(_image.path);
+      });
     Reference reference =
     storage.ref().child("productImg/${productID}");
 
@@ -111,8 +110,8 @@ class _AddProductsState extends State<AddProducts> {
     imgUrl = '${await taskSnapshot.ref.getDownloadURL()}';
     return imgUrl;
   }
+
   Widget build(BuildContext context) {
-    final firestoreInstance = FirebaseFirestore.instance;
     return Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -224,37 +223,37 @@ class _AddProductsState extends State<AddProducts> {
                 ),
               ),
               Padding(
-            padding: const EdgeInsets.only(left: 8.0, top: 32, right: 8, bottom: 8),
-            child: Stack(
-                alignment: Alignment.bottomCenter,
-                children: <Widget>[
-                  CircleAvatar(
-                    radius: 85,
-                    backgroundColor: Colors.grey.shade400,
-                    child: ClipOval(
-                      child:InkWell(
-                        onTap: (){
-                          _onCameraClick();
-                        },
-                      child: SizedBox(
-                        width: 170,
-                        height: 170,
-                        child: _image == null
-                            ? Image.asset(
-                          'assets/images/placeholder.png',
-                          fit: BoxFit.fill,
-                        )
-                            : Image.file(
-                          _image,
-                          fit: BoxFit.cover,
+                padding: const EdgeInsets.only(left: 8.0, top: 32, right: 8, bottom: 8),
+                child: Stack(
+                  alignment: Alignment.bottomCenter,
+                  children: <Widget>[
+                    CircleAvatar(
+                      radius: 85,
+                      backgroundColor: Colors.grey.shade400,
+                      child: ClipOval(
+                        child:InkWell(
+                          onTap: (){
+                            _onCameraClick();
+                          },
+                          child: SizedBox(
+                            width: 170,
+                            height: 170,
+                            child: _image == null
+                                ? Image.asset(
+                              'assets/images/placeholder.png',
+                              fit: BoxFit.fill,
+                            )
+                                : Image.file(
+                              _image,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
                         ),
                       ),
-                      ),
                     ),
-                  ),
 
-              ],
-            ),
+                  ],
+                ),
               ),
               Padding(
                   padding: EdgeInsets.all(20.0),
@@ -262,57 +261,37 @@ class _AddProductsState extends State<AddProducts> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
                       ClipRRect(
-                  borderRadius: BorderRadius.circular(15),
+                        borderRadius: BorderRadius.circular(15),
                         child:RaisedButton(
-                        color: Colors.green,
-                        onPressed: () {
-                          setState(() {
-                            var firebaseUser = FirebaseAuth.instance.currentUser;
-                            firestoreInstance
-                                .collection("users")
-                                .doc(firebaseUser.uid)
-                                .get()
-                                .then((DocumentSnapshot dss) {
-                              Map myItems = dss['MyItems'];
-                              Map<String, List<String>> currentInfo = {productID: [productID,imgUrl,titleController.text,dropdownValue,inst,description]};
-                              myItems.addAll(currentInfo);
-                              print(myItems);
-                              firestoreInstance
-                                  .collection("users")
-                                  .doc(firebaseUser.uid)
-                                  .update({"MyItems": myItems}).then((_) {
-                                print("success!");
+                          color: Colors.green,
+                          onPressed: () {
+                            if (_formKey.currentState.validate()) {
+                              var profilePicUrl = '';
+                              dbRef.push().set({
+                                "name": titleController.text,
+                                "description": descriptionController.text,
+                                "cost": costController.text,
+                                "instagram" : inst.toString(),
+                                "type": dropdownValue,
+                                "imgUrl": imgUrl,
+                                "productID":productID,
+                              }).then((_) {
+                                Scaffold.of(context).showSnackBar(
+                                    SnackBar(content: Text('Successfully Added',style: TextStyle(color: Colors.white),),backgroundColor: Colors.green,)
+                                );
+                              }).catchError((onError) {
+                                Scaffold.of(context)
+                                    .showSnackBar(SnackBar(content: Text(onError)));
                               });
-                            });
-                          });
-                          if (_formKey.currentState.validate()) {
-                            DatabaseReference dbRef = FirebaseDatabase.instance.reference().child("Data/${user.userID}");
-                            var profilePicUrl = '';
-                            dbRef.push().set({
-                              "name": titleController.text,
-                              "description": descriptionController.text,
-                              "cost": costController.text,
-                              "instagram" : inst.toString(),
-                              "type": dropdownValue,
-                              "imgUrl": imgUrl,
-                              "productID":productID,
-                            }).then((_) {
-                              Scaffold.of(context).showSnackBar(
-                                  SnackBar(content: Text('Successfully Added',style: TextStyle(color: Colors.white),),backgroundColor: Colors.green,)
-                              );
-                            }).catchError((onError) {
-                              Scaffold.of(context)
-                                  .showSnackBar(SnackBar(content: Text(onError)));
-                            });
-                          }
+                            }
 
-                          MaterialPageRoute(builder: (context) => Shop(/**/));
-                          descriptionController.clear();
-                          costController.clear();
-                          titleController.clear();
-                        },
-                        child: Text('Add item', style: TextStyle(color: Colors.white),),
-                      ),
+                            MaterialPageRoute(builder: (context) => Shop(/**/));
+                            descriptionController.clear();
+                            costController.clear();
+                            titleController.clear();
+                          },
+                          child: Text('Add item', style: TextStyle(color: Colors.white),),
+                        ),
                       ),
                     ],
                   )),

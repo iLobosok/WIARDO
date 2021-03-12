@@ -117,8 +117,8 @@ class ProductInfo extends State<ProductInformation> {
 
                         _isFavorite == true ? InkWell(
                           child:Container(
-                            width: 35,
-                            height: 35,
+                            width: 45,
+                            height: 45,
                             decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: Colors.white
@@ -138,8 +138,8 @@ class ProductInfo extends State<ProductInformation> {
                           },
                         ) : InkWell (
                         child:Container(
-                          width: 35,
-                          height: 35,
+                          width: 45,
+                          height: 45,
                           decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               color: Colors.white

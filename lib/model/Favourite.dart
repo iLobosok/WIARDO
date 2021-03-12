@@ -7,6 +7,9 @@ import 'package:flutter_login_screen/database/Data.dart';
 import 'package:flutter_login_screen/animation/FadeAnimation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:share/share.dart';
+
 
 
 class Favourite extends StatefulWidget {
@@ -150,111 +153,133 @@ class Favouriteping extends State<Favourite> {
 
 
   Widget CardUI({String name, String productID, String type, String cost, String img, String inst, BuildContext context, String description}) {
-    return Card(
-      color: Colors.transparent,
-      child: Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            InkWell(
-              borderRadius: BorderRadius.circular(20),
-              child: Container(
-                alignment: Alignment.center,
-                height: 200,
-                width: double.infinity,
-                padding: EdgeInsets.all(20),
-                margin: EdgeInsets.only(bottom: 20),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    image: DecorationImage(
-                        image: NetworkImage('$img'),
-                        fit: BoxFit.cover
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                          color: Colors.grey[900],
-                          blurRadius: 10,
-                          offset: Offset(0, 10)
-                      )
-                    ]
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment
-                                .start,
-                            children: <Widget>[
-                              FadeAnimation(1, Text('$name',
-                                style: TextStyle(color: Colors.white,
-                                    fontSize: 25,
-                                    fontWeight: FontWeight.bold),)),
-                              SizedBox(height: 10,),
-                              FadeAnimation(1.1, Text('$type',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 15),)),
-
-                            ],
-                          ),
-                        ),
-                        FadeAnimation(1.2, InkWell(
-                          child: Container(
-                            width: 35,
-                            height: 35,
-                            decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.white
+    String text = '$img';
+    String subject = 'Check this item $productID';
+    return Slidable(
+      actionPane: SlidableDrawerActionPane(),
+      actionExtentRatio: 0.25,
+      actions: <Widget>[
+        IconSlideAction(
+          caption: 'Seller',
+          color: Colors.orangeAccent,
+          icon: Icons.account_circle,
+        ),
+        InkWell(
+          onTap: (){
+            final RenderBox box = context.findRenderObject();
+            Share.share(text,
+                subject: subject,
+                sharePositionOrigin:
+                box.localToGlobal(Offset.zero) &
+                box.size);
+           setState(() {
+           });
+            },
+        child:IconSlideAction(
+          caption: 'Share',
+          color: Colors.indigo,
+          icon: Icons.share,
+        ),
+        ),
+        IconSlideAction(
+          caption: 'Delete',
+          color: Colors.red[500],
+          icon: Icons.restore_from_trash_rounded,
+          onTap: () => deleteItem(productID: productID),
+        ),
+      ],
+      child: Card(
+        color: Colors.transparent,
+        child: Center(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              InkWell(
+                borderRadius: BorderRadius.circular(20),
+                child: Container(
+                  alignment: Alignment.center,
+                  height: 200,
+                  width: double.infinity,
+                  padding: EdgeInsets.all(20),
+                  margin: EdgeInsets.only(bottom: 20),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      image: DecorationImage(
+                          image: NetworkImage('$img'), fit: BoxFit.cover),
+                      boxShadow: [
+                        BoxShadow(
+                            color: Colors.grey[900],
+                            blurRadius: 10,
+                            offset: Offset(0, 10))
+                      ]),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                FadeAnimation(
+                                    1,
+                                    Text(
+                                      '$name',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 25,
+                                          fontWeight: FontWeight.bold),
+                                    )),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                FadeAnimation(
+                                    1.1,
+                                    Text(
+                                      '$type',
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 15),
+                                    )),
+                              ],
                             ),
-                            child: Center(
-                              child: Icon(
-                                Icons.delete_outline_outlined, size: 20,),
-                            ),
                           ),
-                          onTap: (){
-                            print("deleted!");
-                            deleteItem(productID: productID);
-                            //getDataFromFirebaseAndBuildList();
-                            setState(() {});
-                          },
-                        ),
-                        )
-                      ],
-                    ), // пример карточки и визуала
-                    FadeAnimation(1.2, Text('$cost\$', style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold),)),
-                  ],
+                        ],
+                      ), // пример карточки и визуала
+                      FadeAnimation(
+                          1.2,
+                          Text(
+                            '$cost\$',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 30,
+                                fontWeight: FontWeight.bold),
+                          )),
+                    ],
+                  ),
                 ),
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ProductInformation(
+                                inst: inst,
+                                img: img,
+                                name: name,
+                                description: description,
+                                productID: productID,
+                                type: type,
+                                cost: cost,
+                              )));
+                },
               ),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) =>
-                        ProductInformation(
-                          inst: inst,
-                          img: img,
-                          name: name,
-                          description: description,
-                          productID: productID,
-                          type: type,
-                          cost: cost,
-                        )
-                    )
-                );
-              },
-            ),
-
-          ],
+            ],
+          ),
         ),
       ),
     );
+
   }
   
   void deleteItem({String productID}){
@@ -271,6 +296,9 @@ class Favouriteping extends State<Favourite> {
           .doc(firebaseUser.uid)
           .update({"favorites": favs}).then((_) {
         getDataFromFirebaseAndBuildList();
+        setState(() {
+
+        });
       });
   });
 }
