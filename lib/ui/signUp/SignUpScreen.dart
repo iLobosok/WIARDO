@@ -433,7 +433,7 @@ class _SignUpState extends State<SignUpScreen> {
       {
         haventinsta = true;
       }
-    if (_key.currentState.validate() || insta == false) {
+    if (_key.currentState.validate() && insta != "") {
       _key.currentState.save();
       showProgress(context, 'Please wait...', false);
       var profilePicUrl = '';

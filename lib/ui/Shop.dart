@@ -24,6 +24,7 @@ class Shop extends StatefulWidget {
   @override
   State createState() {
     return Shopping(user);
+
   }
 }
 
@@ -46,6 +47,7 @@ int r = min + rnd.nextInt(max - min);
 String image_to_print  = randomImages[r].toString();
 
 class Shopping extends State<Shop> {
+
   /*var queryResultSet = [];
   var tempSearchStore = [];
 
@@ -78,6 +80,7 @@ class Shopping extends State<Shop> {
     }
   }*/
   final Users user;
+
   var WidgetList = List<Widget>();
   List images_collection = [];
   List<Data> dataList = [
@@ -92,22 +95,9 @@ class Shopping extends State<Shop> {
     super.initState();
     getDataFromFirebaseAndBuildCarousel();
     getDataFromFirebaseAndBuildList(); //вызываем функцию, которая создаст список виджетов и отрисует их
- setState(() {
-   user.profilePictureURL;
- });
-  if (user.profilePictureURL == '' || user.profilePictureURL == null)
-    {
-      user.profilePictureURL == image_to_print;
-    }
   }
   @override
   Widget build(BuildContext context) {
-  if (user.profilePictureURL == null) {
-    user.profilePictureURL = '${user.profilePictureURL}';
-    setState(() {
-
-    });
-  }
     String imageUrl;
     int min = 1,
         max = 99999999;
@@ -115,7 +105,9 @@ class Shopping extends State<Shop> {
     int HASHT = min + rnd.nextInt(max - min);
     int _current = 0;
     String image, tag, descript; //context;
-
+    setState(() {
+      user.profilePictureURL;
+    });
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -190,10 +182,15 @@ class Shopping extends State<Shop> {
                                 MaterialPageRoute(builder: (context) =>
                                     HomeScreenx(user: user,)));
                           },
-                          child: CircleAvatar(
+                          child: user.profilePictureURL == "" ? CircleAvatar(
                             //circle avatar
                             radius: 30.0,
                             backgroundImage: NetworkImage('$image_to_print'),
+                            backgroundColor: Colors.transparent,
+                          ) : CircleAvatar(
+                            //circle avatar
+                            radius: 30.0,
+                            backgroundImage: NetworkImage('${user.profilePictureURL}'),
                             backgroundColor: Colors.transparent,
                           )
                       ),
