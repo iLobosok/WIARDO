@@ -48,26 +48,21 @@ class Favourite extends StatefulWidget {
 class Favouriteping extends State<Favourite> {
   final Users user;
   final firestoreInstance = FirebaseFirestore.instance;
-  
   List images_collection = [];
   List<Data> dataList = []; //тут будет список виджетов данных для виджетов, котрый создастся при чтении данных с бд
-  DatabaseReference databaseReference = FirebaseDatabase.instance
-      .reference(); // инициализация бд
-
+  DatabaseReference databaseReference = FirebaseDatabase.instance.reference(); // инициализация бд
   Favouriteping(this.user);
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     getDataFromFirebaseAndBuildList();
-
   }
+
   @override
   Widget build(BuildContext context) {
-    //getDataFromFirebaseAndBuildList(); //вызываем функцию, которая создаст список виджетов и отрисует их
-    //setState(() {});
-    //print("dataList $dataList");
-    //print("dataList len ${dataList.length}");
+    getDataFromFirebaseAndBuildList(); //вызываем функцию, которая создаст список виджетов и отрисует их
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -109,13 +104,15 @@ class Favouriteping extends State<Favourite> {
               ),
               // тут должен отображаться отдельный список с понравившимися карточками (надо ещё настроить правильное получение их в getdatafromFirebase)
              Container(
-               child: dataList.length == 0
+               child: dataList.length == 0 || dataList == null
                ? Container(
                    height: MediaQuery.of(context).size.height * 0.6,
                    width: MediaQuery.of(context).size.width,
                    child: Align(
                     alignment: Alignment.center,
-                       child:CircularProgressIndicator()
+                       child:CircularProgressIndicator(
+                         backgroundColor: Colors.yellow[600],
+                       )
                    )
                )
                : ListView.builder(
@@ -167,7 +164,6 @@ class Favouriteping extends State<Favourite> {
         );
         dataList.add(data);
       }
-      print(dataList);
       setState(() {});
     }
     );
