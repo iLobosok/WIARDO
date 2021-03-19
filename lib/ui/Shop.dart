@@ -4,6 +4,7 @@ import 'package:flutter_login_screen/model/AddingProduct.dart';
 import 'package:flutter_login_screen/model/Favourite.dart';
 import 'package:flutter_login_screen/model/User.dart';
 import 'package:flutter_login_screen/model/config.dart';
+import 'package:flutter_login_screen/model/selfproducts.dart';
 import 'package:flutter_login_screen/ui/ProductInfo/ProductInfo.dart';
 import 'package:flutter_login_screen/ui/home/Test.dart';
 import 'package:flutter_login_screen/database/Data.dart';
@@ -140,6 +141,21 @@ class Shopping extends State<Shop> {
                 },
                 child: Icon(
                   Icons.favorite_border,
+                  size: 26.0,
+                  color: Colors.white,
+                ),
+              )
+          ),
+          Padding(
+              padding: EdgeInsets.only(left: 20.0),
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(
+                      builder: (context) =>
+                          SelfProducts(user: user))); //to self items page
+                },
+                child: Icon(
+                  Icons.my_library_books_sharp,
                   size: 26.0,
                   color: Colors.white,
                 ),
