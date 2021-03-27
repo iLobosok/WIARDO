@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_login_screen/model/AddingProduct.dart';
 import 'package:flutter_login_screen/model/Favourite.dart';
@@ -97,6 +98,7 @@ class Shopping extends State<Shop> {
     getDataFromFirebaseAndBuildCarousel();
     getDataFromFirebaseAndBuildList(); //вызываем функцию, которая создаст список виджетов и отрисует их
   }
+  int _value = 1;
   @override
   Widget build(BuildContext context) {
     String imageUrl;
@@ -155,7 +157,7 @@ class Shopping extends State<Shop> {
                           SelfProducts(user: user))); //to self items page
                 },
                 child: Icon(
-                  Icons.my_library_books_sharp,
+                  Icons.checkroom,
                   size: 26.0,
                   color: Colors.white,
                 ),
@@ -191,8 +193,9 @@ class Shopping extends State<Shop> {
                         .width * 0.39,),
                     Align(
                       alignment: FractionalOffset(3, 3),
-                      child: InkWell(
-                          onTap: () {
+                      child: RaisedButton(
+                        color: Colors.black,
+                          onPressed: () {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(builder: (context) =>
@@ -236,7 +239,7 @@ class Shopping extends State<Shop> {
                           Icons.search,
                           color: Colors.white,
                         ),
-                        hintText: "Search something",
+                        hintText: "Search designers",
                         hintStyle: TextStyle(color: Colors.grey, fontSize: 15)),
                   ),
                 ),

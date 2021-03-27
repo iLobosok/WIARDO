@@ -33,7 +33,7 @@ class _AdgProductState extends State<AddProduct> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.grey[900],
         body: Center(
             child: SingleChildScrollView(
               child: Column(
@@ -70,7 +70,7 @@ class _AddProductsState extends State<AddProducts> {
   final Users user;
   _AddProductsState(this.user);
   final _formKey = GlobalKey<FormState>();
-  final listOfPets = ["Shoppers", "Shirts", "T-Shirts", "Shoes", "Shorts", "Pants", "Masks", "Glasses"];
+  final listOfPets = ["T-shirts", "Tops", "Bras", "Shirts", "Dresses", "Skirts", "Pants", "Shoppers", "Shorts", "Socks", "Shoes", "Sweaters", "Jeans", "Masks"];
   String dropdownValue = 'Shoppers';
   final titleController = TextEditingController();
   final ImagePicker _imagePicker = ImagePicker();
@@ -100,7 +100,7 @@ class _AddProductsState extends State<AddProducts> {
     productID = '$randomNumber';
     _image = await ImagePicker.pickImage(
         source: ImageSource.gallery,
-        imageQuality: 80
+        imageQuality: 70
     );
     if (_image != null)
       setState(() {
@@ -125,7 +125,7 @@ class _AddProductsState extends State<AddProducts> {
         key: _formKey,
         child: SingleChildScrollView(
             child: Container(
-              color: Colors.black,
+              color: Colors.grey[900],
               child: Column(
                 children: <Widget>[
                 Padding(
@@ -252,8 +252,8 @@ class _AddProductsState extends State<AddProducts> {
                               height: 170,
                               child: _image == null
                                   ? Image.asset(
-                                'assets/images/placeholder.png',
-                                fit: BoxFit.fill,
+                                'assets/images/placeholder.jpg',
+                                fit: BoxFit.fitWidth,
                               )
                                   : Image.file(
                                 _image,

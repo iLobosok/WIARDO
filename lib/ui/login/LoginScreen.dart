@@ -11,6 +11,7 @@ import 'package:flutter_login_screen/model/User.dart';
 import 'package:flutter_login_screen/services/Authenticate.dart';
 import 'package:flutter_login_screen/ui/home/Test.dart';
 import 'package:http/http.dart' as http;
+import 'package:lottie/lottie.dart';
 
 
 
@@ -37,11 +38,7 @@ class _LoginScreen extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[900],
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        iconTheme: IconThemeData(color: Colors.white),
-        elevation: 0.0,
-      ),
+
       body: Form(
         key: _key,
         autovalidateMode: _validate,
@@ -52,12 +49,22 @@ class _LoginScreen extends State<LoginScreen> {
                   const EdgeInsets.only(top: 32.0, right: 16.0, left: 16.0),
               child: Center(
                 child:Text(
-                'Sign In',
+                'Welcome back!',
                 style: TextStyle(
                     color: Colors.white,
                     fontSize: 25.0,
                     fontWeight: FontWeight.bold),
               ),
+              ),
+            ),
+            Center(
+              child: Lottie.network(
+                //Lottie
+                'https://assets4.lottiefiles.com/packages/lf20_nqB8Mn.json',
+                width: 320,
+                repeat: true,
+                height: 320,
+                fit: BoxFit.fill,
               ),
             ),
             ConstrainedBox(
@@ -81,15 +88,15 @@ class _LoginScreen extends State<LoginScreen> {
                         contentPadding:
                             new EdgeInsets.only(left: 16, right: 16),
                         fillColor: Colors.white,
-                        hintText: 'E-mail Address',
+                        hintText: 'Email',
                         hintStyle: TextStyle(color:Colors.white),
                         focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(25.0),
+                            borderRadius: BorderRadius.circular(15.0),
                             borderSide: BorderSide(
                                 color: Color(Constants.COLOR_PRIMARY),
                                 width: 2.0)),
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(25.0),
+                          borderRadius: BorderRadius.circular(15.0),
                         ))),
               ),
             ),
@@ -118,12 +125,12 @@ class _LoginScreen extends State<LoginScreen> {
                         hintText: 'Password',
                         hintStyle: TextStyle(color:Colors.white),
                         focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(25.0),
+                            borderRadius: BorderRadius.circular(15.0),
                             borderSide: BorderSide(
                                 color: Color(Constants.COLOR_PRIMARY),
                                 width: 2.0)),
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(25.0),
+                          borderRadius: BorderRadius.circular(15.0),
                         ))),
               ),
             ),
@@ -131,9 +138,10 @@ class _LoginScreen extends State<LoginScreen> {
               padding:
                   const EdgeInsets.only(right: 40.0, left: 40.0, top: 40),
               child: ConstrainedBox(
+
                 constraints: const BoxConstraints(minWidth: double.infinity),
                 child: RaisedButton(
-                  color: Color(Constants.COLOR_PRIMARY),
+                  color: Color(0xFF5DB075),
                   child: Text(
                     'Log In',
                     style:
@@ -146,9 +154,8 @@ class _LoginScreen extends State<LoginScreen> {
                   },
                   padding: EdgeInsets.only(top: 12, bottom: 12),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25.0),
-                      side:
-                          BorderSide(color: Color(Constants.COLOR_PRIMARY))),
+                      borderRadius: BorderRadius.circular(15.0),
+                  ),
                 ),
               ),
             ),

@@ -43,6 +43,7 @@ class _HomeState extends State<HomeScreenx> {
   final Users user;
   String imseller = 'Seller';
   _HomeState(this.user);
+  String dropdownValue = 'Menu';
   @override
   Widget build(BuildContext context) {
     setState(() {
