@@ -95,12 +95,16 @@ class Shopping extends State<Shop> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    getDataFromFirebaseAndBuildCarousel();
-    getDataFromFirebaseAndBuildList(); //вызываем функцию, которая создаст список виджетов и отрисует их
+    getDataFromFirebaseAndBuildCarousel(1);
+    getDataFromFirebaseAndBuildList();
+    //вызываем функцию, которая создаст список виджетов и отрисует их
   }
   int _value = 1;
   @override
   Widget build(BuildContext context) {
+    getDataFromFirebaseAndBuildCarousel(0);
+    getDataFromFirebaseAndBuildList();
+    setState(() {});
     String imageUrl;
     int min = 1,
         max = 99999999;
@@ -363,7 +367,8 @@ class Shopping extends State<Shop> {
   void getDataFromFirebaseAndBuildList() {
     databaseReference.once().then((DataSnapshot snapshot) { //получаем данные
       dataList.clear(); //очищаем список (дабы не возникло путаницы с повторением элементов)
-      var keys = snapshot.value['Data'].keys; //получаем ключи
+      var keys = snapshot.value['Data'].keys;
+      print(keys);//получаем ключи
       var values = snapshot.value['Data']; //получаем значения
       for (var key in keys) { // бежим по ключам и добавляем значение их пары в отдельный класс
         Data data = Data(
@@ -377,23 +382,18 @@ class Shopping extends State<Shop> {
         );
         dataList.add(data);
       }
-      setState(() {
-
-      });
     }
     );
   }
 
-  void getDataFromFirebaseAndBuildCarousel() {
+  void getDataFromFirebaseAndBuildCarousel(int d) {
     databaseReference.once().then((DataSnapshot snapshot) { //получаем данные
       var keys = snapshot.value['PromoToday'].keys; //получаем ключи
       var values = snapshot.value['PromoToday']; //получаем значения
       for (var key in keys) {
         images_collection.add(values[key]);
       }
-      setState(() {
-
-      });
+      d==1 ? setState((){}) : print(d);
     }
     );
   }

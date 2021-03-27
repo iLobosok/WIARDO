@@ -278,6 +278,7 @@ class _AddProductsState extends State<AddProducts> {
                             color: Colors.green,
                             onPressed: () {
                               if (_formKey.currentState.validate()) {
+
                                 updateListOfSelfItems(
                                   name: titleController.text,
                                   description: descriptionController.text,
@@ -285,7 +286,7 @@ class _AddProductsState extends State<AddProducts> {
                                   inst: inst.toString(),
                                   type: dropdownValue,
                                   imgUrl: imgUrl,
-                                  productID: productID,
+                                  productID: createID(),
                                 );
                               }
 
@@ -314,7 +315,9 @@ class _AddProductsState extends State<AddProducts> {
     super.dispose();
   }
   void updateListOfSelfItems({String productID,String imgUrl,String name,String type, String cost, String inst, String description}) {
-    dbRef.push().set({
+    var date = DateTime.now();
+    print(date);
+    dbRef.child('$productID').set({
       "name": name,
       "description": description,
       "cost": cost,
@@ -356,5 +359,14 @@ class _AddProductsState extends State<AddProducts> {
           SnackBar(content: Text(onError))
       );
     });
+  }
+  String createID(){
+    var firebaseUser = FirebaseAuth.instance.currentUser;
+    RegExp exp = RegExp(r"[^\w]+");
+    DateTime date = DateTime.now();
+    String formattedDate =  date.toString().replaceAll(exp, '');
+    String productID = formattedDate + firebaseUser.uid.toString().substring(0,5);
+    print(productID);
+    return(productID);
   }
 }

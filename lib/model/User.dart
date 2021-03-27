@@ -8,7 +8,7 @@ class Users {
   String email = '';
   String firstName = '';
   String bio = '';
-  Map favorites = {};
+  List favorites = [];
   Map MyItems = {};
   String lastName = '';
   String phoneNumber = '';
