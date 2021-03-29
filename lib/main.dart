@@ -52,6 +52,8 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     if (_error) {
       return MaterialApp(
+          theme: ThemeData.light(),
+          darkTheme: ThemeData.dark(),
           home: Scaffold(
         body: Container(
           color: Colors.white,

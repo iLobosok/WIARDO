@@ -168,7 +168,7 @@ class _LoginScreen extends State<LoginScreen> {
   login() async {
     if (_key.currentState.validate()) {
       _key.currentState.save();
-      showProgress(context, 'Logging in, please wait...', false);
+      showProgress(context, 'Please wait...', false);
       Users user = await loginWithUserNameAndPassword();
       if (user != null && user.ban != true)
         pushAndRemoveUntil(context, Shop(user: user), false);
