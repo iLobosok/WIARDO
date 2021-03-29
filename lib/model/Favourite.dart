@@ -90,7 +90,7 @@ class Favouriteping extends State<Favourite> {
                     SizedBox(height: 20,),
                     Center(
                       child: Text(
-                        'Your favourite items',
+                        'Your favorite items',
                         style: TextStyle(color: Colors.white,
                             fontSize: 25,
                             fontWeight: FontWeight.bold),
