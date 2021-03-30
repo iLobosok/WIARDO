@@ -86,7 +86,7 @@ class _SelfProductsState extends State<SelfProducts> {
                         physics: NeverScrollableScrollPhysics(),
                         itemCount: dataList.length,
                         itemBuilder: (_, index) {
-                              return CardUI(
+                              return cardUI(
                                 name: dataList[index].name,
                                 productID: dataList[index].productID,
                                 img: dataList[index].img,
@@ -112,47 +112,49 @@ class _SelfProductsState extends State<SelfProducts> {
         .doc(firebaseUser.uid)
         .get()
         .then((DocumentSnapshot ds) {
-      Map myItems = ds['MyItems'];
+      List myItems = ds['MyItems'];
       myItems.remove("$productID");
       firestoreInstance
           .collection("users")
           .doc(firebaseUser.uid)
           .update({"MyItems": myItems}).then((_) {
-        getDataFromFirebaseAndBuildList();
-        setState(() {
+        dbRef.child('$productID').remove().then((_){
+          getDataFromFirebaseAndBuildList();
+          setState(() {});
         });
       });
     });
   }
   void getDataFromFirebaseAndBuildList() {
     var firebaseUser = FirebaseAuth.instance.currentUser;
+    var dbRef = FirebaseDatabase.instance.reference().child("Data");
     dataList.clear();
     firestoreInstance
         .collection("users")
         .doc(firebaseUser.uid)
         .get()
         .then((DocumentSnapshot ds) {
-      Map myItems = ds['MyItems'];
-      var values = myItems.values; //получаем значения
-      for (var i in values) {
-        Data data = Data(
-            productID: i[0],
-            img: i[1],
-            name: i[2],
-            type: i[3],
-            cost: i[4],
-            description: i[5],
-            inst: i[6],
-        );
-        dataList.add(data);
+          List myItems = ds['MyItems'];
+          dbRef.once().then((DataSnapshot ds){
+            for(String item in myItems){
+              Data data = Data(
+                img: ds.value[item]['imgUrl'],
+                name: ds.value[item]['name'],
+                productID: ds.value[item]['productID'],
+                description: ds.value[item]['description'],
+                inst: ds.value[item]['inst'],
+                cost: ds.value[item]['cost'],
+                type: ds.value[item]['type'],
+              );
+              dataList.add(data);
+            }
+            setState(() {});
+          });
       }
-      print(dataList);
-      setState(() {});
-    }
     );
   }
 
-  Widget CardUI({String name, String productID, String type, String cost, String img, String inst, BuildContext context, String description}) {
+  Widget cardUI({String name, String productID, String type, String cost, String img, String inst, BuildContext context, String description}) {
     String text = '$img';
     String subject = 'Check this item $productID';
     return Slidable(
@@ -167,9 +169,9 @@ class _SelfProductsState extends State<SelfProducts> {
                 subject: subject,
                 sharePositionOrigin:
                 box.localToGlobal(Offset.zero) &
-                box.size);
-            setState(() {
-            });
+                box.size
+            );
+            setState(() {});
           },
           child:IconSlideAction(
             caption: 'Share',

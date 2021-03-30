@@ -49,10 +49,8 @@ class Favouriteping extends State<Favourite> {
   final Users user;
   final firestoreInstance = FirebaseFirestore.instance;
   List images_collection = [];
-  List<Data> dataList = [
-  ]; //тут будет список виджетов данных для виджетов, котрый создастся при чтении данных с бд
-  DatabaseReference databaseReference = FirebaseDatabase.instance
-      .reference(); // инициализация бд
+  List<Data> dataList = []; //тут будет список виджетов данных для виджетов, котрый создастся при чтении данных с бд
+  DatabaseReference databaseReference = FirebaseDatabase.instance.reference(); // инициализация бд
   Favouriteping(this.user);
 
   @override
@@ -152,11 +150,9 @@ class Favouriteping extends State<Favourite> {
     var firebaseUser = FirebaseAuth.instance.currentUser;
     firestoreInstance.collection("users").doc(firebaseUser.uid).get().then((DocumentSnapshot ds) {
       List favs = ds['favorites'];
-      print(favs);
       databaseReference.once().then((DataSnapshot snapshot) {
         dataList.clear(); //очищаем список (дабы не возникло путаницы с повторением элементов)//получаем ключи
         Map values = snapshot.value['Data']; //получаем значения
-        print(values);
         for(String i in favs){
           try{
             Data data = Data(

@@ -455,7 +455,7 @@ class _SignUpState extends State<SignUpScreen> {
             VIP: false,
             bio: bio,
             favorites: [],
-            MyItems: {},
+            MyItems: [],
             insta: insta,
             userID: result.user.uid,
             active: true,

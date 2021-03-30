@@ -80,8 +80,6 @@ class _AddProductsState extends State<AddProducts> {
   final ImagePicker _imagePicker = ImagePicker();
   final descriptionController = TextEditingController();
   TextEditingController _passwordController = new TextEditingController();
-  GlobalKey<FormState> _key = new GlobalKey();
-  AutovalidateMode _validate = AutovalidateMode.disabled;
   final costController = TextEditingController();
   final dbRef = FirebaseDatabase.instance.reference().child("Data");
   String title, description, productID, product, inst;
@@ -102,10 +100,16 @@ class _AddProductsState extends State<AddProducts> {
     Random random = new Random();
     int randomNumber = random.nextInt(9999999);
     productID = '$randomNumber';
-    _image = await ImagePicker.pickImage(
+    final _picker = ImagePicker();
+    final pickedFile = await _picker.getImage(
         source: ImageSource.gallery,
         imageQuality: 70
     );
+    _image = File(pickedFile.path);
+    /*_image = await ImagePicker.getImage(
+        source: ImageSource.gallery,
+        imageQuality: 70
+    ); */
     if (_image != null)
       setState(() {
         _image = File(_image.path);
@@ -256,21 +260,21 @@ class _AddProductsState extends State<AddProducts> {
                               height: 170,
                               child: _image == null
                                   ? Image.asset(
-                                'assets/images/placeholder.jpg',
-                                fit: BoxFit.fitWidth,
-                              )
+                                      'assets/images/placeholder.jpg',
+                                      fit: BoxFit.fitWidth,
+                                    )
                                   : Image.file(
-                                _image,
-                                fit: BoxFit.cover,
-                              ),
+                                      _image,
+                                      fit: BoxFit.cover,
+                                    ),
                             ),
                           ),
                         ),
                       ),
-
                     ],
                   ),
                 ),
+
                 Padding(
                     padding: EdgeInsets.all(20.0),
                     child: Row(
@@ -278,11 +282,12 @@ class _AddProductsState extends State<AddProducts> {
                       children: <Widget>[
                         ClipRRect(
                           borderRadius: BorderRadius.circular(15),
-                          child:RaisedButton(
-                            color: Colors.green,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              primary: Colors.green
+                            ),
                             onPressed: () {
                               if (_formKey.currentState.validate()) {
-
                                 updateListOfSelfItems(
                                   name: titleController.text,
                                   description: descriptionController.text,
@@ -293,7 +298,6 @@ class _AddProductsState extends State<AddProducts> {
                                   productID: createID(),
                                 );
                               }
-
                               MaterialPageRoute(builder: (context) => Shop(/**/));
                               descriptionController.clear();
                               costController.clear();
@@ -318,9 +322,8 @@ class _AddProductsState extends State<AddProducts> {
     _image = null;
     super.dispose();
   }
-  void updateListOfSelfItems({String productID,String imgUrl,String name,String type, String cost, String inst, String description}) {
-    var date = DateTime.now();
-    print(date);
+
+  void updateListOfSelfItems({String productID, String imgUrl,String name,String type, String cost, String inst, String description}) {
     dbRef.child('$productID').set({
       "name": name,
       "description": description,
@@ -329,35 +332,24 @@ class _AddProductsState extends State<AddProducts> {
       "type": type,
       "imgUrl": imgUrl,
       "productID":productID,
-    }).then((_) {
-      var firebaseUser = FirebaseAuth.instance.currentUser;
-      firestoreInstance
-          .collection("users")
-          .doc(firebaseUser.uid)
-          .get()
-          .then((DocumentSnapshot ds) {
-              Map myItems = ds['MyItems'];
-              Map<String, List<String>> currentInfo = {
-                productID: [
-                  productID,
-                  imgUrl,
-                  name,
-                  type,
-                  cost,
-                  description,
-                  inst,
-                ]
-              };
-              myItems.addAll(currentInfo);
+      }).then((_) {
+        var firebaseUser = FirebaseAuth.instance.currentUser;
+        firestoreInstance
+            .collection("users")
+            .doc(firebaseUser.uid)
+            .get()
+            .then((DocumentSnapshot ds) {
+                List myItems = ds['MyItems'];
+                myItems.add(productID);
                 firestoreInstance
                     .collection("users")
                     .doc(firebaseUser.uid)
                     .update({"MyItems": myItems})
                     .then((_) {});
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Successfully Added',style: TextStyle(color: Colors.white),),backgroundColor: Colors.green,)
-      );
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Successfully Added',style: TextStyle(color: Colors.white),),backgroundColor: Colors.green,)
+        );
     }).catchError((onError) {
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(onError))
@@ -370,7 +362,6 @@ class _AddProductsState extends State<AddProducts> {
     DateTime date = DateTime.now();
     String formattedDate =  date.toString().replaceAll(exp, '');
     String productID = formattedDate + firebaseUser.uid.toString().substring(0,5);
-    print(productID);
     return(productID);
   }
 }

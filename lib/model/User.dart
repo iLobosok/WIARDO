@@ -1,15 +1,13 @@
 import 'dart:io';
-import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
+
 
 class Users {
   String email = '';
   String firstName = '';
   String bio = '';
   List favorites = [];
-  Map MyItems = {};
+  List MyItems = [];
   String lastName = '';
   String phoneNumber = '';
   bool active = false;
