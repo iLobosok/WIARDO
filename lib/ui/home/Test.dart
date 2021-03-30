@@ -31,6 +31,7 @@ import 'package:flutter_login_screen/animation/AnimationProfile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login_screen/model/Settings.dart';
+import 'package:flutter_login_screen/model/VIP.dart';
 import 'package:share/share.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_login_screen/model/User.dart';
@@ -173,7 +174,7 @@ class _HomeState extends State<HomeScreenx> {
                             SizedBox(width: 200,),
                               ElevatedButton(
                                   child: Text(
-                                      "Settings".toUpperCase(),
+                                      "Try VIP".toUpperCase(),
                                       style: TextStyle(fontSize: 14, color: Colors.white)
                                   ),
                                   style: ElevatedButton.styleFrom(shape: new RoundedRectangleBorder(
@@ -183,7 +184,7 @@ class _HomeState extends State<HomeScreenx> {
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(builder: (context) =>
-                                            SettingsPage(user: user,)));
+                                            VIPScreen(user: user,)));
                                   }
                               ),
                             ],),],),),

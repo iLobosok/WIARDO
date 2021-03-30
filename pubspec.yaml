@@ -6,6 +6,7 @@ environment:
   sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
+
   flutter_social_content_share: ^0.0.4
   permission_handler: ^5.0.1+1
   flutter_facebook_login: ^2.0.1

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -48,8 +49,10 @@ class SettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
 
     var brightness = MediaQuery.of(context).platformBrightness;
+    TextEditingController emailController = new TextEditingController();
+    TextEditingController idController = new TextEditingController();
 
-     PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
+    PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
       String version = packageInfo.version;
     });
     return Scaffold(
@@ -82,21 +85,45 @@ class SettingsPage extends StatelessWidget {
                       },
                     ),
                     SizedBox(
-                      height: 40,
+                      height: 50,
                     ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    ItemCard(
-                      title: 'Change Email (${user.email})',
-
-                      textColor: Colors.white,
-                      color: (brightness == Brightness.dark) ? Colors.white : Colors.grey[900],
-                      rightWidget: _arrow(),
-                      callback: () {
-                        print('Tap Settings Item 02');
+                  Row(
+                    children: <Widget>[
+                      Container(
+                        margin: const EdgeInsets.only(left: 20.0, right: 20.0),
+                        height: 20,
+                      width: 200,
+                      child:TextField(
+                        controller: emailController,
+                        style: TextStyle(color: Colors.white),
+                        decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: "Change Email (${user.email})",
+                            hintStyle: TextStyle(color: Colors.grey, fontSize: 15)),
+                      ),
+                      ),
+                      SizedBox(width: 120,),
+                    InkWell(
+                      onTap: (){
+                        if (emailController.text.length != 0)
+                          {
+                            user.email = emailController.text;
+                          }
                       },
+                      child:Icon(Icons.check,
+                    color: Colors.green,
+                    size: 25,),
                     ),
+                    ],),
+                    // ItemCard(
+                    //   title: 'Change Email (${user.email})',
+                    //   textColor: Colors.white,
+                    //   color: (brightness == Brightness.dark) ? Colors.white : Colors.grey[900],
+                    //   rightWidget: _arrow(),
+                    //   callback: () {
+                    //     print('Tap Settings Item 02');
+                    //   },
+                    // ),
                     ItemCard(
                       title: 'Change Picture',
 

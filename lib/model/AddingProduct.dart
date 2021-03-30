@@ -33,6 +33,10 @@ class _AdgProductState extends State<AddProduct> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        appBar: AppBar(
+          elevation: 0.0,
+          backgroundColor: Colors.grey[900],
+        ),
         backgroundColor: Colors.grey[900],
         body: Center(
             child: SingleChildScrollView(
