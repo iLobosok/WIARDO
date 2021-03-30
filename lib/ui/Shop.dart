@@ -79,18 +79,13 @@ class Shopping extends State<Shop> {
     }
   }*/
   final Users user;
-
-  var WidgetList = List<Widget>();
   List images_collection = [];
-  List<Data> dataList = [
-  ]; //тут будет список виджетов данных для виджетов, котрый создастся при чтении данных с бд
-  DatabaseReference databaseReference = FirebaseDatabase.instance
-      .reference(); // инициализация бд
-
+  List<Data> dataList = []; //тут будет список виджетов данных для виджетов, котрый создастся при чтении данных с бд
+  DatabaseReference databaseReference = FirebaseDatabase.instance.reference(); // инициализация бд
   Shopping(this.user);
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getDataFromFirebaseAndBuildCarousel(1);
     getDataFromFirebaseAndBuildList();
@@ -103,8 +98,7 @@ class Shopping extends State<Shop> {
     getDataFromFirebaseAndBuildList();
     setState(() {});
     String imageUrl;
-    int min = 1,
-        max = 99999999;
+    int min = 1, max = 99999999;
     Random rnd = new Random();
     int HASHT = min + rnd.nextInt(max - min);
     int _current = 0;
@@ -150,7 +144,7 @@ class Shopping extends State<Shop> {
               )
           ),
           Padding(
-              padding: EdgeInsets.only(left: 20.0),
+              padding: EdgeInsets.only(left: 20.0, right: 10.0),
               child: GestureDetector(
                 onTap: () {
                   Navigator.push(context, MaterialPageRoute(
@@ -191,11 +185,13 @@ class Shopping extends State<Shop> {
                     SizedBox(width: MediaQuery
                         .of(context)
                         .size
-                        .width * 0.39,),
+                        .width * 0.158,),
                     Align(
                       alignment: FractionalOffset(3, 3),
-                      child: RaisedButton(
-                        color: Colors.black,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.black,
+                        ),
                           onPressed: () {
                             Navigator.push(
                                 context,
@@ -208,11 +204,27 @@ class Shopping extends State<Shop> {
                             backgroundImage: NetworkImage('$image_to_print'),
                             backgroundColor: Colors.transparent,
                           ) : CircleAvatar(
-                            //circle avatar
                             radius: 30.0,
                             backgroundImage: NetworkImage('${user.profilePictureURL}'),
                             backgroundColor: Colors.transparent,
                           )
+                      ),
+                    ),
+                    Align(
+                      alignment: FractionalOffset(1, 1),
+                      child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.black,
+                          ),
+                          onPressed: () {
+                            getDataFromFirebaseAndBuildList();
+                            setState(() {setState(() {});});
+                          },
+                          child: Icon(
+                            Icons.refresh,
+                            size: 30.0,
+                            color: Colors.white,
+                          ),
                       ),
                     ),
                   ],
@@ -366,7 +378,6 @@ class Shopping extends State<Shop> {
     databaseReference.once().then((DataSnapshot snapshot) { //получаем данные
       dataList.clear(); //очищаем список (дабы не возникло путаницы с повторением элементов)
       var keys = snapshot.value['Data'].keys;
-      print(keys);//получаем ключи
       var values = snapshot.value['Data']; //получаем значения
       for (var key in keys) { // бежим по ключам и добавляем значение их пары в отдельный класс
         Data data = Data(
@@ -380,8 +391,10 @@ class Shopping extends State<Shop> {
         );
         dataList.add(data);
       }
-    }
-    );
+    });
+    setState(() {
+
+    });
   }
 
   void getDataFromFirebaseAndBuildCarousel(int d) {
