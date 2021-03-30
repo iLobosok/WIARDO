@@ -377,7 +377,7 @@ class _SignUpState extends State<SignUpScreen> {
           },
           ),
     ),
-        ConstrainedBox(
+         sellerx == true ? ConstrainedBox(
             constraints: BoxConstraints(minWidth: double.infinity),
             child: Padding(
                 padding:
@@ -403,7 +403,7 @@ class _SignUpState extends State<SignUpScreen> {
                                 width: 2.0)),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(25.0),
-                        ))))),
+                        ))))) : SizedBox(height: 1,),
         Padding(
           padding: const EdgeInsets.only(right: 40.0, left: 40.0, top: 40.0),
           child: ConstrainedBox(
