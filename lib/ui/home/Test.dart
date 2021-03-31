@@ -207,12 +207,12 @@ class _HomeState extends State<HomeScreenx> {
               )
             ],
           ),
-          Positioned.fill(
+         /* Positioned.fill(
             bottom: 50,
             child: Container(
               child: Align(
                 alignment: Alignment.bottomCenter,
-               /* child: user.seller == true ? FadeAnimation(2,
+                child: user.seller == true ? FadeAnimation(2,
                   InkWell(
                     onTap: ()
                     {
@@ -235,10 +235,10 @@ class _HomeState extends State<HomeScreenx> {
                     ),
                   ),
                   ),
-                ) : null,*/
+                ) : null,
               ),
             ),
-          )
+          )*/
         ],
       ),
     );

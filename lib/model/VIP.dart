@@ -39,6 +39,8 @@ import 'package:flutter_login_screen/ui/home/Test.dart';
 import 'package:flutter_login_screen/database/Data.dart';
 import 'package:flutter_login_screen/animation/FadeAnimation.dart';
 import 'dart:math';
+import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
@@ -76,8 +78,10 @@ class _VIPState extends State<VIPScreen> {
     getDataFromFirebaseAndBuildCarousel(0);
     setState(() {});
     return Scaffold(
-      backgroundColor: Colors.grey[900],
-      body:Center(
+      backgroundColor: Color(0xFFFDFAF5),
+      body:Stack(
+        children: <Widget>[
+      Center(
     child:CarouselSlider(
       options: CarouselOptions(
         height: getScreenHeight,
@@ -98,9 +102,7 @@ class _VIPState extends State<VIPScreen> {
             return Container(
               height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
-              margin: EdgeInsets.symmetric(horizontal: 5.0),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(20),
                 child: FittedBox(
                 fit: BoxFit.fill,
                 child: Image.network(
@@ -113,12 +115,45 @@ class _VIPState extends State<VIPScreen> {
           },
         );
       }).toList(),
-    ),),);
+    ),),
+          Positioned.fill(
+            bottom: 50,
+            child: Container(
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child:FadeAnimation(1,
+                  InkWell(
+                    onTap: ()
+                    {
+                      _launchVIP();
+                    },
+                    child:Container(
+                      margin: EdgeInsets.symmetric(horizontal: 20),
+                      height: 50,
+                      width: 200,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(40),
+                          color: Colors.green
+                      ),
+                      child: Align(
+                        child: Text("Try VIP",
+                          style: TextStyle(color: Colors.white, fontSize: 15),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+    ],
+      ),
+    );
   }
   void getDataFromFirebaseAndBuildCarousel(int d) {
     databaseReference.once().then((DataSnapshot snapshot) { //получаем данные
-      var keys = snapshot.value['PromoToday'].keys; //получаем ключи
-      var values = snapshot.value['PromoToday']; //получаем значения
+      var keys = snapshot.value['VIP'].keys; //получаем ключи
+      var values = snapshot.value['VIP']; //получаем значения
       for (var key in keys) {
         images_collection.add(values[key]);
       }
@@ -126,6 +161,13 @@ class _VIPState extends State<VIPScreen> {
     }
     );
   }
-
+  _launchVIP() async {
+    const url = 'https://www.donationalerts.com/c/wiardo';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
 }
 
