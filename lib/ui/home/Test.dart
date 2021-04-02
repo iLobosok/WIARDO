@@ -172,7 +172,7 @@ class _HomeState extends State<HomeScreenx> {
                             children: <Widget>[
                             Text("Profile ID", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),),
                             SizedBox(width: 200,),
-                              user.VIP == true ? ElevatedButton(
+                              user.VIP == false ? ElevatedButton(
                                   child: Text(
                                       "Try VIP".toUpperCase(),
                                       style: TextStyle(fontSize: 14, color: Colors.white)

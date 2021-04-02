@@ -185,7 +185,7 @@ class Shopping extends State<Shop> {
                     SizedBox(width: MediaQuery
                         .of(context)
                         .size
-                        .width * 0.158,),
+                        .width * 0.450,),
                     Align(
                       alignment: FractionalOffset(3, 3),
                       child: ElevatedButton(
