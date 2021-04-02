@@ -85,7 +85,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           Center(
                             child: Lottie.network(
                               //Lottie
-                              'https://assets7.lottiefiles.com/packages/lf20_sSF6EG.json',
+                              'https://assets9.lottiefiles.com/packages/lf20_PEAd1R.json',
                               width: 250,
                               height: 250,
                               fit: BoxFit.fill,
@@ -106,7 +106,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         children: <Widget>[
                           Center(
                       child:Text(
-                            'Connect with designers\n',
+                            'Chat with designers\n',
                             style: kTitleStyle,
                           ),
                           ),
@@ -114,7 +114,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           Center(
                             child: Lottie.network(
                               //Lottie
-                              'https://assets5.lottiefiles.com/packages/lf20_decvxrvx.json',
+                              'https://assets1.lottiefiles.com/packages/lf20_QpolL2.json',
                               width: 350,
                               height: 250,
                               fit: BoxFit.fill,
@@ -134,7 +134,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                          Center(child: Text(
-                            'You can start career\nlike designer',
+                            'You can start career\n as designer',
                             style: kTitleStyle,
                           ),
                          ),
@@ -142,8 +142,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           Center(
                             child: Lottie.network(
                               //Lottie
-                              'https://assets8.lottiefiles.com/datafiles/6WfDdm3ooQTEs1L/data.json',
-                              width: 250,
+                              'https://assets5.lottiefiles.com/packages/lf20_8ypuhlx4.json',
+                              width: 300,
                               height: 250,
                               fit: BoxFit.fill,
                             ),
@@ -199,15 +199,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       ),
       bottomSheet: _currentPage == _numPages - 1
           ? Container(
-        height: 100.0,
+          height: 100.0,
         width: double.infinity,
-        color: Colors.grey[900],
+        color: Colors.green,
         child: InkWell(
           onTap: () {
             setFinishedOnBoarding();
             pushReplacement(context, new AuthScreen());
           },
           child: Center(
+
             child: Padding(
               padding: EdgeInsets.only(bottom: 30.0),
               child: Text(

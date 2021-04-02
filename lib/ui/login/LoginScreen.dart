@@ -60,9 +60,9 @@ class _LoginScreen extends State<LoginScreen> {
             Center(
               child: Lottie.network(
                 //Lottie
-                'https://assets4.lottiefiles.com/packages/lf20_nqB8Mn.json',
-                width: 320,
-                repeat: true,
+                'https://assets10.lottiefiles.com/packages/lf20_kltum0us.json',
+                width: 350,
+                repeat: false,
                 height: 320,
                 fit: BoxFit.fill,
               ),

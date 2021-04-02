@@ -172,7 +172,7 @@ class _HomeState extends State<HomeScreenx> {
                             children: <Widget>[
                             Text("Profile ID", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),),
                             SizedBox(width: 200,),
-                              ElevatedButton(
+                              user.VIP == true ? ElevatedButton(
                                   child: Text(
                                       "Try VIP".toUpperCase(),
                                       style: TextStyle(fontSize: 14, color: Colors.white)
@@ -186,7 +186,7 @@ class _HomeState extends State<HomeScreenx> {
                                         MaterialPageRoute(builder: (context) =>
                                             VIPScreen(user: user,)));
                                   }
-                              ),
+                              ) : Text('VIP', style: TextStyle(color:Colors.transparent),),
                             ],),],),),
                         SizedBox(height: 10,),
                         FadeAnimation(1.6,

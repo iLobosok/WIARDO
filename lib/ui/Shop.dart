@@ -210,23 +210,7 @@ class Shopping extends State<Shop> {
                           )
                       ),
                     ),
-                    Align(
-                      alignment: FractionalOffset(1, 1),
-                      child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            primary: Colors.black,
-                          ),
-                          onPressed: () {
-                            getDataFromFirebaseAndBuildList();
-                            setState(() {setState(() {});});
-                          },
-                          child: Icon(
-                            Icons.refresh,
-                            size: 30.0,
-                            color: Colors.white,
-                          ),
-                      ),
-                    ),
+
                   ],
                 ),
               ),
@@ -335,9 +319,8 @@ class Shopping extends State<Shop> {
                       ),
                     ),
                     SizedBox(
-                      height: 60,
+                      height: 50,
                     ),
-                    SizedBox(height: 20,),
 
                     Container(
                       child: dataList.length == 0
@@ -362,7 +345,23 @@ class Shopping extends State<Shop> {
                           }
                       ),
                     ),
-
+                    SizedBox(height: 10,),
+                    Center(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.black,
+                        ),
+                        onPressed: () {
+                          getDataFromFirebaseAndBuildList();
+                          setState(() {setState(() {});});
+                        },
+                        child: Icon(
+                          Icons.refresh,
+                          size: 20.0,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
 
                   ],
                 ),
