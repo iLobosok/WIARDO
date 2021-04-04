@@ -83,6 +83,7 @@ class _AddProductsState extends State<AddProducts> {
   final costController = TextEditingController();
   final dbRef = FirebaseDatabase.instance.reference().child("Data");
   String title, description, productID, product, inst;
+  File getImage;
   Future<void> retrieveLostData() async {
     final LostData response = await _imagePicker.getLostData();
     if (response == null) {
@@ -95,7 +96,7 @@ class _AddProductsState extends State<AddProducts> {
     }
   }
   var imgUrl = '';
-  _onCameraClick() async {
+  Future<File> _onCameraClick() async {
     inst = '${user.insta.toString()}';
     Random random = new Random();
     int randomNumber = random.nextInt(9999999);
@@ -106,27 +107,34 @@ class _AddProductsState extends State<AddProducts> {
         imageQuality: 70
     );
     _image = File(pickedFile.path);
-    /*_image = await ImagePicker.getImage(
-        source: ImageSource.gallery,
-        imageQuality: 70
-    ); */
     if (_image != null)
       setState(() {
         _image = File(_image.path);
       });
-    Reference reference =
-    storage.ref().child("productImg/${productID}");
+    /*Reference reference =
+    storage.ref().child("productImg/${productID}"); */
     if (_image != null)
       setState(() {
         _image = File(_image.path);
       });
     //Upload the file to firebase
-    UploadTask uploadTask = reference.putFile(_image);
+   /* UploadTask uploadTask = reference.putFile(_image);
     TaskSnapshot taskSnapshot = await uploadTask;
     imgUrl = '${await taskSnapshot.ref.getDownloadURL()}';
     print(imgUrl);
+    return imgUrl;*/
+    return _image;
+  }
+  Future<String> uploadImage(File img) async {
+    Reference reference = storage.ref().child("productImg/${productID}");
+    UploadTask uploadTask = reference.putFile(img);
+    TaskSnapshot taskSnapshot = await uploadTask;
+    imgUrl = '${await taskSnapshot.ref.getDownloadURL()}';
     return imgUrl;
   }
+
+
+
 
   Widget build(BuildContext context) {
     return Form(
@@ -253,7 +261,8 @@ class _AddProductsState extends State<AddProducts> {
                         child: ClipOval(
                           child:InkWell(
                             onTap: (){
-                              _onCameraClick();
+                              _onCameraClick().then((val){getImage = val;
+                              print(getImage);});
                             },
                             child: SizedBox(
                               width: 170,
@@ -288,20 +297,22 @@ class _AddProductsState extends State<AddProducts> {
                             ),
                             onPressed: () {
                               if (_formKey.currentState.validate()) {
-                                updateListOfSelfItems(
-                                  name: titleController.text,
-                                  description: descriptionController.text,
-                                  cost: costController.text,
-                                  inst: inst.toString(),
-                                  type: dropdownValue,
-                                  imgUrl: imgUrl,
-                                  productID: createID(),
-                                );
+                                uploadImage(getImage).then((_){
+                                  updateListOfSelfItems(
+                                    name: titleController.text,
+                                    description: descriptionController.text,
+                                    cost: costController.text,
+                                    inst: inst.toString(),
+                                    type: dropdownValue,
+                                    imgUrl: imgUrl,
+                                    productID: createID(),
+                                  );
+                                  MaterialPageRoute(builder: (context) => Shop(/**/));
+                                  descriptionController.clear();
+                                  costController.clear();
+                                  titleController.clear();
+                                });
                               }
-                              MaterialPageRoute(builder: (context) => Shop(/**/));
-                              descriptionController.clear();
-                              costController.clear();
-                              titleController.clear();
                             },
                             child: Text('Add item', style: TextStyle(color: Colors.white),),
                           ),

@@ -182,10 +182,11 @@ class Shopping extends State<Shop> {
                           fontSize: 25,
                           fontWeight: FontWeight.bold),
                     ),
-                    SizedBox(width: MediaQuery
-                        .of(context)
-                        .size
-                        .width * 0.450,),
+
+                    Expanded(
+                        child: SizedBox(),
+                    ),
+
                     Align(
                       alignment: FractionalOffset(3, 3),
                       child: ElevatedButton(
