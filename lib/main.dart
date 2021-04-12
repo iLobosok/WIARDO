@@ -134,11 +134,6 @@ class OnBoarding extends StatefulWidget {
 
 class OnBoardingState extends State<OnBoarding> {
   Future hasFinishedOnBoarding() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool finishedOnBoarding =
-    (prefs.getBool(Constants.FINISHED_ON_BOARDING) ?? false);
-
-    if (finishedOnBoarding) {
       auth.User firebaseUser = auth.FirebaseAuth.instance.currentUser;
       if (firebaseUser != null) {
         Users user = await FireStoreUtils().getCurrentUser(firebaseUser.uid);
@@ -150,7 +145,6 @@ class OnBoardingState extends State<OnBoarding> {
           pushReplacement(context, new AuthScreen());
         }
       }
-    }
     else {
       pushReplacement(context, new OnboardingScreen());
     }

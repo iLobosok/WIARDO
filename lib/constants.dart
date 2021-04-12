@@ -1,4 +1,5 @@
 const FINISHED_ON_BOARDING = 'finishedOnBoarding';
+const Finish = false;
 const COLOR_ACCENT = 0xFF5e60ce;
 const COLOR_PRIMARY_DARK = 0xFFa2d2ff;
 const COLOR_PRIMARY = 0xFF000000;

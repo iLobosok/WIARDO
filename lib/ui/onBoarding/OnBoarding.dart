@@ -208,7 +208,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             pushReplacement(context, new AuthScreen());
           },
           child: Center(
-
             child: Padding(
               padding: EdgeInsets.only(bottom: 30.0),
               child: Text(

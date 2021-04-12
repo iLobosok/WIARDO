@@ -77,7 +77,7 @@ class ProductInfo extends State<ProductInformation> {
               decoration: BoxDecoration(
                   image: DecorationImage(
                       image: NetworkImage('$img'),
-                      fit: BoxFit.cover
+                      fit: BoxFit.fitHeight,
                   ),
                   boxShadow: [
                     BoxShadow(
