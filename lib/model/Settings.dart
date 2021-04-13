@@ -1,11 +1,9 @@
 import 'dart:io';
-import 'dart:ui';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login_screen/model/item_card.dart';
 import 'package:flutter_login_screen/ui/auth/AuthScreen.dart';
-import 'package:package_info/package_info.dart';
 import 'User.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -51,10 +49,6 @@ class SettingsPage extends StatelessWidget {
     var brightness = MediaQuery.of(context).platformBrightness;
     TextEditingController emailController = new TextEditingController();
     TextEditingController idController = new TextEditingController();
-
-    PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
-      String version = packageInfo.version;
-    });
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.grey[900],
