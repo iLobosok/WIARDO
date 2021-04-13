@@ -1,0 +1,30 @@
+{
+  "name": "wiardo",
+  "version": "1.0.0",
+  "description": "Wiardo - app for buy and sell clothes Find your personal swag or sell anywhere your clothes!",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "dependencies": {
+    "@firebase/app": "^0.6.16"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "engines": {
+    "node": "8"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iLobosok/WIARDO.git"
+  },
+  "author": "iLobosok",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/iLobosok/WIARDO/issues"
+  },
+  "homepage": "https://github.com/iLobosok/WIARDO#readme"
+}
