@@ -48,26 +48,20 @@ class Favourite extends StatefulWidget {
 class Favouriteping extends State<Favourite> {
   final Users user;
   final firestoreInstance = FirebaseFirestore.instance;
-  
   List images_collection = [];
   List<Data> dataList = []; //тут будет список виджетов данных для виджетов, котрый создастся при чтении данных с бд
-  DatabaseReference databaseReference = FirebaseDatabase.instance
-      .reference(); // инициализация бд
-
+  DatabaseReference databaseReference = FirebaseDatabase.instance.reference(); // инициализация бд
   Favouriteping(this.user);
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     getDataFromFirebaseAndBuildList();
-
   }
+
   @override
   Widget build(BuildContext context) {
-    //getDataFromFirebaseAndBuildList(); //вызываем функцию, которая создаст список виджетов и отрисует их
-    //setState(() {});
-    //print("dataList $dataList");
-    //print("dataList len ${dataList.length}");
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -82,62 +76,69 @@ class Favouriteping extends State<Favourite> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-               Container(
-                  decoration: BoxDecoration(
-                      color: Colors.black12,
-                      borderRadius:
-                      BorderRadius.vertical(bottom: Radius.circular(30))),
-                  padding: EdgeInsets.all(20.0),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      SizedBox(height: 20,),
-                      Center(
-                        child: Text(
-                          'Your favourite items',
-                          style: TextStyle(color: Colors.white,
-                              fontSize: 25,
-                              fontWeight: FontWeight.bold),
-                        ),
+              Container(
+                decoration: BoxDecoration(
+                    color: Colors.black12,
+                    borderRadius:
+                    BorderRadius.vertical(bottom: Radius.circular(30))),
+                padding: EdgeInsets.all(20.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    SizedBox(height: 20,),
+                    Center(
+                      child: Text(
+                        'Your favorite items',
+                        style: TextStyle(color: Colors.white,
+                            fontSize: 25,
+                            fontWeight: FontWeight.bold),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
+              ),
 
               SizedBox(
                 height: 40,
               ),
               // тут должен отображаться отдельный список с понравившимися карточками (надо ещё настроить правильное получение их в getdatafromFirebase)
-             Container(
-               child: dataList.length == 0
-               ? Container(
-                   height: MediaQuery.of(context).size.height * 0.6,
-                   width: MediaQuery.of(context).size.width,
-                   child: Align(
-                    alignment: Alignment.center,
-                       child:CircularProgressIndicator()
-                   )
-               )
-               : ListView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: dataList.length,
-                      itemBuilder: (_, index) {
-                        return CardUI(
-                            name: dataList[index].name,
-                            productID: dataList[index].productID,
-                            img: dataList[index].img,
-                            inst: dataList[index].inst,
-                            description: dataList[index].description,
-                            type: dataList[index].type,
-                            cost: dataList[index].cost,
-                            context: context
-                        );
+              Container(
+                child: dataList.length == 0 || dataList == null
+                    ? Container(
+                    height: MediaQuery
+                        .of(context)
+                        .size
+                        .height * 0.6,
+                    width: MediaQuery
+                        .of(context)
+                        .size
+                        .width,
+                    child: Align(
+                        alignment: Alignment.center,
+                        child: CircularProgressIndicator(
+                          backgroundColor: Colors.yellow[600],
+                        )
+                    )
+                )
+                    :  ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: dataList.length,
+                    itemBuilder: (_, index) {
+                      return CardUI(
+                          name: dataList[index].name,
+                          productID: dataList[index].productID,
+                          img: dataList[index].img,
+                          inst: dataList[index].inst,
+                          description: dataList[index].description,
+                          type: dataList[index].type,
+                          cost: dataList[index].cost,
+                          context: context
+                      );
+                    }
+                ),
+              ),
 
-                      }
-                  ),
-             ),
-              
             ],
           ),
         ),
@@ -147,61 +148,65 @@ class Favouriteping extends State<Favourite> {
 
   void getDataFromFirebaseAndBuildList() {
     var firebaseUser = FirebaseAuth.instance.currentUser;
-    dataList.clear();
-    firestoreInstance
-        .collection("users")
-        .doc(firebaseUser.uid)
-        .get()
-        .then((DocumentSnapshot ds) {
-      Map favs = ds['favorites'];
-      var values = favs.values; //получаем значения
-      for (var i in values) {
-        Data data = Data(
-            img: i[1],
-            name: i[2],
-            type: i[3],
-            cost: i[4],
-            inst: i[6],
-            description: i[5],
-            productID: i[0]
-        );
-        dataList.add(data);
-      }
-      print(dataList);
-      setState(() {});
+    firestoreInstance.collection("users").doc(firebaseUser.uid).get().then((DocumentSnapshot ds) {
+      List favs = ds['favorites'];
+      databaseReference.once().then((DataSnapshot snapshot) {
+        dataList.clear(); //очищаем список (дабы не возникло путаницы с повторением элементов)//получаем ключи
+        Map values = snapshot.value['Data']; //получаем значения
+        for(String i in favs){
+          try{
+            Data data = Data(
+                img: values[i]["imgUrl"],
+                name: values[i]["name"],
+                type: values[i]["type"],
+                cost: values[i]["cost"],
+                inst: values[i]["instagram"],
+                description: values[i]["description"],
+                productID: values[i]["productID"]
+            );
+            dataList.add(data);
+          }
+          catch(e){
+            print('error!');
+          }
+
+        }
+        setState((){});
+      });
+
     }
     );
+
   }
 
 
-  Widget CardUI({String name, String productID, String type, String cost, String img, String inst, BuildContext context, String description}) {
+  Widget CardUI(
+      {String name, String productID, String type, String cost, String img, String inst, BuildContext context, String description}) {
     String text = '$img';
     String subject = 'Check this item $productID';
     return Slidable(
       actionPane: SlidableDrawerActionPane(),
       actionExtentRatio: 0.25,
       actions: <Widget>[
-
         InkWell(
-          onTap: (){
+          onTap: () {
             final RenderBox box = context.findRenderObject();
             Share.share(text,
                 subject: subject,
                 sharePositionOrigin:
                 box.localToGlobal(Offset.zero) &
                 box.size);
-           setState(() {
-           });
-            },
-        child:IconSlideAction(
-          caption: 'Share',
-          color: Colors.indigo,
-          icon: Icons.share,
+            setState(() {});
+          },
+          child: IconSlideAction(
+            caption: 'Share',
+            color: Colors.indigo,
+            icon: Icons.share,
+          ),
         ),
-        ),
-        ],
+      ],
       secondaryActions: <Widget>[
-         IconSlideAction(
+        IconSlideAction(
           caption: 'Delete',
           color: Colors.red[500],
           icon: Icons.delete,
@@ -243,33 +248,33 @@ class Favouriteping extends State<Favourite> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
-                                    Text(
-                                      '$name',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 25,
-                                          fontWeight: FontWeight.bold),
-                                    ),
+                                Text(
+                                  '$name',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 25,
+                                      fontWeight: FontWeight.bold),
+                                ),
                                 SizedBox(
                                   height: 10,
                                 ),
-                                    Text(
-                                      '$type',
-                                      style: TextStyle(
-                                          color: Colors.white, fontSize: 15),
-                                    ),
+                                Text(
+                                  '$type',
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 15),
+                                ),
                               ],
                             ),
                           ),
                         ],
                       ), // пример карточки и визуала
-                          Text(
-                            '$cost\$',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 30,
-                                fontWeight: FontWeight.bold),
-                          ),
+                      Text(
+                        '$cost\$',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold),
+                      ),
                     ],
                   ),
                 ),
@@ -277,7 +282,8 @@ class Favouriteping extends State<Favourite> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => ProductInformation(
+                          builder: (context) =>
+                              ProductInformation(
                                 inst: inst,
                                 img: img,
                                 name: name,
@@ -285,7 +291,9 @@ class Favouriteping extends State<Favourite> {
                                 productID: productID,
                                 type: type,
                                 cost: cost,
-                              )));
+                              )
+                      )
+                  );
                 },
               ),
             ],
@@ -293,27 +301,20 @@ class Favouriteping extends State<Favourite> {
         ),
       ),
     );
-
   }
-  
-  void deleteItem({String productID}){
+
+  void deleteItem({String productID}) {
     var firebaseUser = FirebaseAuth.instance.currentUser;
-    firestoreInstance
-        .collection("users")
-        .doc(firebaseUser.uid)
-        .get()
-        .then((DocumentSnapshot ds) {
-      Map favs = ds['favorites'];
+    firestoreInstance.collection("users").doc(firebaseUser.uid).get().then((DocumentSnapshot ds) {
+      List favs = ds['favorites'];
       favs.remove("$productID");
       firestoreInstance
           .collection("users")
           .doc(firebaseUser.uid)
           .update({"favorites": favs}).then((_) {
         getDataFromFirebaseAndBuildList();
-        setState(() {
-
-        });
+        setState(() {print("setState");});
       });
-  });
-}
+    });
+  }
 }

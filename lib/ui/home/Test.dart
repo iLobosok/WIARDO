@@ -1,12 +1,40 @@
+/*Copyright 2017, the Flutter project authors. All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above
+      copyright notice, this list of conditions and the following
+      disclaimer in the documentation and/or other materials provided
+      with the distribution.
+    * Neither the name of Google Inc. nor the names of its
+      contributors may be used to endorse or promote products derived
+      from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.*/
+
 import 'dart:async';
 import 'dart:math';
 import 'dart:ui';
 import 'package:flutter_login_screen/animation/AnimationProfile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_login_screen/model/Settings.dart';
+import 'package:flutter_login_screen/model/VIP.dart';
+import 'package:share/share.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_login_screen/model/User.dart';
-import 'package:rounded_loading_button/rounded_loading_button.dart';
 
 List randomImages =
 [
@@ -43,6 +71,7 @@ class _HomeState extends State<HomeScreenx> {
   final Users user;
   String imseller = 'Seller';
   _HomeState(this.user);
+  String dropdownValue = 'Menu';
   @override
   Widget build(BuildContext context) {
     setState(() {
@@ -137,8 +166,28 @@ class _HomeState extends State<HomeScreenx> {
                           style: TextStyle(color: Colors.grey, height: 1.4),)),
                         SizedBox(height: 40,),
                         FadeAnimation(1.6,
-                            Text("Profile ID", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),)
-                        ),
+                            Column(
+                              children: <Widget>[
+                            Row(
+                            children: <Widget>[
+                            Text("Profile ID", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),),
+                            SizedBox(width: 200,),
+                              user.VIP == false ? ElevatedButton(
+                                  child: Text(
+                                      "Try VIP".toUpperCase(),
+                                      style: TextStyle(fontSize: 14, color: Colors.white)
+                                  ),
+                                  style: ElevatedButton.styleFrom(shape: new RoundedRectangleBorder(
+                                    borderRadius: new BorderRadius.circular(30.0),
+                                  ),),
+                                  onPressed: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (context) =>
+                                            VIPScreen(user: user,)));
+                                  }
+                              ) : Text('VIP', style: TextStyle(color:Colors.transparent),),
+                            ],),],),),
                         SizedBox(height: 10,),
                         FadeAnimation(1.6,
                             InkWell(
@@ -158,12 +207,12 @@ class _HomeState extends State<HomeScreenx> {
               )
             ],
           ),
-          Positioned.fill(
+         /* Positioned.fill(
             bottom: 50,
             child: Container(
               child: Align(
                 alignment: Alignment.bottomCenter,
-               /* child: user.seller == true ? FadeAnimation(2,
+                child: user.seller == true ? FadeAnimation(2,
                   InkWell(
                     onTap: ()
                     {
@@ -186,10 +235,10 @@ class _HomeState extends State<HomeScreenx> {
                     ),
                   ),
                   ),
-                ) : null,*/
+                ) : null,
               ),
             ),
-          )
+          )*/
         ],
       ),
     );

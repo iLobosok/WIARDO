@@ -10,7 +10,7 @@ class Product {
   String productPictureURL = '';
 
   Product(
-      {this.title,
+      { this.title,
         this.instagram,
         this.description,
         this.productID,

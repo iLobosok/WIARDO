@@ -17,13 +17,14 @@ class AuthScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
+            SizedBox(height: 10,),
             Center(
               child: Lottie.network(
                 //Lottie
-                'https://assets1.lottiefiles.com/packages/lf20_XRLjtE.json',
+                'https://assets2.lottiefiles.com/packages/lf20_pcxwaqk2.json',
                 width: 350,
                 repeat: true,
-                height: 520,
+                height: 350,
                 fit: BoxFit.fill,
               ),
             ),

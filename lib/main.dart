@@ -52,6 +52,8 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     if (_error) {
       return MaterialApp(
+          theme: ThemeData.light(),
+          darkTheme: ThemeData.dark(),
           home: Scaffold(
             body: Container(
               color: Colors.white,
@@ -132,11 +134,6 @@ class OnBoarding extends StatefulWidget {
 
 class OnBoardingState extends State<OnBoarding> {
   Future hasFinishedOnBoarding() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool finishedOnBoarding =
-    (prefs.getBool(Constants.FINISHED_ON_BOARDING) ?? false);
-
-    if (finishedOnBoarding) {
       auth.User firebaseUser = auth.FirebaseAuth.instance.currentUser;
       if (firebaseUser != null) {
         Users user = await FireStoreUtils().getCurrentUser(firebaseUser.uid);
@@ -148,7 +145,6 @@ class OnBoardingState extends State<OnBoarding> {
           pushReplacement(context, new AuthScreen());
         }
       }
-    }
     else {
       pushReplacement(context, new OnboardingScreen());
     }

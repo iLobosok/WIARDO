@@ -1,9 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_login_screen/model/AddingProduct.dart';
 import 'package:flutter_login_screen/model/Favourite.dart';
 import 'package:flutter_login_screen/model/User.dart';
 import 'package:flutter_login_screen/model/config.dart';
+import 'package:flutter_login_screen/model/selfproducts.dart';
 import 'package:flutter_login_screen/ui/ProductInfo/ProductInfo.dart';
 import 'package:flutter_login_screen/ui/home/Test.dart';
 import 'package:flutter_login_screen/database/Data.dart';
@@ -12,7 +12,6 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_login_screen/ui/searchservice.dart';
 
 
 
@@ -80,27 +79,26 @@ class Shopping extends State<Shop> {
     }
   }*/
   final Users user;
-
-  var WidgetList = List<Widget>();
   List images_collection = [];
-  List<Data> dataList = [
-  ]; //тут будет список виджетов данных для виджетов, котрый создастся при чтении данных с бд
-  DatabaseReference databaseReference = FirebaseDatabase.instance
-      .reference(); // инициализация бд
-
+  List<Data> dataList = []; //тут будет список виджетов данных для виджетов, котрый создастся при чтении данных с бд
+  DatabaseReference databaseReference = FirebaseDatabase.instance.reference(); // инициализация бд
   Shopping(this.user);
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    getDataFromFirebaseAndBuildCarousel();
-    getDataFromFirebaseAndBuildList(); //вызываем функцию, которая создаст список виджетов и отрисует их
+    getDataFromFirebaseAndBuildCarousel(1);
+    getDataFromFirebaseAndBuildList();
+    //вызываем функцию, которая создаст список виджетов и отрисует их
   }
+  int _value = 1;
   @override
   Widget build(BuildContext context) {
+    getDataFromFirebaseAndBuildCarousel(0);
+    getDataFromFirebaseAndBuildList();
+    setState(() {});
     String imageUrl;
-    int min = 1,
-        max = 99999999;
+    int min = 1, max = 99999999;
     Random rnd = new Random();
     int HASHT = min + rnd.nextInt(max - min);
     int _current = 0;
@@ -145,6 +143,21 @@ class Shopping extends State<Shop> {
                 ),
               )
           ),
+          Padding(
+              padding: EdgeInsets.only(left: 20.0, right: 10.0),
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(
+                      builder: (context) =>
+                          SelfProducts(user: user))); //to self items page
+                },
+                child: Icon(
+                  Icons.checkroom,
+                  size: 26.0,
+                  color: Colors.white,
+                ),
+              )
+          ),
         ],
       ),
       body: SafeArea(
@@ -172,11 +185,14 @@ class Shopping extends State<Shop> {
                     SizedBox(width: MediaQuery
                         .of(context)
                         .size
-                        .width * 0.39,),
+                        .width * 0.40,),
                     Align(
                       alignment: FractionalOffset(3, 3),
-                      child: InkWell(
-                          onTap: () {
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.black,
+                        ),
+                          onPressed: () {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(builder: (context) =>
@@ -188,19 +204,20 @@ class Shopping extends State<Shop> {
                             backgroundImage: NetworkImage('$image_to_print'),
                             backgroundColor: Colors.transparent,
                           ) : CircleAvatar(
-                            //circle avatar
                             radius: 30.0,
                             backgroundImage: NetworkImage('${user.profilePictureURL}'),
                             backgroundColor: Colors.transparent,
                           )
                       ),
                     ),
+
                   ],
                 ),
               ),
               SizedBox(
                 height: 20,
               ),
+
               Container(
                 padding: EdgeInsets.symmetric(
                     horizontal: Paddings.getPadding(context, 0.02)),
@@ -220,7 +237,7 @@ class Shopping extends State<Shop> {
                           Icons.search,
                           color: Colors.white,
                         ),
-                        hintText: "Search something",
+                        hintText: "Search designers",
                         hintStyle: TextStyle(color: Colors.grey, fontSize: 15)),
                   ),
                 ),
@@ -302,9 +319,8 @@ class Shopping extends State<Shop> {
                       ),
                     ),
                     SizedBox(
-                      height: 60,
+                      height: 50,
                     ),
-                    SizedBox(height: 20,),
 
                     Container(
                       child: dataList.length == 0
@@ -329,7 +345,23 @@ class Shopping extends State<Shop> {
                           }
                       ),
                     ),
-
+                    SizedBox(height: 10,),
+                    Center(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.black,
+                        ),
+                        onPressed: () {
+                          getDataFromFirebaseAndBuildList();
+                          setState(() {setState(() {});});
+                        },
+                        child: Icon(
+                          Icons.refresh,
+                          size: 20.0,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
 
                   ],
                 ),
@@ -344,7 +376,7 @@ class Shopping extends State<Shop> {
   void getDataFromFirebaseAndBuildList() {
     databaseReference.once().then((DataSnapshot snapshot) { //получаем данные
       dataList.clear(); //очищаем список (дабы не возникло путаницы с повторением элементов)
-      var keys = snapshot.value['Data'].keys; //получаем ключи
+      var keys = snapshot.value['Data'].keys;
       var values = snapshot.value['Data']; //получаем значения
       for (var key in keys) { // бежим по ключам и добавляем значение их пары в отдельный класс
         Data data = Data(
@@ -358,23 +390,20 @@ class Shopping extends State<Shop> {
         );
         dataList.add(data);
       }
-      setState(() {
+    });
+    setState(() {
 
-      });
-    }
-    );
+    });
   }
 
-  void getDataFromFirebaseAndBuildCarousel() {
+  void getDataFromFirebaseAndBuildCarousel(int d) {
     databaseReference.once().then((DataSnapshot snapshot) { //получаем данные
       var keys = snapshot.value['PromoToday'].keys; //получаем ключи
       var values = snapshot.value['PromoToday']; //получаем значения
       for (var key in keys) {
         images_collection.add(values[key]);
       }
-      setState(() {
-
-      });
+      d==1 ? setState((){}) : print(d);
     }
     );
   }

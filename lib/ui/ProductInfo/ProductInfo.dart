@@ -31,7 +31,7 @@ class ProductInformation extends StatefulWidget {
       name: name,
       description: description,
       inst: inst,
-      productId: productID);
+      productID: productID);
 }
 
 
@@ -43,7 +43,7 @@ class ProductInfo extends State<ProductInformation> {
   final String type;
   final String description;
   final String inst;
-  final String productId;
+  final String productID;
   bool _isFavorite = false;
   ProductInfo({
     this.inst,
@@ -52,7 +52,7 @@ class ProductInfo extends State<ProductInformation> {
     this.type,
     this.name,
     this.description,
-    this.productId
+    this.productID
   });
 
   _launchURL() async {
@@ -77,7 +77,7 @@ class ProductInfo extends State<ProductInformation> {
               decoration: BoxDecoration(
                   image: DecorationImage(
                       image: NetworkImage('$img'),
-                      fit: BoxFit.cover
+                      fit: BoxFit.fitHeight,
                   ),
                   boxShadow: [
                     BoxShadow(
@@ -161,9 +161,8 @@ class ProductInfo extends State<ProductInformation> {
                                   .doc(firebaseUser.uid)
                                   .get()
                                   .then((DocumentSnapshot ds) {
-                                    Map favs = ds['favorites'];
-                                    Map<String, List<String>> currentInfo = {productId: [productId,img,name,type,cost,description,inst]};
-                                    favs.addAll(currentInfo);
+                                    List favs = ds['favorites'];
+                                    favs.add(productID);
                                     print(favs);
                                     firestoreInstance
                                       .collection("users")
