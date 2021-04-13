@@ -20,6 +20,7 @@ class Users {
   String insta;
   bool selected = false;
   bool seller = false;
+  String appIdentifier = '${Platform.operatingSystem}';
 
   Users(
       {this.email,
@@ -82,6 +83,7 @@ class Users {
       'banned': this.ban,
       'lastOnlineTimestamp': this.lastOnlineTimestamp,
       'profilePictureURL': this.profilePictureURL,
+      'appIdentifier': this.appIdentifier
     };
   }
 }

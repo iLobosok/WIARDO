@@ -1,13 +1,12 @@
 name: flutter_login_screen
 description: Functional Flutter Starter Kit
-version: 2.0.2+3
+version: 2.0.5+5
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
-  build_runner: ^1.6.2
-  build_web_compilers: ^2.0.0
+
   flutter_social_content_share: ^0.0.4
   permission_handler: ^5.0.1+1
   flutter_facebook_login: ^2.0.1
@@ -29,10 +28,12 @@ dependencies:
   simple_animations: ^1.3.3
   rounded_loading_button: ^1.0.18
   url_launcher: ^5.7.10
+  build_web_compilers: ^2.12.2
   firebase_database: ^6.0.0
+  package_info: ^2.0.0
+  share: ^2.0.1
   flutter:
     sdk: flutter
-  share: any
   cupertino_icons: ^1.0.0
 
 dev_dependencies:
@@ -40,12 +41,9 @@ dev_dependencies:
     sdk: flutter
   share: any
 
-analyzer:
-  enable-experiment:
-    - non-nullable
-
 flutter:
 
   uses-material-design: true
   assets:
   - assets/images/
+

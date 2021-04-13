@@ -49,6 +49,9 @@ class _SignUpState extends State<SignUpScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (Platform.isAndroid) {
+      retrieveLostData();
+    }
 
     return Scaffold(
       backgroundColor: Colors.grey[900],
@@ -71,6 +74,17 @@ class _SignUpState extends State<SignUpScreen> {
     );
   }
 
+  Future<void> retrieveLostData() async {
+    final LostData response = await _imagePicker.getLostData();
+    if (response == null) {
+      return;
+    }
+    if (response.file != null) {
+      setState(() {
+        _image = File(response.file.path);
+      });
+    }
+  }
 
   _onCameraClick() {
     final action = CupertinoActionSheet(

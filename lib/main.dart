@@ -55,25 +55,25 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
           theme: ThemeData.light(),
           darkTheme: ThemeData.dark(),
           home: Scaffold(
-            body: Container(
-              color: Colors.white,
-              child: Center(
-                  child: Column(
-                    children: [
-                      Icon(
-                        Icons.error_outline,
-                        color: Colors.red,
-                        size: 25,
-                      ),
-                      SizedBox(height: 16),
-                      Text(
-                        'Failed to initialise firebase!',
-                        style: TextStyle(color: Colors.red, fontSize: 25),
-                      ),
-                    ],
-                  )),
-            ),
-          ));
+        body: Container(
+          color: Colors.white,
+          child: Center(
+              child: Column(
+            children: [
+              Icon(
+                Icons.error_outline,
+                color: Colors.red,
+                size: 25,
+              ),
+              SizedBox(height: 16),
+              Text(
+                'Failed to initialise firebase!',
+                style: TextStyle(color: Colors.red, fontSize: 25),
+              ),
+            ],
+          )),
+        ),
+      ));
     }
 
     // Show a loader until FlutterFire is initialized
@@ -140,7 +140,7 @@ class OnBoardingState extends State<OnBoarding> {
         if (user != null && user.ban != true) {
           MyAppState.currentUser = user;
           pushReplacement(context, Shop(user: user));
-          // new HomeScreen(user: user));
+              // new HomeScreen(user: user));
         } else {
           pushReplacement(context, new AuthScreen());
         }
