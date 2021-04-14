@@ -1,6 +1,6 @@
 name: flutter_login_screen
 description: Functional Flutter Starter Kit
-version: 2.0.5+5
+version: 3.0.3+7
 
 environment:
   sdk: ">=2.7.0 <3.0.0"

@@ -1,34 +1,36 @@
 {
   "project_info": {
-    "project_number": "911536410946",
-    "firebase_url": "https://chat-b43aa.firebaseio.com",
-    "project_id": "chat-b43aa",
-    "storage_bucket": "chat-b43aa.appspot.com"
+    "project_number": "851455859774",
+    "firebase_url": "https://robots-eb967.firebaseio.com",
+    "project_id": "robots-eb967",
+    "storage_bucket": "robots-eb967.appspot.com"
   },
+
+
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:911536410946:android:41519cf7a1eb524c1278db",
+        "mobilesdk_app_id": "1:851455859774:android:6bb690ff8d343d1e24856f",
         "android_client_info": {
           "package_name": "com.niowo.shopper"
         }
       },
       "oauth_client": [
         {
-          "client_id": "911536410946-tvruqcoij1pgabeqcrv4pthmda3aptnb.apps.googleusercontent.com",
+          "client_id": "851455859774-fk5fj5kpcg0tnksc8bf0qf17s2madtl7.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBxov19E4KR4PvLo6jOK4Q67AmzFMQBhs4"
+          "current_key": "AIzaSyB3knZiYZHqzYDps_PJaTmZLAXNXE8IXbU"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "911536410946-tvruqcoij1pgabeqcrv4pthmda3aptnb.apps.googleusercontent.com",
+              "client_id": "851455859774-fk5fj5kpcg0tnksc8bf0qf17s2madtl7.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
