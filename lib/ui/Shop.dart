@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:html';
 import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -49,6 +50,7 @@ int r = min + rnd.nextInt(max - min);
 String image_to_print  = randomImages[r].toString();
 
 class Shopping extends State<Shop> {
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   final myController = TextEditingController();
   bool searchstate = false;
   /*var queryResultSet = [];
@@ -114,6 +116,15 @@ class Shopping extends State<Shop> {
     }
   }
 
+  _verification() async {
+    String url = 'https://instagram.com/verifywiardo';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Can not verify your profile right now!';
+    }
+  }
+
   int _value = 1;
   @override
   Widget build(BuildContext context) {
@@ -137,10 +148,17 @@ class Shopping extends State<Shop> {
         //проверка на продавца
         leading: user.seller == true ? InkWell(
           onTap: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) =>
-                    AddProduct(user: user,)));
+            if (user.verifseller == true) {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) =>
+                      AddProduct(user: user,)));
+            }
+            else {
+              var scaffoldKey = _scaffoldKey;
+              scaffoldKey.currentState.showSnackBar(SnackBar(content: Text('Write in direct to verify',style: TextStyle(color: Colors.white),),backgroundColor: Colors.green,));
+              _verification();
+            }
           },
           child: Icon(
             Icons.add,
@@ -155,9 +173,9 @@ class Shopping extends State<Shop> {
               padding: EdgeInsets.only(left: 20.0),
               child: GestureDetector(
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(
-                      builder: (context) =>
-                          Favourite())); //favourite list of cards
+                    Navigator.push(context, MaterialPageRoute(
+                        builder: (context) =>
+                            Favourite()));
                 },
                 child: Icon(
                   Icons.favorite_border,

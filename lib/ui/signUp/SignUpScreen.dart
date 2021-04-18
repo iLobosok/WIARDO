@@ -433,14 +433,86 @@ class _SignUpState extends State<SignUpScreen> {
       {
         haventinsta = true;
       }
-    if (_key.currentState.validate() && insta != "") {
+    if (sellerx == true || insta != null || insta != "") {
+      if (_key.currentState.validate()) {
+        _key.currentState.save();
+        showProgress(context, 'Please wait...', false);
+        var profilePicUrl = '';
+        try {
+          auth.UserCredential result = await auth.FirebaseAuth.instance
+              .createUserWithEmailAndPassword(
+              email: email.trim(), password: password.trim());
+          if (_image != null) {
+            updateProgress('Uploading image...');
+            profilePicUrl = await FireStoreUtils()
+                .uploadUserImageToFireStorage(_image, result.user.uid);
+          }
+          Users user = Users(
+              email: email,
+              firstName: firstName,
+              phoneNumber: mobile,
+              ban: false,
+              verifseller: false,
+              seller: sellerx,
+              VIP: false,
+              bio: bio,
+              favorites: [],
+              MyItems: [],
+              insta: insta,
+              userID: result.user.uid,
+              active: true,
+              lastName: lastName,
+              profilePictureURL: profilePicUrl);
+          await FireStoreUtils.firestore
+              .collection(Constants.USERS)
+              .doc(result.user.uid)
+              .set(user.toJson());
+          hideProgress();
+          MyAppState.currentUser = user;
+          pushReplacement(context, new Shop(user: user));
+          //HomeScreen(user: user), false);
+        } on auth.FirebaseAuthException catch (error) {
+          hideProgress();
+          String message = 'Couldn\'t sign up';
+          switch (error.code) {
+            case 'email-already-in-use':
+              message = 'Email address already in use';
+              break;
+            case 'invalid-email':
+              message = 'validEmail';
+              break;
+            case 'operation-not-allowed':
+              message = 'Email/password accounts are not enabled';
+              break;
+            case 'weak-password':
+              message = 'password is too weak.';
+              break;
+            case 'too-many-requests':
+              message = 'Too many requests, '
+                  'Please try again later.';
+              break;
+          }
+          showAlertDialog(context, 'Failed', message);
+          print(error.toString());
+        } catch (e) {
+          print('_SignUpState._sendToServer $e');
+          hideProgress();
+          showAlertDialog(context, 'Failed', 'Couldn\'t sign up');
+        }
+      } else {
+        setState(() {
+          _validate = AutovalidateMode.onUserInteraction;
+        });
+      }
+    }
+    else if (_key.currentState.validate()) {
       _key.currentState.save();
       showProgress(context, 'Please wait...', false);
       var profilePicUrl = '';
       try {
         auth.UserCredential result = await auth.FirebaseAuth.instance
             .createUserWithEmailAndPassword(
-                email: email.trim(), password: password.trim());
+            email: email.trim(), password: password.trim());
         if (_image != null) {
           updateProgress('Uploading image...');
           profilePicUrl = await FireStoreUtils()
@@ -468,7 +540,7 @@ class _SignUpState extends State<SignUpScreen> {
         hideProgress();
         MyAppState.currentUser = user;
         pushReplacement(context, new Shop(user: user));
-            //HomeScreen(user: user), false);
+        //HomeScreen(user: user), false);
       } on auth.FirebaseAuthException catch (error) {
         hideProgress();
         String message = 'Couldn\'t sign up';
@@ -498,9 +570,9 @@ class _SignUpState extends State<SignUpScreen> {
         showAlertDialog(context, 'Failed', 'Couldn\'t sign up');
       }
     } else {
-      setState(() {
-        _validate = AutovalidateMode.onUserInteraction;
-      });
+    setState(() {
+    _validate = AutovalidateMode.onUserInteraction;
+    });
     }
   }
 

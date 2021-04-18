@@ -20,10 +20,12 @@ class Users {
   String insta;
   bool selected = false;
   bool seller = false;
+  bool verifseller = false;
   String appIdentifier = '${Platform.operatingSystem}';
 
   Users(
       {this.email,
+        this.verifseller,
       this.firstName,
         this.seller,
         this.subs,
@@ -50,6 +52,7 @@ class Users {
         email: parsedJson['email'] ?? '',
         subs: parsedJson['subscribers'] ?? 0,
         seller: parsedJson['seller'] ?? false,
+        verifseller: parsedJson['verificatedseller'] ?? false,
         firstName: parsedJson['firstName'] ?? '',
         lastName: parsedJson['lastName'] ?? '',
         bio: parsedJson['bio'] ?? '',
@@ -75,6 +78,7 @@ class Users {
       'favorites': this.favorites,
       'vip' : this.VIP,
       'MyItems' : this.MyItems,
+      'verificatedseller' : this.verifseller,
       'firstName': this.firstName,
       'lastName': this.lastName,
       'phoneNumber': this.phoneNumber,
