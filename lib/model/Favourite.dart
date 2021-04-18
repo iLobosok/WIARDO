@@ -190,13 +190,11 @@ class Favouriteping extends State<Favourite> {
       actions: <Widget>[
         InkWell(
           onTap: () {
-            final RenderBox box = context.findRenderObject();
-            Share.share(text,
-                subject: subject,
-                sharePositionOrigin:
-                box.localToGlobal(Offset.zero) &
-                box.size);
-            setState(() {});
+            Share.share('check out my website https://example.com');
+            setState(() {
+              Share.share('check out my website https://example.com');
+
+            });
           },
           child: IconSlideAction(
             caption: 'Share',

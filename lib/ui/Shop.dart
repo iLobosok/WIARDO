@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'package:http/http.dart' as http;
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_login_screen/model/AddingProduct.dart';
 import 'package:flutter_login_screen/model/Favourite.dart';
@@ -12,7 +15,8 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter_login_screen/ui/toperson/ToPerson.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 
 class Shop extends StatefulWidget {
@@ -23,7 +27,6 @@ class Shop extends StatefulWidget {
   @override
   State createState() {
     return Shopping(user);
-
   }
 }
 
@@ -46,7 +49,8 @@ int r = min + rnd.nextInt(max - min);
 String image_to_print  = randomImages[r].toString();
 
 class Shopping extends State<Shop> {
-
+  final myController = TextEditingController();
+  bool searchstate = false;
   /*var queryResultSet = [];
   var tempSearchStore = [];
 
@@ -84,6 +88,14 @@ class Shopping extends State<Shop> {
   DatabaseReference databaseReference = FirebaseDatabase.instance.reference(); // инициализация бд
   Shopping(this.user);
 
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    myController.dispose();
+    super.dispose();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -91,6 +103,17 @@ class Shopping extends State<Shop> {
     getDataFromFirebaseAndBuildList();
     //вызываем функцию, которая создаст список виджетов и отрисует их
   }
+
+
+  _launchURL() async {
+    String url = 'http://wiardo.tilda.ws/';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch';
+    }
+  }
+
   int _value = 1;
   @override
   Widget build(BuildContext context) {
@@ -143,7 +166,7 @@ class Shopping extends State<Shop> {
                 ),
               )
           ),
-          Padding(
+          user.seller == true ? Padding(
               padding: EdgeInsets.only(left: 20.0, right: 10.0),
               child: GestureDetector(
                 onTap: () {
@@ -157,6 +180,10 @@ class Shopping extends State<Shop> {
                   color: Colors.white,
                 ),
               )
+          ) : Icon(
+            Icons.favorite_border,
+            size: 26.0,
+            color: Colors.black,
           ),
         ],
       ),
@@ -221,26 +248,48 @@ class Shopping extends State<Shop> {
               Container(
                 padding: EdgeInsets.symmetric(
                     horizontal: Paddings.getPadding(context, 0.02)),
-                child: Container(
+                child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                Container(
                   padding: EdgeInsets.all(5),
                   decoration: BoxDecoration(
                       color: Colors.grey[900],
                       borderRadius: BorderRadius.circular(15)),
                   child: TextField(
-                   /* onChanged: (val) {
-                      initiateSearch(val);
-                    },*/
+                    controller: myController,
+                   onChanged: (text){
+                      SarchMethod(text);
+                   },
                     style: TextStyle(color: Colors.white),
                     decoration: InputDecoration(
                         border: InputBorder.none,
-                        prefixIcon: Icon(
+                        prefixIcon:
+                        InkWell(
+                            onTap: () async {
+                              Text uid = Text(myController.text);
+
+                              DocumentSnapshot result =  await FirebaseFirestore.instance.collection('users/${uid.toString()}').doc().get();
+                              setState(() {
+                                print(uid);
+                                print(result);
+                              });
+                              /* Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => ToPerson(users: result)),
+                          );*/
+                            },
+                        child:Icon(
                           Icons.search,
                           color: Colors.white,
+                          size: 20,
+                        ),
                         ),
                         hintText: "Search designers",
                         hintStyle: TextStyle(color: Colors.grey, fontSize: 15)),
                   ),
                 ),
+              ],),
               ),
              /* SizedBox(height: 10.0),
               GridView.count(
@@ -282,7 +331,8 @@ class Shopping extends State<Shop> {
                           .width,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(5),
-                        child: CarouselSlider(
+
+                          child:CarouselSlider(
                           options: CarouselOptions(
                             enlargeCenterPage: true,
                             height: 240.0,
@@ -306,10 +356,15 @@ class Shopping extends State<Shop> {
                                   margin: EdgeInsets.symmetric(horizontal: 5.0),
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(20),
-                                    child: Image.network(
+                                child: InkWell(
+                                onTap:(){
+                                _launchURL();
+                                },
+                                child:Image.network(
                                       imgUrl,
                                       fit: BoxFit.cover,
                                     ),
+                                ),
                                   ),
                                 );
                               },
@@ -406,6 +461,29 @@ class Shopping extends State<Shop> {
       d==1 ? setState((){}) : print(d);
     }
     );
+  }
+
+  void SarchMethod(String text) {
+    DatabaseReference searchRef = FirebaseDatabase.instance.reference().child('Data');
+    searchRef.once().then((DataSnapshot snapshot){
+    dataList.clear();
+    var keys = snapshot.value;
+    var values = snapshot.value['Data'];
+    for (var key in keys){
+      Data data = new Data(
+          img: values[keys]["imgUrl"],
+          name: values[key]["name"],
+          type: values[key]["type"],
+          cost: values[key]["cost"],
+          inst: values[key]["instagram"],
+          description: values[key]["description"],
+          productID: values[key]["productID"]
+      );
+      if(data.name.contains(text)) {
+        dataList.add(data);
+      }
+    }
+    });
   }
 }
 
