@@ -116,10 +116,17 @@ class Shopping extends State<Shop> {
   }
 
   _verification() async {
+
     String url = 'https://instagram.com/verifywiardo';
-    if (await canLaunch(url)) {
+    if (await canLaunch(url) && user.verifseller == false) {
       await launch(url);
-    } else {
+    } else if (user.verifseller == true) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) =>
+              AddProduct(user: user,)));
+    }
+    else {
       throw 'Can not verify your profile right now!';
     }
   }
@@ -147,17 +154,7 @@ class Shopping extends State<Shop> {
         //проверка на продавца
         leading: user.seller == true ? InkWell(
           onTap: () {
-            if (user.verifseller == true) {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) =>
-                      AddProduct(user: user,)));
-            }
-            else {
-              var scaffoldKey = _scaffoldKey;
-              scaffoldKey.currentState.showSnackBar(SnackBar(content: Text('Write in direct to verify',style: TextStyle(color: Colors.white),),backgroundColor: Colors.green,));
-              _verification();
-            }
+            _verification();
           },
           child: Icon(
             Icons.add,
