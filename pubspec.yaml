@@ -1,6 +1,6 @@
 name: flutter_login_screen
 description: Functional Flutter Starter Kit
-version: 4.0.1+11
+version: 4.1.0+12
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -32,9 +32,12 @@ dependencies:
   firebase_database: ^6.0.0
   package_info: ^2.0.0
   share: ^2.0.1
+  country_picker: ^1.0.4
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.0
+  home_widget: ^0.1.2+1
+  styled_widget: ^0.2.2
 
 dev_dependencies:
   flutter_test:

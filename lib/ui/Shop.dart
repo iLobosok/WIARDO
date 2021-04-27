@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:home_widget/home_widget.dart';
 import 'package:flutter_login_screen/model/AddingProduct.dart';
 import 'package:flutter_login_screen/model/Favourite.dart';
 import 'package:flutter_login_screen/model/User.dart';
@@ -147,6 +148,7 @@ class Shopping extends State<Shop> {
       user.profilePictureURL;
     });
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: Colors.black,
       appBar: AppBar(
         title: Text(''),
@@ -154,13 +156,24 @@ class Shopping extends State<Shop> {
         //проверка на продавца
         leading: user.seller == true ? InkWell(
           onTap: () {
+            if (user.verifseller != true) {
+              var scaffoldKey = _scaffoldKey;
+              scaffoldKey.currentState.showSnackBar(SnackBar(content: Text(
+                'Verifying your profile ',
+                style: TextStyle(color: Colors.white),),
+                backgroundColor: Colors.green,));
+            }
             _verification();
           },
-          child: Icon(
+          child: user.verifseller == true ? Icon(
             Icons.add,
             color: Colors.white, // add custom icons also
-          ),
-        ) : Icon(
+          ) : Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+          Icon(Icons.add, color:Colors.red),
+          ],
+      ),) : Icon(
         Icons.add,
         color: Colors.black, // add custom icons also
       ),

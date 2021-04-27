@@ -379,7 +379,18 @@ class _SignUpState extends State<SignUpScreen> {
     ),
          sellerx == true ? ConstrainedBox(
             constraints: BoxConstraints(minWidth: double.infinity),
-            child: Padding(
+            child:Row(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          top: 30.0, right: 8.0, left: 8.0),
+                      child: Text(
+                        '@',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                    Padding(
                 padding:
                 const EdgeInsets.only(top: 16.0, right: 8.0, left: 8.0),
                 child: TextFormField(
@@ -395,7 +406,7 @@ class _SignUpState extends State<SignUpScreen> {
                             vertical: 8, horizontal: 16),
                         fillColor: Colors.white,
                         hintStyle: TextStyle(color:Colors.white),
-                        hintText: 'Your instagram',
+                        hintText: 'instagram',
                         focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(25.0),
                             borderSide: BorderSide(
@@ -403,7 +414,7 @@ class _SignUpState extends State<SignUpScreen> {
                                 width: 2.0)),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(25.0),
-                        ))))) : SizedBox(height: 1,),
+                        ))))],),) : SizedBox(height: 1,),
         Padding(
           padding: const EdgeInsets.only(right: 40.0, left: 40.0, top: 40.0),
           child: ConstrainedBox(

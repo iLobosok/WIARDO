@@ -104,7 +104,7 @@ class _AddProductsState extends State<AddProducts> {
     final _picker = ImagePicker();
     final pickedFile = await _picker.getImage(
         source: ImageSource.gallery,
-        imageQuality: 85
+        imageQuality: 65
     );
     _image = File(pickedFile.path);
     if (_image != null)

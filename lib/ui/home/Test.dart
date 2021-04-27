@@ -32,6 +32,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login_screen/model/Settings.dart';
 import 'package:flutter_login_screen/model/VIP.dart';
+import 'package:flutter_login_screen/ui/home/Stat.dart';
 import 'package:share/share.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_login_screen/model/User.dart';
@@ -172,9 +173,9 @@ class _HomeState extends State<HomeScreenx> {
                             children: <Widget>[
                             Text("Profile ID", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),),
                             SizedBox(width: 200,),
-                              user.VIP == false ? ElevatedButton(
-                                  child: Text(
-                                      "Try VIP".toUpperCase(),
+                                    user.VIP == false ? ElevatedButton(
+                                        child: Text(
+                                            "Try VIP".toUpperCase(),
                                       style: TextStyle(fontSize: 14, color: Colors.white)
                                   ),
                                   style: ElevatedButton.styleFrom(shape: new RoundedRectangleBorder(
@@ -187,7 +188,7 @@ class _HomeState extends State<HomeScreenx> {
                                             VIPScreen(user: user,)));
                                   }
                               ) : Text('VIP', style: TextStyle(color:Colors.transparent),),
-                            ],),],),),
+                              SizedBox(width: 200,),
                         SizedBox(height: 10,),
                         FadeAnimation(1.6,
                             InkWell(
@@ -198,6 +199,36 @@ class _HomeState extends State<HomeScreenx> {
                               },
                               child:Text('${user.userID}', style: TextStyle(color: Colors.grey),),)
                         ),
+                            ],),
+                    SizedBox(
+                      width: 150.0,
+                      child:
+                      user.seller == true ? ElevatedButton(
+                          child: Row(
+                            children: <Widget>[
+                              Center(
+                              child:Text(
+                                  "View statistics".toUpperCase(),
+                                  style: TextStyle(fontSize: 14, color: Colors.white)
+                              ),),
+                              SizedBox(width: 5,),
+                              Center(
+                                  child: Icon(Icons.equalizer, color:Colors.white, size:20)
+                              ),
+                              ],),
+
+                          style: ElevatedButton.styleFrom(shape: new RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(30.0),
+
+                          ),),
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) =>
+                                    Stat(user: user,)));
+                          }
+                      ) : Text('View statistics', style: TextStyle(color:Colors.transparent),),),
+                              ],),),
                         SizedBox(height: 120,)
 
                       ],
