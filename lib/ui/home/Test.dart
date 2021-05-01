@@ -225,7 +225,7 @@ class _HomeState extends State<HomeScreenx> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(builder: (context) =>
-                                    Stat(user: user,)));
+                                    Stat(user: user)));
                           }
                       ) : Text('View statistics', style: TextStyle(color:Colors.transparent),),),
                               ],),),

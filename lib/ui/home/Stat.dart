@@ -20,11 +20,42 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 
+/*
+
+The MIT License (MIT)
+Copyright (c) 2018 Felix Angelov
+
+Permission is hereby granted, free of charge, to any person
+obtaining a copy of this software and associated documentation
+files (the "Software"), to deal in the Software without restriction,
+including without limitation the rights to use, copy, modify, merge,
+publish, distribute, sublicense, and/or sell copies of the Software,
+and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included
+in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 import 'dart:async';
 import 'dart:math';
+import 'package:confetti/confetti.dart';
+import 'package:intl/intl.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:country_picker/country_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_holo_date_picker/flutter_holo_date_picker.dart';
 import 'package:styled_widget/styled_widget.dart';
 import 'dart:ui';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter_login_screen/animation/AnimationProfile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -55,6 +86,8 @@ class _HomeState extends State<Stat> {
   Widget build(BuildContext context) {
     setState(() {
       user.VIP;
+      user.birtday;
+      user.country;
       user.MyItems.length;
     });
     return MaterialApp(
@@ -63,25 +96,240 @@ class _HomeState extends State<Stat> {
       ),
     );
   }
+
+  ConfettiController _controllerCenter;
+  ConfettiController _controllerCenterRight;
+  ConfettiController _controllerCenterLeft;
+  ConfettiController _controllerTopCenter;
+  ConfettiController _controllerBottomCenter;
+
+  @override
+  void initState() {
+    _controllerCenter =
+        ConfettiController(duration: const Duration(seconds: 10));
+    _controllerCenterRight =
+        ConfettiController(duration: const Duration(seconds: 10));
+    _controllerCenterLeft =
+        ConfettiController(duration: const Duration(seconds: 10));
+    _controllerTopCenter =
+        ConfettiController(duration: const Duration(seconds: 10));
+    _controllerBottomCenter =
+        ConfettiController(duration: const Duration(seconds: 10));
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _controllerCenter.dispose();
+    _controllerCenterRight.dispose();
+    _controllerCenterLeft.dispose();
+    _controllerTopCenter.dispose();
+    _controllerBottomCenter.dispose();
+    super.dispose();
+  }
 }
 
 class UserPage extends StatelessWidget {
+
   final Users user;
   const UserPage({Key key, this.user}) : super(key: key);
   @override
+
   Widget build(BuildContext context) {
+    if (user.birtday == '02-05')
+    {
+      ConfettiController _controllerCenter;
+      ConfettiController _controllerCenterRight;
+      ConfettiController _controllerCenterLeft;
+      ConfettiController _controllerTopCenter;
+      ConfettiController _controllerBottomCenter;
+      print('hp');
+      _controllerCenter =
+          ConfettiController(duration: const Duration(seconds: 10));
+      _controllerCenterRight =
+          ConfettiController(duration: const Duration(seconds: 10));
+      _controllerCenterLeft =
+          ConfettiController(duration: const Duration(seconds: 10));
+      _controllerTopCenter =
+          ConfettiController(duration: const Duration(seconds: 10));
+      _controllerBottomCenter =
+          ConfettiController(duration: const Duration(seconds: 10));
+      Text _display(String text) {
+        return Text(
+          text,
+          style: const TextStyle(color: Colors.white, fontSize: 20),
+        );
+      }
+      Path drawStar(Size size) {
+        // Method to convert degree to radians
+        double degToRad(double deg) => deg * (pi / 180.0);
+
+        const numberOfPoints = 5;
+        final halfWidth = size.width / 2;
+        final externalRadius = halfWidth;
+        final internalRadius = halfWidth / 2.5;
+        final degreesPerStep = degToRad(360 / numberOfPoints);
+        final halfDegreesPerStep = degreesPerStep / 2;
+        final path = Path();
+        final fullAngle = degToRad(360);
+        path.moveTo(size.width, halfWidth);
+
+        for (double step = 0; step < fullAngle; step += degreesPerStep) {
+          path.lineTo(halfWidth + externalRadius * cos(step),
+              halfWidth + externalRadius * sin(step));
+          path.lineTo(halfWidth + internalRadius * cos(step + halfDegreesPerStep),
+              halfWidth + internalRadius * sin(step + halfDegreesPerStep));
+        }
+        path.close();
+        return path;
+      }
+
+      @override
+      Widget build(BuildContext context) {
+        return Stack(
+          children: <Widget>[
+            //CENTER -- Blast
+            Align(
+              alignment: Alignment.center,
+              child: ConfettiWidget(
+                confettiController: _controllerCenter,
+                blastDirectionality: BlastDirectionality
+                    .explosive, // don't specify a direction, blast randomly
+                shouldLoop:
+                true, // start again as soon as the animation is finished
+                colors: const [
+                  Colors.green,
+                  Colors.blue,
+                  Colors.pink,
+                  Colors.orange,
+                  Colors.purple
+                ], // manually specify the colors to be used
+                createParticlePath: drawStar, // define a custom shape/path.
+              ),
+            ),
+            Align(
+              alignment: Alignment.center,
+              child: FlatButton(
+                  onPressed: () {
+                    _controllerCenter.play();
+                  },
+                  child: _display('blast\nstars')),
+            ),
+
+            //CENTER RIGHT -- Emit left
+            Align(
+              alignment: Alignment.centerRight,
+              child: ConfettiWidget(
+                confettiController: _controllerCenterRight,
+                blastDirection: pi, // radial value - LEFT
+                particleDrag: 0.05, // apply drag to the confetti
+                emissionFrequency: 0.05, // how often it should emit
+                numberOfParticles: 20, // number of particles to emit
+                gravity: 0.05, // gravity - or fall speed
+                shouldLoop: false,
+                colors: const [
+                  Colors.green,
+                  Colors.blue,
+                  Colors.pink
+                ], // manually specify the colors to be used
+              ),
+            ),
+            Align(
+              alignment: Alignment.centerRight,
+              child: FlatButton(
+                  onPressed: () {
+                    _controllerCenterRight.play();
+                  },
+                  child: _display('pump left')),
+            ),
+
+            //CENTER LEFT - Emit right
+            Align(
+              alignment: Alignment.centerLeft,
+              child: ConfettiWidget(
+                confettiController: _controllerCenterLeft,
+                blastDirection: 0, // radial value - RIGHT
+                emissionFrequency: 0.6,
+                minimumSize: const Size(10,
+                    10), // set the minimum potential size for the confetti (width, height)
+                maximumSize: const Size(50,
+                    50), // set the maximum potential size for the confetti (width, height)
+                numberOfParticles: 1,
+                gravity: 0.1,
+              ),
+            ),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: FlatButton(
+                  onPressed: () {
+                    _controllerCenterLeft.play();
+                  },
+                  child: _display('singles')),
+            ),
+
+            //TOP CENTER - shoot down
+            Align(
+              alignment: Alignment.topCenter,
+              child: ConfettiWidget(
+                confettiController: _controllerTopCenter,
+                blastDirection: pi / 2,
+                maxBlastForce: 5, // set a lower max blast force
+                minBlastForce: 2, // set a lower min blast force
+                emissionFrequency: 0.05,
+                numberOfParticles: 50, // a lot of particles at once
+                gravity: 1,
+              ),
+            ),
+            Align(
+              alignment: Alignment.topCenter,
+              child: FlatButton(
+                  onPressed: () {
+                    _controllerTopCenter.play();
+                  },
+                  child: _display('goliath')),
+            ),
+            //BOTTOM CENTER
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: ConfettiWidget(
+                confettiController: _controllerBottomCenter,
+                blastDirection: -pi / 2,
+                emissionFrequency: 0.01,
+                numberOfParticles: 20,
+                maxBlastForce: 100,
+                minBlastForce: 80,
+                gravity: 0.3,
+              ),
+            ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: FlatButton(
+                  onPressed: () {
+                    _controllerBottomCenter.play();
+                  },
+                  child: _display('hard and infrequent')),
+            ),
+          ],
+        );
+      }
+    }
+    DateTime now = DateTime.now();
+    String formattedDate = DateFormat('dd-mm').format(now);
+    print(formattedDate);
+
     final page = ({Widget child}) => Styled.widget(child: child)
         .padding(vertical: 30, horizontal: 20)
         .constrained(minHeight: MediaQuery.of(context).size.height - (2 * 30))
         .scrollable();
 
     return <Widget>[
+
       Text(
         'Statistics',
         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 32),
       ).alignment(Alignment.center).padding(bottom: 20),
       UserCard(user: user),
-      ActionsRow(),
+      ActionsRow(user: user),
       Settings(),
     ].toColumn().parent(page);
   }
@@ -93,20 +341,20 @@ class UserCard extends StatelessWidget {
   Widget _buildUserRow() {
     return <Widget>[
       SizedBox(
-        height: 40,
-        width: 40,
-      child: ( (user.profilePictureURL) != '' || (user.profilePictureURL) != null ) ? CircleAvatar(
-        //circle avatar
-        radius: 30.0,
-        backgroundImage: NetworkImage('${user.profilePictureURL}'),
-        backgroundColor: Colors.transparent,
-      ) : Icon(Icons.account_circle)
-          .decorated(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(30),
-      )
-          .constrained(height: 50, width: 50)
-          .padding(right: 10)
+          height: 40,
+          width: 40,
+          child: ( (user.profilePictureURL) != '' || (user.profilePictureURL) != null ) ? CircleAvatar(
+            //circle avatar
+            radius: 30.0,
+            backgroundImage: NetworkImage('${user.profilePictureURL}'),
+            backgroundColor: Colors.transparent,
+          ) : Icon(Icons.account_circle)
+              .decorated(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(30),
+          )
+              .constrained(height: 50, width: 50)
+              .padding(right: 10)
       ),
       <Widget>[
         SizedBox(width: 10,),
@@ -162,6 +410,9 @@ class UserCard extends StatelessWidget {
 }
 
 class ActionsRow extends StatelessWidget {
+  final firestoreInstance = FirebaseFirestore.instance;
+  final Users user;
+   ActionsRow({Key key, this.user}) : super(key: key);
   Widget _buildActionItem(String name, IconData icon) {
     final Widget actionIcon = Icon(icon, size: 20, color: Color(0xFF42526F))
         .alignment(Alignment.center)
@@ -187,10 +438,46 @@ class ActionsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => <Widget>[
-    _buildActionItem('Wallet', Icons.attach_money),
-    _buildActionItem('Delivery', Icons.card_giftcard),
-    _buildActionItem('Message', Icons.message),
-    _buildActionItem('Service', Icons.room_service),
+   user.country != "" ? _buildActionItem('${user.country}', Icons.public) : InkWell(child:_buildActionItem('Country', Icons.public),
+    onTap:()
+    {
+      showCountryPicker(
+        context: context,
+        showPhoneCode: false,
+        onSelect: (Country country) => user.country = '${country.displayName}',
+      );
+    },),
+   user.birtday == "" ? InkWell(
+     onTap: () async {
+         var datePicked = await DatePicker.showSimpleDatePicker(
+           context,
+           // initialDate: DateTime(1994),
+           firstDate: DateTime(1960),
+           // lastDate: DateTime(2012),
+           dateFormat: "dd-MMMM",
+           locale: DateTimePickerLocale.en_us,
+           looping: true,
+
+         );
+         print(datePicked.day);
+         user.birtday = '${datePicked.day}-${datePicked.month}';
+         var firebaseUser = FirebaseAuth.instance.currentUser;
+         String datebir = '${datePicked.day}-${datePicked.month}';
+         firestoreInstance
+             .collection("users")
+             .doc(firebaseUser.uid)
+             .update({"birthday": datebir})
+             .then((_) {});
+         firestoreInstance
+             .collection("users")
+             .doc(firebaseUser.uid)
+             .update({"country": user.country})
+             .then((_) {});
+     },
+     child: _buildActionItem('Age', Icons.cake),
+   ) : _buildActionItem('${user.birtday}', Icons.celebration,),
+    _buildActionItem('Verification',  Icons.fact_check),
+    _buildActionItem('Support', Icons.help),
   ].toRow(mainAxisAlignment: MainAxisAlignment.spaceAround);
 }
 

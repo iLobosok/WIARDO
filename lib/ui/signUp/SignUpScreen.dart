@@ -43,9 +43,9 @@ class _SignUpState extends State<SignUpScreen> {
   TextEditingController _passwordController = new TextEditingController();
   GlobalKey<FormState> _key = new GlobalKey();
   AutovalidateMode _validate = AutovalidateMode.disabled;
-  String firstName, lastName, email, mobile, password, confirmPassword,bio, insta;
-
+  String firstName, country, birtday, lastName, email, mobile, password, confirmPassword,bio, insta;
   bool sellerx = false;
+
 
   @override
   Widget build(BuildContext context) {
@@ -460,6 +460,8 @@ class _SignUpState extends State<SignUpScreen> {
           }
           Users user = Users(
               email: email,
+              birtday: birtday,
+              country: country,
               firstName: firstName,
               phoneNumber: mobile,
               ban: false,

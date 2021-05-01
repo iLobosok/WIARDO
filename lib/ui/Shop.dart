@@ -148,7 +148,7 @@ class Shopping extends State<Shop> {
       user.profilePictureURL;
     });
     return Scaffold(
-      key: _scaffoldKey,
+    key: _scaffoldKey,
       backgroundColor: Colors.black,
       appBar: AppBar(
         title: Text(''),

@@ -38,6 +38,13 @@ dependencies:
   cupertino_icons: ^1.0.0
   home_widget: ^0.1.2+1
   styled_widget: ^0.2.2
+  nice_button: ^0.1.7
+  fl_chart: ^0.12.3
+  bezier_chart: ^1.0.17+1
+  flutter_circular_chart: ^0.1.0
+  flutter_blurhash: ^0.5.0
+  flutter_holo_date_picker: ^0.3.4+1
+  confetti: ^0.5.5
 
 dev_dependencies:
   flutter_test:

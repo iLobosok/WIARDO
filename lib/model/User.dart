@@ -6,6 +6,8 @@ class Users {
   String email = '';
   String firstName = '';
   String bio = '';
+  String birtday = '';
+  String country = '';
   List favorites = [];
   List MyItems = [];
   String lastName = '';
@@ -25,6 +27,8 @@ class Users {
 
   Users(
       {this.email,
+        this.birtday,
+        this.country,
         this.verifseller,
       this.firstName,
         this.seller,
@@ -50,6 +54,8 @@ class Users {
   factory Users.fromJson(Map<String, dynamic> parsedJson) {
     return new Users(
         email: parsedJson['email'] ?? '',
+        birtday: parsedJson['birthday'] ?? '',
+        country: parsedJson['country'] ?? '',
         subs: parsedJson['subscribers'] ?? 0,
         seller: parsedJson['seller'] ?? false,
         verifseller: parsedJson['verificatedseller'] ?? false,
@@ -71,6 +77,8 @@ class Users {
   Map<String, dynamic> toJson() {
     return {
       'bio' : this.bio,
+      'birtday' : this.birtday,
+      'country' : this.country,
       'email': this.email,
       'subcribers' : this.subs,
       'seller': this.seller,
