@@ -118,7 +118,7 @@ class UserPage extends StatelessWidget {
   Widget build(BuildContext context) {
 
     DateTime now = DateTime.now();
-    String formattedDate = DateFormat('dd-mm').format(now);
+    String formattedDate = DateFormat('dd-MM').format(now);
     print(formattedDate);
 
     final page = ({Widget child}) => Styled.widget(child: child)
@@ -183,6 +183,16 @@ class Statistics extends StatelessWidget{
   }
 
   LineChartData mainData() {
+    DateTime now = DateTime.now();
+    String monthnow = DateFormat('MM').format(now);
+    var monthlast = int.parse('$monthnow');
+    assert(monthlast is int);
+    monthlast = monthlast-1;
+    if (monthnow == 01 || monthnow == 1)
+      {
+        monthlast = 12;
+      }
+    var montlast2 = monthlast-1;
     return LineChartData(
       gridData: FlGridData(
         show: true,
@@ -210,11 +220,11 @@ class Statistics extends StatelessWidget{
           getTitles: (value) {
             switch (value.toInt()) {
               case 2:
-                return 'MAR';
+                return '$montlast2';
               case 5:
-                return 'JUN';
+                return '$monthlast';
               case 8:
-                return 'SEP';
+                return '$monthnow';
             }
             return '';
           },
@@ -417,10 +427,18 @@ class UserCard extends StatelessWidget {
   }
 
   Widget _buildUserStats() {
+    String value = 'no';
+    if (user.VIP == true)
+      {
+        value = 'Yes';
+      }
+    else {
+      value = 'No';
+    }
     return <Widget>[
       _buildUserStatsItem('${user.subs}', 'Followers'),
       _buildUserStatsItem('${user.MyItems.length}', 'Goods'),
-      _buildUserStatsItem('${user.VIP}', 'VIP'),
+      _buildUserStatsItem('$value', 'VIP'),
     ]
         .toRow(mainAxisAlignment: MainAxisAlignment.spaceAround)
         .padding(vertical: 10);
