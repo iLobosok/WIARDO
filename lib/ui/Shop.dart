@@ -532,7 +532,7 @@ Widget CardUI({String name,String type, String cost, String img, String inst, Bu
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
                   image: DecorationImage(
-                      image: NetworkImage('$img'),
+                      //image: NetworkImage('$img'),
                       fit: BoxFit.cover
                   ),
                   boxShadow: [
