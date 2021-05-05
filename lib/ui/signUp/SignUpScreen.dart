@@ -43,7 +43,7 @@ class _SignUpState extends State<SignUpScreen> {
   TextEditingController _passwordController = new TextEditingController();
   GlobalKey<FormState> _key = new GlobalKey();
   AutovalidateMode _validate = AutovalidateMode.disabled;
-  String firstName, country, birtday, lastName, email, mobile, password, confirmPassword,bio, insta;
+  String firstName, nickname, country, birtday, lastName, email, mobile, password, confirmPassword,bio, insta;
   bool sellerx = false;
 
 
@@ -462,6 +462,7 @@ class _SignUpState extends State<SignUpScreen> {
               email: email,
               birtday: birtday,
               country: country,
+              nickname: nickname,
               firstName: firstName,
               phoneNumber: mobile,
               ban: false,

@@ -45,8 +45,11 @@ OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+
 import 'package:confetti/confetti.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter_login_screen/database/Data.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:country_picker/country_picker.dart';
@@ -57,6 +60,7 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login_screen/model/User.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Stat extends StatefulWidget {
   final Users user;
@@ -98,9 +102,8 @@ class _HomeState extends State<Stat> {
       user.birtday;
       user.country;
       user.MyItems.length;
-    });
+      });
     return MaterialApp(
-
       home: Scaffold(
         backgroundColor: Colors.grey[900],
         body: SafeArea(child: UserPage(user: user)),
@@ -126,14 +129,35 @@ class UserPage extends StatelessWidget {
         .constrained(minHeight: MediaQuery.of(context).size.height - (2 * 30))
         .scrollable();
 
+    String timex = DateFormat('HH').format(now);
+    var timexx = int.parse('$timex');
+    assert(timexx is int);
+    String good = 'Good morning!';
+    print('Time is = $timex');
+    if (timexx <= 15)
+      {
+        good = 'Good afternoon!';
+      }
+    else if (timexx <= 21)
+      {
+        good = 'Good evening!';
+      }
+    else if (timexx <= 03 || timexx <= 3)
+      {
+        good = 'Good night!';
+      }
+
     return <Widget>[
 
       Text(
-        'Statistics',
+        '$good',
         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 32, color: Colors.white),
       ).alignment(Alignment.center).padding(bottom: 20),
+      SizedBox(height: 15),
       UserCard(user: user),
+      SizedBox(height: 25),
       ActionsRow(user: user),
+      SizedBox(height: 50),
       Statistics(user: user),
     ].toColumn().parent(page);
   }
@@ -151,7 +175,6 @@ class Statistics extends StatelessWidget{
   @override
 
   Widget build(BuildContext context) {
-
     SizedBox(height: 100,);
     bool showAvg = false;
     int touchedIndex;
@@ -176,23 +199,66 @@ class Statistics extends StatelessWidget{
           ),
         ),
         SizedBox(height: 100,),
-
+        TextField(
+          controller: NickController,
+          obscureText: true,
+          textAlign: TextAlign.left,
+          decoration: InputDecoration(
+            border: InputBorder.none,
+            hintText: 'Add your personal nickname',
+            hintMaxLines: 10,
+            errorMaxLines: 10,
+            hintStyle: TextStyle(color: Colors.grey),
+          ),
+        )
       ],
     ),
-    );
+    )
+    void Nick(){
+      final firestoreInstance = FirebaseFirestore.instance;
+      TextEditingController NickController = new TextEditingController();
+      var firebaseUser = FirebaseAuth.instance.currentUser;
+      if(NickController.text.length < 20 && NickController.text.length > 2) {
+        firestoreInstance
+            .collection("users")
+            .doc(firebaseUser.uid)
+            .update({"nickname": NickController.text})
+            .then((_) {});
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Added nickname',style: TextStyle(color: Colors.white),),backgroundColor: Colors.green,));
+      }
+      else {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error nick format. Please try again',style: TextStyle(color: Colors.white),),backgroundColor: Colors.red,));}
+    }
+    }
   }
 
   LineChartData mainData() {
+
+
+
+
     DateTime now = DateTime.now();
     String monthnow = DateFormat('MM').format(now);
     var monthlast = int.parse('$monthnow');
     assert(monthlast is int);
-    monthlast = monthlast-1;
-    if (monthnow == 01 || monthnow == 1)
-      {
-        monthlast = 12;
+    monthlast = monthlast - 1;
+    if (monthnow == 01 || monthnow == 1) {
+      monthlast = 12;
+    }
+    var montlast2 = monthlast - 1;
+    int count = user.MyItems.length;
+    var list = [count];
+    int sum = 0;
+    for (int i = 0; i < count; i++)
+     {
+
       }
-    var montlast2 = monthlast-1;
+    print(count);
+
+
+
     return LineChartData(
       gridData: FlGridData(
         show: true,
@@ -238,13 +304,41 @@ class Statistics extends StatelessWidget{
             fontSize: 15,
           ),
           getTitles: (value) {
+            final firestoreInstance = FirebaseFirestore.instance;
+            final dbRef = FirebaseDatabase.instance.reference().child("Data");
+            List<Data> dataList = [];
+            var firebaseUser = FirebaseAuth.instance.currentUser;
+            dataList.clear();
+            firestoreInstance
+                .collection("users")
+                .doc(firebaseUser.uid)
+                .get()
+                .then((DocumentSnapshot ds) {
+              List myItems = ds['MyItems'];
+              dbRef.once().then((DataSnapshot ds) {
+                for (String item in myItems) {
+                  Data data = Data(
+                    cost: ds.value[item]['cost'],
+                  );
+                  dataList.add(data);
+                  int sum = 0;
+                  print(data.cost);
+                  var costx = int.parse('${data.cost}');
+                  assert(costx is int);
+                  for (int i = 0; i < data.cost.length; i++) {
+                    sum = (sum + costx);
+                  }
+                }
+              });
+            }
+            );
             switch (value.toInt()) {
               case 1:
-                return '10k';
+                return '0';
               case 3:
-                return '30k';
+                return '10';
               case 5:
-                return '50k';
+                return '100';
             }
             return '';
           },
@@ -385,10 +479,11 @@ class Statistics extends StatelessWidget{
 }
 
 class UserCard extends StatelessWidget {
+
   final Users user;
   const UserCard({Key key, this.user}) : super(key: key);
-  Widget _buildUserRow() {
-    return <Widget>[
+  Widget _buildUserRow(BuildContext context) {
+     return <Widget>[
       SizedBox(
           height: 40,
           width: 40,
@@ -407,6 +502,8 @@ class UserCard extends StatelessWidget {
       ),
       SizedBox(width: 10,),
       <Widget>[
+        Row(
+          children: <Widget>[
         Text(
           '${user.firstName} ${user.lastName}',
           style: TextStyle(
@@ -415,6 +512,9 @@ class UserCard extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ).padding(bottom: 5),
+            SizedBox(width: 10,),
+        ],
+        ),
         Text(
           'Seller',
           style: TextStyle(
@@ -451,7 +551,7 @@ class UserCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return <Widget>[_buildUserRow(), _buildUserStats()]
+    return <Widget>[_buildUserRow(context), _buildUserStats()]
         .toColumn(mainAxisAlignment: MainAxisAlignment.spaceAround)
         .padding(horizontal: 20, vertical: 10)
         .decorated(
@@ -463,6 +563,16 @@ class UserCard extends StatelessWidget {
     )
         .height(175)
         .alignment(Alignment.center);
+  }
+}
+
+
+_launchURL() async {
+  String url = 'https://www.instagram.com/verifywiardo/';
+  if (await canLaunch(url)) {
+    await launch(url);
+  } else {
+    throw 'Could not launch';
   }
 }
 
@@ -540,7 +650,11 @@ class ActionsRow extends StatelessWidget {
      },
      child: _buildActionItem('Age', Icons.cake),
    ) : _buildActionItem('${user.birtday}', Icons.celebration,),
-    _buildActionItem('Verification',  Icons.fact_check),
-    _buildActionItem('Support', Icons.help),
+   InkWell (child: _buildActionItem('Verification',  Icons.fact_check),onTap: (){
+     _launchURL();
+   },),
+    InkWell(child:_buildActionItem('Support', Icons.help),onTap: (){
+      _launchURL();
+    },),
   ].toRow(mainAxisAlignment: MainAxisAlignment.spaceAround);
 }

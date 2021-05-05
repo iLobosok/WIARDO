@@ -25,14 +25,20 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.*/
 
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_login_screen/animation/AnimationProfile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_login_screen/model/AddingProduct.dart';
 import 'package:flutter_login_screen/model/Settings.dart';
 import 'package:flutter_login_screen/model/VIP.dart';
 import 'package:flutter_login_screen/ui/home/Stat.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:share/share.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_login_screen/model/User.dart';
@@ -55,6 +61,8 @@ Random rnd = new Random();
 int r = min + rnd.nextInt(max - min);
 String image_to_print  = randomImages[r].toString();
 
+File _image;
+
 
 class HomeScreenx extends StatefulWidget {
   final Users user;
@@ -67,14 +75,53 @@ class HomeScreenx extends StatefulWidget {
   }
 }
 
+
+
+
+
 class _HomeState extends State<HomeScreenx> {
+
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final Users user;
   String imseller = 'Seller';
   _HomeState(this.user);
+  final firestoreInstance = FirebaseFirestore.instance;
   String dropdownValue = 'Menu';
   @override
   Widget build(BuildContext context) {
+    var imgUrl = '';
+    Future<File> _change_picture() async {
+      final _picker = ImagePicker();
+      final pickedFile = await _picker.getImage(
+          source: ImageSource.gallery,
+          imageQuality: 65
+      );
+      _image = File(pickedFile.path);
+      if (_image != null)
+        setState(() {
+          _image = File(_image.path);
+        });
+
+      if (_image != null)
+        setState(() {
+          _image = File(_image.path);
+        });
+      Reference reference =
+      storage.ref().child("images/${user.userID}.png");
+      UploadTask uploadTask = reference.putFile(_image);
+    TaskSnapshot taskSnapshot = await uploadTask;
+    imgUrl = '${await taskSnapshot.ref.getDownloadURL()}';
+    print(imgUrl);
+      var firebaseUser = FirebaseAuth.instance.currentUser;
+      imgUrl = '${await taskSnapshot.ref.getDownloadURL()}';
+      firestoreInstance
+          .collection("users")
+          .doc(firebaseUser.uid)
+          .update({"profilePictureURL": imgUrl})
+          .then((_) {});
+      return _image;
+    }
+
     setState(() {
       user.VIP;
       user.seller;
@@ -116,6 +163,7 @@ class _HomeState extends State<HomeScreenx> {
                               ]
                           )
                       ),
+
                       child: Padding(
                         padding: EdgeInsets.all(20),
                         child: Column(
@@ -136,16 +184,30 @@ class _HomeState extends State<HomeScreenx> {
                                 ) : null),
                               ],
                             ),
-                            SizedBox(height: 20,),
+
                             Row(
                               children: <Widget>[
-                                FadeAnimation(1.2,
+                                FadeAnimation(1.3,
                                     Text('$imseller', style: TextStyle(color: Colors.grey, fontSize: 16),)
                                 ),
                                 SizedBox(width: 50,),
                                 FadeAnimation(1.3, Text('${user.subs} Subscribers', style:
                                 TextStyle(color: Colors.grey, fontSize: 16)
-                                  ,))
+                                  ,)),
+                                SizedBox(width:100),
+                                FadeAnimation(1.3, Opacity(
+                                  opacity: 0.75,
+                                  child:Align(
+                                    alignment: Alignment.centerRight,
+                                    child:IconButton(
+                                      icon: const Icon(Icons.add_a_photo_outlined, color: Colors.white, size: 17),
+                                      tooltip: 'Change picture',
+                                      onPressed: () {
+                                        _change_picture();
+                                      },
+                                    ),
+                                  ),),
+                                ),
                               ],
                             ),
 
@@ -172,7 +234,6 @@ class _HomeState extends State<HomeScreenx> {
                             Row(
                             children: <Widget>[
                             Text("Profile ID", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),),
-                            SizedBox(width: 200,),
                                     user.VIP == false ? ElevatedButton(
                                         child: Text(
                                             "Try VIP".toUpperCase(),
@@ -188,7 +249,6 @@ class _HomeState extends State<HomeScreenx> {
                                             VIPScreen(user: user,)));
                                   }
                               ) : Text('VIP', style: TextStyle(color:Colors.transparent),),
-                              SizedBox(width: 200,),
                         SizedBox(height: 10,),
                         FadeAnimation(1.6,
                             InkWell(
@@ -200,17 +260,19 @@ class _HomeState extends State<HomeScreenx> {
                               child:Text('${user.userID}', style: TextStyle(color: Colors.grey),),)
                         ),
                             ],),
+                    SizedBox(height:20),
                     SizedBox(
                       width: 150.0,
                       child:
                       user.seller == true ? ElevatedButton(
                           child: Row(
                             children: <Widget>[
-                              Center(
+                              Align(
                               child:Text(
                                   "View statistics".toUpperCase(),
                                   style: TextStyle(fontSize: 14, color: Colors.white)
-                              ),),
+                              ),
+                              alignment: Alignment.centerLeft,),
                               SizedBox(width: 5,),
                               Center(
                                   child: Icon(Icons.equalizer, color:Colors.white, size:20)

@@ -12,6 +12,7 @@ class Users {
   List MyItems = [];
   String lastName = '';
   String phoneNumber = '';
+  String nickname = '';
   bool active = false;
   int subs = 1;
   bool ban = false;
@@ -29,6 +30,7 @@ class Users {
       {this.email,
         this.birtday,
         this.country,
+        this.nickname,
         this.verifseller,
       this.firstName,
         this.seller,
@@ -56,6 +58,7 @@ class Users {
         email: parsedJson['email'] ?? '',
         birtday: parsedJson['birthday'] ?? '',
         country: parsedJson['country'] ?? '',
+        nickname: parsedJson['nickname'] ?? '',
         subs: parsedJson['subscribers'] ?? 0,
         seller: parsedJson['seller'] ?? false,
         verifseller: parsedJson['verificatedseller'] ?? false,
@@ -82,6 +85,7 @@ class Users {
       'email': this.email,
       'subcribers' : this.subs,
       'seller': this.seller,
+      'nickname' : this.nickname,
       'instagram' : this.insta,
       'favorites': this.favorites,
       'vip' : this.VIP,
