@@ -74,7 +74,7 @@ class _AddProductsState extends State<AddProducts> {
   final Users user;
   _AddProductsState(this.user);
   final _formKey = GlobalKey<FormState>();
-  final listOfPets = ["T-shirts", "Tops", "Bras", "Shirts", "Dresses", "Skirts", "Pants", "Shoppers", "Shorts", "Socks", "Shoes", "Sweaters", "Jeans", "Masks"];
+  final listOfPets = ["T-shirts", "Tops", "Bras", "Shirts", "Dresses", "Skirts", "Pants", "Shoppers", "Shorts", "Socks", "Shoes", "Sweaters", "Jeans", "Masks", "Other"];
   String dropdownValue = 'Shoppers';
   final titleController = TextEditingController();
   final ImagePicker _imagePicker = ImagePicker();

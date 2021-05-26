@@ -208,6 +208,21 @@ class _HomeState extends State<HomeScreenx> {
                                     ),
                                   ),),
                                 ),
+                                user.VIP == false ? FadeAnimation(1.3, Opacity(
+                                  opacity: 0.75,
+                                  child:Align(
+                                    alignment: Alignment.centerRight,
+                                    child:IconButton(
+                                      icon: const Icon(Icons.stars, color: Colors.yellow, size: 17),
+                                      tooltip: 'VIP',
+                                      onPressed: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(builder: (context) =>
+                                                VIPScreen(user: user,)));
+                                      },
+                                    ),
+                                  ),),) : null,
                               ],
                             ),
 
@@ -234,22 +249,7 @@ class _HomeState extends State<HomeScreenx> {
                             Row(
                             children: <Widget>[
                             Text("Profile ID", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),),
-                                    user.VIP == false ? ElevatedButton(
-                                        child: Text(
-                                            "Try VIP".toUpperCase(),
-                                      style: TextStyle(fontSize: 14, color: Colors.white)
-                                  ),
-                                  style: ElevatedButton.styleFrom(shape: new RoundedRectangleBorder(
-                                    borderRadius: new BorderRadius.circular(30.0),
-                                  ),),
-                                  onPressed: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(builder: (context) =>
-                                            VIPScreen(user: user,)));
-                                  }
-                              ) : Text('VIP', style: TextStyle(color:Colors.transparent),),
-                        SizedBox(height: 10,),
+                        SizedBox(width: 10,),
                         FadeAnimation(1.6,
                             InkWell(
                               onTap: () {
@@ -287,7 +287,7 @@ class _HomeState extends State<HomeScreenx> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(builder: (context) =>
-                                    Stat(user: user)));
+                                    Stat(users: user)));
                           }
                       ) : Text('View statistics', style: TextStyle(color:Colors.transparent),),),
                               ],),),

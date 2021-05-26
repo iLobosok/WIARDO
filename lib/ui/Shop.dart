@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -139,6 +140,7 @@ class Shopping extends State<Shop> {
     getDataFromFirebaseAndBuildList();
     setState(() {});
     String imageUrl;
+    bool view = false;
     int min = 1, max = 99999999;
     Random rnd = new Random();
     int HASHT = min + rnd.nextInt(max - min);
@@ -403,7 +405,22 @@ class Shopping extends State<Shop> {
                     SizedBox(
                       height: 50,
                     ),
-
+                    Row(
+                      children: <Widget> [
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child:InkWell(
+                            child:Icon(Icons.view_list_rounded, size: 15, color: Colors.white),
+                            onTap: ()
+                            {
+                              setState(() {
+                                view = true;
+                              });
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
                     Container(
                       child: dataList.length == 0
                           ? Center(child: Text('no data', style: TextStyle(
@@ -615,6 +632,108 @@ Widget CardUI({String name,String type, String cost, String img, String inst, Bu
     ),
   );
 }
+Widget CardUI2({String name,String type, String cost, String img, String inst, BuildContext context, String description, String productID}) {
+  return Card(
+    color: Colors.transparent,
+    child: Center(
+      child:Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          InkWell(
+            borderRadius: BorderRadius.circular(20),
+            child: Container(
+              alignment: Alignment.center,
+              height: 150,
+              width: double.infinity,
+              padding: EdgeInsets.all(20),
+              margin: EdgeInsets.only(bottom: 20),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  image: DecorationImage(
+                      image: NetworkImage('$img'),
+                      fit: BoxFit.cover
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                        color: Colors.grey[900],
+                        blurRadius: 10,
+                        offset: Offset(0, 10)
+                    )
+                  ]
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment
+                              .start,
+                          children: <Widget>[
+                            FadeAnimation(1, Text('$name',
+                              style: TextStyle(color: Colors.white,
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.bold),)),
+                            SizedBox(height: 10,),
+                            FadeAnimation(1.1, Text('$type',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20),)),
+
+                          ],
+                        ),
+                      ),
+                      FadeAnimation(1.2, Container(
+                        width: 35,
+                        height: 35,
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white
+                        ),
+                        child: InkWell(
+                          child:Center(
+                            child: Icon(
+                              Icons.favorite_border, size: 20,),
+                          ),
+                        ),
+                      ))
+                    ],
+                  ), // пример карточки и визуала
+                  FadeAnimation(1.2, Text('$cost\$', style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold),)),
+                ],
+              ),
+            ),
+            onTap: () {
+
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) =>
+                      ProductInformation(
+                        inst: inst,
+                        img: img,
+                        name: name,
+                        description: description,
+                        productID: productID,
+                        type: type,
+                        cost: cost,
+                      )
+                  )
+              );
+            },
+          ),
+
+        ],
+      ),
+    ),
+  );
+}
+
 /*
 
 Widget buildResultCard(data) {

@@ -1,660 +1,348 @@
-/*MIT License
-
-Copyright (c) 2019 Rein Gundersen Bentdal
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.*/
-
-/*
-
-The MIT License (MIT)
-Copyright (c) 2018 Felix Angelov
-
-Permission is hereby granted, free of charge, to any person
-obtaining a copy of this software and associated documentation
-files (the "Software"), to deal in the Software without restriction,
-including without limitation the rights to use, copy, modify, merge,
-publish, distribute, sublicense, and/or sell copies of the Software,
-and to permit persons to whom the Software is furnished to do so,
-subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included
-in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-USE OR OTHER DEALINGS IN THE SOFTWARE.
- */
-
-
-import 'package:confetti/confetti.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter_login_screen/database/Data.dart';
-import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:country_picker/country_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_holo_date_picker/flutter_holo_date_picker.dart';
-import 'package:styled_widget/styled_widget.dart';
-import 'dart:ui';
-import 'package:flutter/cupertino.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:flutter_login_screen/database/Data.dart';
 import 'package:flutter_login_screen/model/User.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_login_screen/ui/home/donut_charts.dart';
+import 'package:flutter_login_screen/ui/home/percent_indicator.dart';
+import 'package:flutter_login_screen/ui/home/wave_progress.dart';
+import 'package:flutter_login_screen/ui/home/screen_size.dart';
+import 'package:charts_flutter/flutter.dart' as charts;
 
-class Stat extends StatefulWidget {
-  final Users user;
+var data = [
+  new DataPerItem('Home', 35, Colors.greenAccent),
+  new DataPerItem('Food & Drink', 25, Colors.yellow),
+  new DataPerItem('Hotel & Restaurant', 24, Colors.indigo),
+  new DataPerItem('Travelling', 40, Colors.pinkAccent),
+];
 
-  Stat({Key key, @required this.user}) : super(key: key);
+var series = [
+  new charts.Series(
+    domainFn: (DataPerItem clickData, _) => clickData.name,
+    measureFn: (DataPerItem clickData, _) => clickData.percent,
+    colorFn: (DataPerItem clickData, _) => clickData.color,
+    id: 'Item',
+    data: data,
+  ),
+];
 
-  @override
-  State createState() {
-    return _HomeState(user);
-  }
-}
-
-class _HomeState extends State<Stat> {
-  ConfettiController _controllerCenter;
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
-  final Users user;
-  String imseller = 'Seller';
-
-  _HomeState(this.user);
-
-  String dropdownValue = 'Menu';
-  @override
-  void initState() {
-    _controllerCenter = ConfettiController(duration: const Duration(seconds: 10));
-    _controllerCenter.play();
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _controllerCenter.dispose();
-    super.dispose();
-  }
+class Stat extends StatelessWidget {
+  final Users users;
+  const Stat({Key key, this.users}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    setState(() {
-      user.VIP;
-      user.birtday;
-      user.country;
-      user.MyItems.length;
+    final DateTime now = DateTime.now();
+    final DateFormat formatter = DateFormat('MM');
+    final String formatted = formatter.format(now);
+    final firestoreInstance = FirebaseFirestore.instance;
+    var firebaseUser = FirebaseAuth.instance.currentUser;
+
+    List<Data> dataList = [];
+    final dbRef = FirebaseDatabase.instance.reference().child("Data");
+    firestoreInstance
+        .collection("users")
+        .doc(firebaseUser.uid)
+        .get()
+        .then((DocumentSnapshot ds) {
+      List myItems = ds['MyItems'];
+      var summary = 0.00;
+      dbRef.once().then((DataSnapshot ds) {
+        for (String item in myItems) {
+          Data data = Data(
+            cost: ds.value[item]['cost'],
+          );
+          dataList.add(data);
+          for (int i = 0; i < dataList.length; i++) {
+            var costpr = int.parse('${dataList[i]}');
+            assert(costpr is int);
+            summary = summary + costpr;
+          }
+          print('$summary - SUM');
+        }
       });
-    return MaterialApp(
-      home: Scaffold(
-        backgroundColor: Colors.grey[900],
-        body: SafeArea(child: UserPage(user: user)),
-      ),
-    );
-  }
-}
+      });
+    final _media = MediaQuery.of(context).size;
+    return Scaffold(
 
-class UserPage extends StatelessWidget {
-
-  final Users user;
-  const UserPage({Key key, this.user}) : super(key: key);
-  @override
-
-  Widget build(BuildContext context) {
-
-    DateTime now = DateTime.now();
-    String formattedDate = DateFormat('dd-MM').format(now);
-    print(formattedDate);
-
-    final page = ({Widget child}) => Styled.widget(child: child)
-        .padding(vertical: 30, horizontal: 20)
-        .constrained(minHeight: MediaQuery.of(context).size.height - (2 * 30))
-        .scrollable();
-
-    String timex = DateFormat('HH').format(now);
-    var timexx = int.parse('$timex');
-    assert(timexx is int);
-    String good = 'Good morning!';
-    print('Time is = $timex');
-    if (timexx <= 15)
-      {
-        good = 'Good afternoon!';
-      }
-    else if (timexx <= 21)
-      {
-        good = 'Good evening!';
-      }
-    else if (timexx <= 03 || timexx <= 3)
-      {
-        good = 'Good night!';
-      }
-
-    return <Widget>[
-
-      Text(
-        '$good',
-        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 32, color: Colors.white),
-      ).alignment(Alignment.center).padding(bottom: 20),
-      SizedBox(height: 15),
-      UserCard(user: user),
-      SizedBox(height: 25),
-      ActionsRow(user: user),
-      SizedBox(height: 50),
-      Statistics(user: user),
-    ].toColumn().parent(page);
-  }
-}
-
-class Statistics extends StatelessWidget{
-  final Users user;
-  List<Color> gradientColors = [
-    const Color(0xff23b6e6),
-    const Color(0xff02d39a),
-  ];
-
-  Statistics({Key key, this.user}) : super(key: key);
-
-  @override
-
-  Widget build(BuildContext context) {
-    SizedBox(height: 100,);
-    bool showAvg = false;
-    int touchedIndex;
-    return SingleChildScrollView(
-    child:Stack(
-      children: <Widget>[
-        AspectRatio(
-
-          aspectRatio: 1.70,
-          child: Container(
-            decoration: const BoxDecoration(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(18),
+      body: ListView(
+        physics: BouncingScrollPhysics(),
+        padding: EdgeInsets.only(
+          left: 20,
+          top: 70,
+        ),
+        children: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                "Overview",
+                style: TextStyle(
+                  fontSize: 35,
+                  fontWeight: FontWeight.bold,
                 ),
-                color: Color(0xff232d37)),
-            child: Padding(
-              padding: const EdgeInsets.only(right: 18.0, left: 12.0, top: 24, bottom: 12),
-              child: LineChart(
-                showAvg ? avgData() : mainData(),
+              ),
+              FlatButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text(
+                  "Cancel",
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold, color: Colors.black87),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(
+            height: 25,
+          ),
+          Text(
+            "Accounts",
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              inherit: true,
+              letterSpacing: 0.4,
+            ),
+          ),
+          Row(
+            children: <Widget>[
+              colorCard("Cash", 35.170, 1, context, Color(0xFF1b5bff)),
+            ],
+          ),
+          SizedBox(
+            height: 30,
+          ),
+          RichText(
+            text: TextSpan(
+              children: [
+                TextSpan(
+                  text: "Budgets",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: "Varela",
+                  ),
+                ),
+                TextSpan(
+                  text: "    $formatted",
+                  style: TextStyle(
+                    color: Colors.grey.shade400,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16,
+                    fontFamily: "Varela",
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.only(
+              top: 15,
+              right: 20,
+            ),
+            padding: EdgeInsets.all(10),
+            height: screenAwareSize(45, context),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(6),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.shade100,
+                  blurRadius: 6,
+                  spreadRadius: 10,
+                )
+              ],
+            ),
+            child: LinearPercentIndicator(
+              width: screenAwareSize(
+                  _media.width - (_media.longestSide <= 775 ? 100 : 160),
+                  context),
+              lineHeight: 20.0,
+              percent: 0.68,
+              backgroundColor: Colors.grey.shade300,
+              progressColor: Color(0xFF1b52ff),
+              animation: true,
+              animateFromLastPercent: true,
+              alignment: MainAxisAlignment.spaceEvenly,
+              animationDuration: 1000,
+              linearStrokeCap: LinearStrokeCap.roundAll,
+              center: Text(
+                "68.0%",
+                style: TextStyle(color: Colors.white),
               ),
             ),
           ),
-        ),
-        SizedBox(height: 100,),
-        TextField(
-          controller: NickController,
-          obscureText: true,
-          textAlign: TextAlign.left,
-          decoration: InputDecoration(
-            border: InputBorder.none,
-            hintText: 'Add your personal nickname',
-            hintMaxLines: 10,
-            errorMaxLines: 10,
-            hintStyle: TextStyle(color: Colors.grey),
+          SizedBox(
+            height: 30,
           ),
+          Text(
+            "Cash flow",
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              inherit: true,
+              letterSpacing: 0.4,
+            ),
+          ),
+          vaweCard(
+            context,
+            "Earned",
+            200,
+            1,
+            Colors.grey.shade100,
+            Color(0xFF716cff),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget vaweCard(BuildContext context, String name, double amount, int type,
+      Color fillColor, Color bgColor) {
+    return Container(
+      margin: EdgeInsets.only(
+        top: 15,
+        right: 20,
+      ),
+      padding: EdgeInsets.only(left: 15),
+      height: screenAwareSize(80, context),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(6),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.shade100,
+            blurRadius: 6,
+            spreadRadius: 10,
+          )
+        ],
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          Stack(
+            alignment: Alignment.center,
+            children: <Widget>[
+              WaveProgress(
+                screenAwareSize(45, context),
+                fillColor,
+                bgColor,
+                67,
+              ),
+              Text(
+                "80%",
+                style:
+                TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+              ),
+            ],
+          ),
+          SizedBox(
+            width: 20,
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                name,
+                style:
+                TextStyle(color: Colors.grey, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(
+                height: 8,
+              ),
+              Text(
+                "${type > 0 ? "" : "-"} \$ ${amount.toString()}",
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
+              )
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget donutCard(Color color, String text) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: <Widget>[
+        Container(
+          margin: EdgeInsets.only(
+            left: 0,
+            top: 18,
+            right: 10,
+          ),
+          height: 15,
+          width: 15,
+          decoration: BoxDecoration(
+            color: color,
+            shape: BoxShape.circle,
+          ),
+        ),
+        Text(
+          text,
+          style: TextStyle(
+            color: Colors.grey,
+            fontWeight: FontWeight.bold,
+            fontSize: 14,
+            inherit: true,
+          ),
+          overflow: TextOverflow.ellipsis,
+          softWrap: true,
         )
       ],
-    ),
-    )
-    void Nick(){
-      final firestoreInstance = FirebaseFirestore.instance;
-      TextEditingController NickController = new TextEditingController();
-      var firebaseUser = FirebaseAuth.instance.currentUser;
-      if(NickController.text.length < 20 && NickController.text.length > 2) {
-        firestoreInstance
-            .collection("users")
-            .doc(firebaseUser.uid)
-            .update({"nickname": NickController.text})
-            .then((_) {});
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Added nickname',style: TextStyle(color: Colors.white),),backgroundColor: Colors.green,));
-      }
-      else {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error nick format. Please try again',style: TextStyle(color: Colors.white),),backgroundColor: Colors.red,));}
-    }
-    }
-  }
-
-  LineChartData mainData() {
-
-
-
-
-    DateTime now = DateTime.now();
-    String monthnow = DateFormat('MM').format(now);
-    var monthlast = int.parse('$monthnow');
-    assert(monthlast is int);
-    monthlast = monthlast - 1;
-    if (monthnow == 01 || monthnow == 1) {
-      monthlast = 12;
-    }
-    var montlast2 = monthlast - 1;
-    int count = user.MyItems.length;
-    var list = [count];
-    int sum = 0;
-    for (int i = 0; i < count; i++)
-     {
-
-      }
-    print(count);
-
-
-
-    return LineChartData(
-      gridData: FlGridData(
-        show: true,
-        drawVerticalLine: true,
-        getDrawingHorizontalLine: (value) {
-          return FlLine(
-            color: const Color(0xff37434d),
-            strokeWidth: 1,
-          );
-        },
-        getDrawingVerticalLine: (value) {
-          return FlLine(
-            color: const Color(0xff37434d),
-            strokeWidth: 1,
-          );
-        },
-      ),
-      titlesData: FlTitlesData(
-        show: true,
-        bottomTitles: SideTitles(
-          showTitles: true,
-          reservedSize: 22,
-          getTextStyles: (value) =>
-          const TextStyle(color: Color(0xff68737d), fontWeight: FontWeight.bold, fontSize: 16),
-          getTitles: (value) {
-            switch (value.toInt()) {
-              case 2:
-                return '$montlast2';
-              case 5:
-                return '$monthlast';
-              case 8:
-                return '$monthnow';
-            }
-            return '';
-          },
-          margin: 8,
-        ),
-        leftTitles: SideTitles(
-          showTitles: true,
-          getTextStyles: (value) => const TextStyle(
-            color: Color(0xff67727d),
-            fontWeight: FontWeight.bold,
-            fontSize: 15,
-          ),
-          getTitles: (value) {
-            final firestoreInstance = FirebaseFirestore.instance;
-            final dbRef = FirebaseDatabase.instance.reference().child("Data");
-            List<Data> dataList = [];
-            var firebaseUser = FirebaseAuth.instance.currentUser;
-            dataList.clear();
-            firestoreInstance
-                .collection("users")
-                .doc(firebaseUser.uid)
-                .get()
-                .then((DocumentSnapshot ds) {
-              List myItems = ds['MyItems'];
-              dbRef.once().then((DataSnapshot ds) {
-                for (String item in myItems) {
-                  Data data = Data(
-                    cost: ds.value[item]['cost'],
-                  );
-                  dataList.add(data);
-                  int sum = 0;
-                  print(data.cost);
-                  var costx = int.parse('${data.cost}');
-                  assert(costx is int);
-                  for (int i = 0; i < data.cost.length; i++) {
-                    sum = (sum + costx);
-                  }
-                }
-              });
-            }
-            );
-            switch (value.toInt()) {
-              case 1:
-                return '0';
-              case 3:
-                return '10';
-              case 5:
-                return '100';
-            }
-            return '';
-          },
-          reservedSize: 28,
-          margin: 12,
-        ),
-      ),
-      borderData:
-      FlBorderData(show: true, border: Border.all(color: const Color(0xff37434d), width: 1)),
-      minX: 0,
-      maxX: 11,
-      minY: 0,
-      maxY: 6,
-      lineBarsData: [
-        LineChartBarData(
-          spots: [
-            FlSpot(0, 3),
-            FlSpot(2.6, 2),
-            FlSpot(4.9, 5),
-            FlSpot(6.8, 3.1),
-            FlSpot(8, 4),
-            FlSpot(9.5, 3),
-            FlSpot(11, 4),
-          ],
-          isCurved: true,
-          colors: gradientColors,
-          barWidth: 5,
-          isStrokeCapRound: true,
-          dotData: FlDotData(
-            show: false,
-          ),
-          belowBarData: BarAreaData(
-            show: true,
-            colors: gradientColors.map((color) => color.withOpacity(0.3)).toList(),
-          ),
-        ),
-      ],
     );
   }
 
-  LineChartData avgData() {
-    return LineChartData(
-      lineTouchData: LineTouchData(enabled: false),
-      gridData: FlGridData(
-        show: true,
-        drawHorizontalLine: true,
-        getDrawingVerticalLine: (value) {
-          return FlLine(
-            color: const Color(0xff37434d),
-            strokeWidth: 1,
-          );
-        },
-        getDrawingHorizontalLine: (value) {
-          return FlLine(
-            color: const Color(0xff37434d),
-            strokeWidth: 1,
-          );
-        },
-      ),
-      titlesData: FlTitlesData(
-        show: true,
-        bottomTitles: SideTitles(
-          showTitles: true,
-          reservedSize: 22,
-          getTextStyles: (value) =>
-          const TextStyle(color: Color(0xff68737d), fontWeight: FontWeight.bold, fontSize: 16),
-          getTitles: (value) {
-            switch (value.toInt()) {
-              case 2:
-                return 'MAR';
-              case 5:
-                return 'JUN';
-              case 8:
-                return 'SEP';
-            }
-            return '';
-          },
-          margin: 8,
-        ),
-        leftTitles: SideTitles(
-          showTitles: true,
-          getTextStyles: (value) => const TextStyle(
-            color: Color(0xff67727d),
-            fontWeight: FontWeight.bold,
-            fontSize: 15,
-          ),
-          getTitles: (value) {
-            switch (value.toInt()) {
-              case 1:
-                return '10k';
-              case 3:
-                return '30k';
-              case 5:
-                return '50k';
-            }
-            return '';
-          },
-          reservedSize: 28,
-          margin: 12,
-        ),
-      ),
-      borderData:
-      FlBorderData(show: true, border: Border.all(color: const Color(0xff37434d), width: 1)),
-      minX: 0,
-      maxX: 11,
-      minY: 0,
-      maxY: 6,
-      lineBarsData: [
-        LineChartBarData(
-          spots: [
-            FlSpot(0, 3.44),
-            FlSpot(2.6, 3.44),
-            FlSpot(4.9, 3.44),
-            FlSpot(6.8, 3.44),
-            FlSpot(8, 3.44),
-            FlSpot(9.5, 3.44),
-            FlSpot(11, 3.44),
-          ],
-          isCurved: true,
-          colors: [
-            ColorTween(begin: gradientColors[0], end: gradientColors[1]).lerp(0.2),
-            ColorTween(begin: gradientColors[0], end: gradientColors[1]).lerp(0.2),
-          ],
-          barWidth: 5,
-          isStrokeCapRound: true,
-          dotData: FlDotData(
-            show: false,
-          ),
-          belowBarData: BarAreaData(show: true, colors: [
-            ColorTween(begin: gradientColors[0], end: gradientColors[1]).lerp(0.2).withOpacity(0.1),
-            ColorTween(begin: gradientColors[0], end: gradientColors[1]).lerp(0.2).withOpacity(0.1),
+  Widget colorCard(
+      String text, double amount, int type, BuildContext context, Color color) {
+    final _media = MediaQuery.of(context).size;
+    return Container(
+      margin: EdgeInsets.only(top: 15, right: 15),
+      padding: EdgeInsets.all(15),
+      height: screenAwareSize(90, context),
+      width: _media.width / 2 - 25,
+      decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(15),
+          boxShadow: [
+            BoxShadow(
+                color: color.withOpacity(0.4),
+                blurRadius: 16,
+                spreadRadius: 0.2,
+                offset: Offset(0, 8)),
           ]),
-        ),
-      ],
-    );
-  }
-
-}
-
-class UserCard extends StatelessWidget {
-
-  final Users user;
-  const UserCard({Key key, this.user}) : super(key: key);
-  Widget _buildUserRow(BuildContext context) {
-     return <Widget>[
-      SizedBox(
-          height: 40,
-          width: 40,
-          child: ( (user.profilePictureURL) != '' || (user.profilePictureURL) != null ) ? CircleAvatar(
-            //circle avatar
-            radius: 30.0,
-            backgroundImage: NetworkImage('${user.profilePictureURL}'),
-            backgroundColor: Colors.transparent,
-          ) : Icon(Icons.account_circle)
-              .decorated(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(30),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            text,
+            style: TextStyle(
+              fontSize: 18,
+              color: Colors.white,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          Text(
+            "${type > 0 ? "" : "-"} \$ ${amount.toString()}",
+            style: TextStyle(
+              fontSize: 22,
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
           )
-              .constrained(height: 50, width: 50)
-              .padding(right: 10)
-      ),
-      SizedBox(width: 10,),
-      <Widget>[
-        Row(
-          children: <Widget>[
-        Text(
-          '${user.firstName} ${user.lastName}',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-        ).padding(bottom: 5),
-            SizedBox(width: 10,),
         ],
-        ),
-        Text(
-          'Seller',
-          style: TextStyle(
-            color: Colors.white.withOpacity(0.6),
-            fontSize: 12,
-          ),
-        ),
-      ].toColumn(crossAxisAlignment: CrossAxisAlignment.start),
-    ].toRow();
-  }
-
-  Widget _buildUserStats() {
-    String value = 'no';
-    if (user.VIP == true)
-      {
-        value = 'Yes';
-      }
-    else {
-      value = 'No';
-    }
-    return <Widget>[
-      _buildUserStatsItem('${user.subs}', 'Followers'),
-      _buildUserStatsItem('${user.MyItems.length}', 'Goods'),
-      _buildUserStatsItem('$value', 'VIP'),
-    ]
-        .toRow(mainAxisAlignment: MainAxisAlignment.spaceAround)
-        .padding(vertical: 10);
-  }
-
-  Widget _buildUserStatsItem(String value, String text) => <Widget>[
-    Text(value).fontSize(20).textColor(Colors.white).padding(bottom: 5),
-    Text(text).textColor(Colors.white.withOpacity(0.6)).fontSize(12),
-  ].toColumn();
-
-  @override
-  Widget build(BuildContext context) {
-    return <Widget>[_buildUserRow(context), _buildUserStats()]
-        .toColumn(mainAxisAlignment: MainAxisAlignment.spaceAround)
-        .padding(horizontal: 20, vertical: 10)
-        .decorated(
-        color: Color(0xff3977ff), borderRadius: BorderRadius.circular(20))
-        .elevation(
-      5,
-      shadowColor: Color(0xff3977ff),
-      borderRadius: BorderRadius.circular(20),
-    )
-        .height(175)
-        .alignment(Alignment.center);
-  }
-}
-
-
-_launchURL() async {
-  String url = 'https://www.instagram.com/verifywiardo/';
-  if (await canLaunch(url)) {
-    await launch(url);
-  } else {
-    throw 'Could not launch';
-  }
-}
-
-class ActionsRow extends StatelessWidget {
-  final firestoreInstance = FirebaseFirestore.instance;
-  final Users user;
-   ActionsRow({Key key, this.user}) : super(key: key);
-  Widget _buildActionItem(String name, IconData icon) {
-    final Widget actionIcon = Icon(icon, size: 20, color: Colors.white)
-        .alignment(Alignment.center)
-        .ripple()
-        .constrained(width: 50, height: 50)
-        .backgroundColor(Color(0xff232d37))
-        .clipOval()
-        .padding(bottom: 5);
-
-    final Widget actionText = Text(
-      name,
-      style: TextStyle(
-        color: Colors.white,
-        fontSize: 12,
       ),
     );
-
-    return <Widget>[
-      actionIcon,
-      actionText,
-    ].toColumn().padding(vertical: 20);
   }
-
-  @override
-  Widget build(BuildContext context) => <Widget>[
-   user.country != "" ? _buildActionItem('${user.country}', Icons.public) : InkWell(child:_buildActionItem('Country', Icons.public),
-    onTap:()
-    {
-      var firebaseUser = FirebaseAuth.instance.currentUser;
-      showCountryPicker(
-        context: context,
-        showPhoneCode: false,
-        onSelect: (Country country) {
-          print('Select country: ${country.displayName}');
-          String count = '${country.displayNameNoCountryCode}';
-          String result = count.substring(0, count.indexOf(' ')); //delete everything after country name
-          user.country = '$result';
-          print(result);
-        },
-         );
-      firestoreInstance
-          .collection("users")
-          .doc(firebaseUser.uid)
-          .update({"country": user.country})
-          .then((_) {});
-    },),
-   user.birtday == "" ? InkWell(
-     onTap: () async {
-         var datePicked = await DatePicker.showSimpleDatePicker(
-           context,
-           // initialDate: DateTime(1994),
-           firstDate: DateTime(1960),
-           // lastDate: DateTime(2012),
-           dateFormat: "dd-MMMM",
-           locale: DateTimePickerLocale.en_us,
-           looping: true,
-
-         );
-         print(datePicked.day);
-         user.birtday = '${datePicked.day}-${datePicked.month}';
-         var firebaseUser = FirebaseAuth.instance.currentUser;
-         String datebir = '${datePicked.day}-${datePicked.month}';
-         firestoreInstance
-             .collection("users")
-             .doc(firebaseUser.uid)
-             .update({"birthday": datebir})
-             .then((_) {});
-     },
-     child: _buildActionItem('Age', Icons.cake),
-   ) : _buildActionItem('${user.birtday}', Icons.celebration,),
-   InkWell (child: _buildActionItem('Verification',  Icons.fact_check),onTap: (){
-     _launchURL();
-   },),
-    InkWell(child:_buildActionItem('Support', Icons.help),onTap: (){
-      _launchURL();
-    },),
-  ].toRow(mainAxisAlignment: MainAxisAlignment.spaceAround);
 }
