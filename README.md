@@ -16,4 +16,4 @@ How to setup?
 5. Add .json to project
 6. Compile and use
 
-<a href="https://i.imgur.com/BTCjCaf.jpg"><img src="https://i.imgur.com/BTCjCaf.jpg" title="source: imgur.com" /></a>
+<a href="https://i.imgur.com/20e6px5.png"><img src="https://i.imgur.com/20e6px5.png" title="source: imgur.com" /></a>
