@@ -5,7 +5,7 @@ Find your personal swag or sell anywhere your clothes!
 Some parts of code were taken from other open-source developers projects
 In app haven't ads
 
-Google Market - https://play.google.com/store/apps/details?id=com.niowo.shopper
+Google Market - https://play.google.com/store/apps/details?id=com.niowo.shopper (not available app right now)
 
 How to setup? 
 
