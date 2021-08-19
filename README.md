@@ -1,5 +1,5 @@
 # WIARDO
-Wiardo - app for buy and sell clothes
+Wiardo - online shop
 Find your personal swag or sell anywhere your clothes!
 
 Some parts of code were taken from other open-source developers projects
